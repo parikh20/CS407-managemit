@@ -1,6 +1,8 @@
 # CS407 Project
 
-Meeting log:
+### Meeting log
+
+2/3 - Meeting to continue work on sprint 1 planning document. In this meeting, we finished the planning document by estimating time for each backlog item and assigning work between team members. We ended the meeting by submitting the completed document.
 
 2/2 - Meeting to work on sprint 1 planning document. In this meeting, we determined which tasks we would work on in the upcoming sprint, and wrote out detailed actions and acceptance criteria for each. We left assigning work and estimating time to next meeting.
 
