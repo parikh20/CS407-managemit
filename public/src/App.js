@@ -20,7 +20,13 @@ const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(2),
         textAlign: 'center',
+        color: theme.palette.text.secondary
+    },
+    loginPaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
         color: theme.palette.text.secondary,
+        height: 100 + '%' // Keeps the boxes at the same height
     },
     button: {
         marginRight: 5,
@@ -39,8 +45,14 @@ function App() {
             <NavBar />
             <div className={classes.loginBody}>
                 <Grid container spacing={3}>
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                         <Paper className={classes.paper}>
+                            <h2>Welcome to Managemit</h2>
+                            <p>Keep track of your tasks and work collaboratively. Log in or register to get started.</p>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Paper className={classes.loginPaper}>
 
                             <h2>Log in</h2>
 
@@ -55,12 +67,15 @@ function App() {
                                     <Button variant="contained" color="primary" className={classes.button}>Log in</Button>
                                     <Button variant="contained" className={classes.button}>Log in with Google</Button>
                                 </Grid>
+                                <Grid item xs={12}>
+                                    <Button>Forgot password?</Button>
+                                </Grid>
                             </Grid>
 
                         </Paper>
                     </Grid>
                     <Grid item xs={6}>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.loginPaper}>
 
                             <h2>Register</h2>
 
