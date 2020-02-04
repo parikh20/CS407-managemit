@@ -1,26 +1,90 @@
 import React from 'react';
-import logo from './logo.svg';
+
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+
 import './App.css';
 
+import NavBar from './NavBar.js';
+
+const useStyles = makeStyles(theme => ({
+    loginBody: {
+        flexGrow: 1,
+        padding: 20,
+        paddingRight: 200,
+        paddingLeft: 200
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+    button: {
+        marginRight: 5,
+        marginLeft: 5
+    },
+    textField: {
+        width: 80 + '%'
+    }
+}));
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const classes = useStyles();
+
+    return (
+        <div>
+            <NavBar />
+            <div className={classes.loginBody}>
+                <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                        <Paper className={classes.paper}>
+
+                            <h2>Log in</h2>
+
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <TextField label="Email" variant="outlined" className={classes.textField} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField label="Password" variant="outlined" type="password" className={classes.textField} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button variant="contained" color="primary" className={classes.button}>Log in</Button>
+                                    <Button variant="contained" className={classes.button}>Log in with Google</Button>
+                                </Grid>
+                            </Grid>
+
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Paper className={classes.paper}>
+
+                            <h2>Register</h2>
+
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <TextField label="Email" variant="outlined" className={classes.textField} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField label="Password" type="password" variant="outlined" className={classes.textField} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField label="Re-enter password" type="password" variant="outlined" className={classes.textField} />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button variant="contained" color="primary" className={classes.button}>Register</Button>
+                                </Grid>
+                            </Grid>
+
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </div>
+        </div>
+    );
 }
 
 export default App;
