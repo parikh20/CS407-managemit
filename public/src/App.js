@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+  } from "react-router-dom";
 
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -21,6 +27,8 @@ import BoardSettings from './BoardSettings.js';
 
 // Firebase imports
 import firebase, { auth, provider } from './Firebase.js'
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function loginWithGoogle() {
     auth.signInWithPopup(provider).then(function(result) {
@@ -64,80 +72,35 @@ function App() {
     const classes = useStyles();
 
     return (
-        <div>
+        <Router>
             <NavBar onLandingPage='true' />
-            <div className={classes.loginBody}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                            <h2>Welcome to Managemit</h2>
-                            <p>Keep track of your tasks and work collaboratively. Log in or register to get started.</p>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper className={classes.loginPaper}>
+            <Switch>
+                <Route path="/login">
+                    <Login></Login>
+                </Route>
+                <Route path="/register">
+                    <Register></Register>
+                </Route>
+            </Switch>
+        </Router>
 
-                            <h2>Log in</h2>
 
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <TextField label='Email' type='email' variant='outlined' className={classes.textField} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField label='Password' variant='outlined' type='password' className={classes.textField} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Button variant='contained' color='primary' className={classes.button}>Log in</Button>
-                                    <Button variant='contained' className={classes.button} onClick={loginWithGoogle} >Log in with Google</Button>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ResetPasswordDialog />
-                                </Grid>
-                            </Grid>
-
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper className={classes.loginPaper}>
-
-                            <h2>Register</h2>
-
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <TextField label='Email' type='email' variant='outlined' className={classes.textField} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField label='Password' type='password' variant='outlined' className={classes.textField} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField label='Re-enter password' type='password' variant='outlined' className={classes.textField} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Button variant='contained' color='primary' className={classes.button}>Register</Button>
-                                </Grid>
-                            </Grid>
-
-                        </Paper>
-                    </Grid>
-                </Grid>
-            </div>
-
-            <div>
-                <br /><br /><br /><br />everything below is a testing area<br /><br /><br /><br />
-                <p>Boards page WIP:</p>
-                <NavBar />
-                <BoardsActions />
-                <BoardCardCollection />
-                <p>Board page WIP:</p>
-                <NavBar onBoardPage='true' />
-                <BoardActions/>
-                <ColumnGroup />
-                <p>Board settings page WIP:</p>
-                <NavBar />
-                <BoardSettingsBreadcrumbs boardName='Placeholder name' />
-                <BoardSettings />
-            </div>
-        </div>
+        //     <div>
+        //         <br /><br /><br /><br />everything below is a testing area<br /><br /><br /><br />
+        //         <p>Boards page WIP:</p>
+        //         <NavBar />
+        //         <BoardsActions />
+        //         <BoardCardCollection />
+        //         <p>Board page WIP:</p>
+        //         <NavBar onBoardPage='true' />
+        //         <BoardActions/>
+        //         <ColumnGroup />
+        //         <p>Board settings page WIP:</p>
+        //         <NavBar />
+        //         <BoardSettingsBreadcrumbs boardName='Placeholder name' />
+        //         <BoardSettings />
+        //     </div>
+        // </div>
     );
 }
 
