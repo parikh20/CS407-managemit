@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -21,7 +22,9 @@ function NewBoardDialog() {
 
     return (
         <div>
-            <Button onClick={handleClickOpen}>New board</Button>
+            <ButtonGroup size='small'>
+                <Button onClick={handleClickOpen}>New board</Button>
+            </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>New board</DialogTitle>
                 <DialogContent>
