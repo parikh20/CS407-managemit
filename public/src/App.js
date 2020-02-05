@@ -10,6 +10,9 @@ import './App.css';
 
 import NavBar from './NavBar.js';
 
+// test imports - not actually needed on this page
+import ColumnGroup from './ColumnGroup.js';
+
 const useStyles = makeStyles(theme => ({
     loginBody: {
         flexGrow: 1,
@@ -97,6 +100,11 @@ function App() {
                         </Paper>
                     </Grid>
                 </Grid>
+            </div>
+
+            <div>
+                <br /><br /><br /><br />everything here and below is a testing area<br /><br /><br /><br />
+                <ColumnGroup />
             </div>
         </div>
     );
