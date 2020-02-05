@@ -110,7 +110,7 @@ function EditTaskDialog() {
                             <TextField
                                 margin='dense'
                                 id='taskDependencies'
-                                label='taskDependencies'
+                                label='Dependencies'
                                 variant='outlined'
                                 fullWidth
                                 InputLabelProps={{shrink: true}}

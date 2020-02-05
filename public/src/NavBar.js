@@ -9,6 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
+import SortIcon from '@material-ui/icons/Sort';
 import TextField from '@material-ui/core/TextField';
 
 class NavBar extends React.Component {
@@ -29,12 +30,19 @@ class NavBar extends React.Component {
                         </Typography>
                         {this.props.onBoardPage == 'true' && <>
                             <TextField placeholder='Search for task' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                            <IconButton
+                                edge='end'
+                                aria-label='sort'
+                                color='inherit'>
+                                <SortIcon />
+                            </IconButton>
                         </>}
                         {this.props.onLandingPage != 'true' && <>
                             <IconButton
                                 edge='end'
                                 aria-label='notifications'
-                                color='inherit'>
+                                color='inherit'
+                                style={{marginLeft: 30}}>
                                 <MailIcon />
                             </IconButton>
                             <IconButton

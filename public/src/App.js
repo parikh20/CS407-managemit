@@ -11,12 +11,13 @@ import './App.css';
 import NavBar from './NavBar.js';
 import ResetPasswordDialog from './ResetPasswordDialog.js';
 
-// test imports - not actually needed on this page
+// test imports - not actually needed on this page. These can be removed later
 import ColumnGroup from './ColumnGroup.js';
 import BoardsActions from './BoardsActions.js';
 import BoardActions from './BoardActions.js';
 import BoardCardCollection from './BoardCardCollection.js';
-
+import BoardSettingsBreadcrumbs from './BoardSettingsBreadcrumbs.js';
+import BoardSettings from './BoardSettings.js';
 
 // Firebase imports
 import firebase, { auth, provider } from './Firebase.js'
@@ -122,15 +123,19 @@ function App() {
             </div>
 
             <div>
-                <br /><br /><br /><br />everything here and below is a testing area<br /><br /><br /><br />
-                <p>nav bar: variant for boards page</p>
+                <br /><br /><br /><br />everything below is a testing area<br /><br /><br /><br />
+                <p>Boards page WIP:</p>
                 <NavBar />
                 <BoardsActions />
                 <BoardCardCollection />
-                <p>nav bar: variant for individual board page</p>
+                <p>Board page WIP:</p>
                 <NavBar onBoardPage='true' />
                 <BoardActions/>
                 <ColumnGroup />
+                <p>Board settings page WIP:</p>
+                <NavBar />
+                <BoardSettingsBreadcrumbs boardName='Placeholder name' />
+                <BoardSettings />
             </div>
         </div>
     );
