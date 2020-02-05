@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import './App.css';
 
 import NavBar from './NavBar.js';
+import ResetPasswordDialog from './ResetPasswordDialog.js';
 
 // test imports - not actually needed on this page
 import ColumnGroup from './ColumnGroup.js';
@@ -61,7 +62,7 @@ function App() {
 
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
-                                    <TextField label="Email" variant="outlined" className={classes.textField} />
+                                    <TextField label="Email" type="email" variant="outlined" className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField label="Password" variant="outlined" type="password" className={classes.textField} />
@@ -71,7 +72,7 @@ function App() {
                                     <Button variant="contained" className={classes.button}>Log in with Google</Button>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button>Forgot password?</Button>
+                                    <ResetPasswordDialog />
                                 </Grid>
                             </Grid>
 
@@ -84,7 +85,7 @@ function App() {
 
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
-                                    <TextField label="Email" variant="outlined" className={classes.textField} />
+                                    <TextField label="Email" type="email" variant="outlined" className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField label="Password" type="password" variant="outlined" className={classes.textField} />
