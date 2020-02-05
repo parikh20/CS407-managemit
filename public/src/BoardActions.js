@@ -5,6 +5,8 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Grid from '@material-ui/core/Grid';
 
+import EditTaskDialog from './EditTaskDialog.js';
+
 class BoardActions extends React.Component {
     constructor(props) {
         super(props);
@@ -18,7 +20,7 @@ class BoardActions extends React.Component {
                     <BoardBreadcrumbs boardName="Placeholder name" />
                 </div>
                 <ButtonGroup size='small'>
-                    <Button>New task</Button>
+                    <EditTaskDialog />
                     <Button>Select view</Button>
                     <Button>View history</Button>
                 </ButtonGroup>
