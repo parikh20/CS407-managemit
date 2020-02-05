@@ -7,6 +7,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
+import ViewTaskDialog from './ViewTaskDialog.js';
+
 class TaskListing extends React.Component {
     constructor(props) {
         super(props);
@@ -22,6 +24,7 @@ class TaskListing extends React.Component {
                     <Typography variant='body2' component='p'>
                         {this.props.description}
                     </Typography>
+                    <ViewTaskDialog taskDetails={this.props} />
                 </CardContent>
             </Card>
         );
