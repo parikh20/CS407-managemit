@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 
-function ResetPasswordDialog() {
+function NewBoardDialog() {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -21,20 +21,28 @@ function ResetPasswordDialog() {
 
     return (
         <div>
-            <Button onClick={handleClickOpen}>Forgot password?</Button>
+            <Button onClick={handleClickOpen}>New board</Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Reset password</DialogTitle>
+                <DialogTitle id='form-dialog-title'>New board</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                    Enter your email. If the email is already associated with an account, you will recieve an email with a new password.
+                    Enter a name and description for your new board.
                     </DialogContentText>
                     <TextField
                         autoFocus
                         margin='dense'
-                        id='forgotPasswordEmail'
-                        label='Email'
-                        type='email'
+                        id='newBoardName'
+                        label='Board name'
                         variant='outlined'
+                        fullWidth
+                    />
+                    <TextField
+                        margin='dense'
+                        id='newBoardDescription'
+                        label='Board description'
+                        rows='5'
+                        variant='outlined'
+                        multiline
                         fullWidth
                     />
                 </DialogContent>
@@ -43,7 +51,7 @@ function ResetPasswordDialog() {
                         Cancel
                     </Button>
                     <Button onClick={handleClose} color='primary'>
-                        Reset password
+                        Create board
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -51,4 +59,4 @@ function ResetPasswordDialog() {
     );
 }
 
-export default ResetPasswordDialog;
+export default NewBoardDialog;

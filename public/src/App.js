@@ -13,6 +13,8 @@ import ResetPasswordDialog from './ResetPasswordDialog.js';
 
 // test imports - not actually needed on this page
 import ColumnGroup from './ColumnGroup.js';
+import NewBoardDialog from './NewBoardDialog.js';
+import BoardBreadcrumbs from './BoardBreadcrumbs.js';
 
 const useStyles = makeStyles(theme => ({
     loginBody: {
@@ -46,7 +48,7 @@ function App() {
 
     return (
         <div>
-            <NavBar />
+            <NavBar onLandingPage='true' />
             <div className={classes.loginBody}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
@@ -62,14 +64,14 @@ function App() {
 
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
-                                    <TextField label="Email" type="email" variant="outlined" className={classes.textField} />
+                                    <TextField label='Email' type='email' variant='outlined' className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <TextField label="Password" variant="outlined" type="password" className={classes.textField} />
+                                    <TextField label='Password' variant='outlined' type='password' className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button variant="contained" color="primary" className={classes.button}>Log in</Button>
-                                    <Button variant="contained" className={classes.button}>Log in with Google</Button>
+                                    <Button variant='contained' color='primary' className={classes.button}>Log in</Button>
+                                    <Button variant='contained' className={classes.button}>Log in with Google</Button>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <ResetPasswordDialog />
@@ -85,16 +87,16 @@ function App() {
 
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
-                                    <TextField label="Email" type="email" variant="outlined" className={classes.textField} />
+                                    <TextField label='Email' type='email' variant='outlined' className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <TextField label="Password" type="password" variant="outlined" className={classes.textField} />
+                                    <TextField label='Password' type='password' variant='outlined' className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <TextField label="Re-enter password" type="password" variant="outlined" className={classes.textField} />
+                                    <TextField label='Re-enter password' type='password' variant='outlined' className={classes.textField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button variant="contained" color="primary" className={classes.button}>Register</Button>
+                                    <Button variant='contained' color='primary' className={classes.button}>Register</Button>
                                 </Grid>
                             </Grid>
 
@@ -105,6 +107,12 @@ function App() {
 
             <div>
                 <br /><br /><br /><br />everything here and below is a testing area<br /><br /><br /><br />
+                <p>nav bar: variant for boards page</p>
+                <NavBar />
+                <p>nav bar: variant for individual board page</p>
+                <NavBar onBoardPage='true' />
+                <NewBoardDialog />
+                <BoardBreadcrumbs boardName='Example Board Name' />
                 <ColumnGroup />
             </div>
         </div>

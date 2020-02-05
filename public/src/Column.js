@@ -31,12 +31,12 @@ class Column extends React.Component {
     render() {
         return (
             <GridListTile style={{margin: 5, width: 250}}>
-                <Typography variant="h6" color="inherit">
+                <Typography variant='h6' color='inherit'>
                     {this.props.columnName}
                     <IconButton
-                        edge="end"
-                        aria-label="edit column"
-                        color="inherit">
+                        edge='end'
+                        aria-label='edit column'
+                        color='inherit'>
                         <EditIcon />
                     </IconButton>
                 </Typography>
