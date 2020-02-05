@@ -14,7 +14,7 @@ import ResetPasswordDialog from './ResetPasswordDialog.js';
 // test imports - not actually needed on this page
 import ColumnGroup from './ColumnGroup.js';
 import NewBoardDialog from './NewBoardDialog.js';
-import BoardBreadcrumbs from './BoardBreadcrumbs.js';
+import BoardActions from './BoardActions.js';
 
 const useStyles = makeStyles(theme => ({
     loginBody: {
@@ -109,10 +109,10 @@ function App() {
                 <br /><br /><br /><br />everything here and below is a testing area<br /><br /><br /><br />
                 <p>nav bar: variant for boards page</p>
                 <NavBar />
+                <NewBoardDialog />
                 <p>nav bar: variant for individual board page</p>
                 <NavBar onBoardPage='true' />
-                <NewBoardDialog />
-                <BoardBreadcrumbs boardName='Example Board Name' />
+                <BoardActions/>
                 <ColumnGroup />
             </div>
         </div>
