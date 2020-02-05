@@ -6,6 +6,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Grid from '@material-ui/core/Grid';
 
 import EditTaskDialog from './EditTaskDialog.js';
+import NewColumnDialog from './NewColumnDialog.js';
 
 class BoardActions extends React.Component {
     constructor(props) {
@@ -21,6 +22,7 @@ class BoardActions extends React.Component {
                 </div>
                 <ButtonGroup size='small'>
                     <EditTaskDialog />
+                    <NewColumnDialog />
                     <Button>Select view</Button>
                     <Button>View history</Button>
                 </ButtonGroup>
