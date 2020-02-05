@@ -17,6 +17,21 @@ import BoardsActions from './BoardsActions.js';
 import BoardActions from './BoardActions.js';
 import BoardCardCollection from './BoardCardCollection.js';
 
+
+// Firebase imports
+import firebase, { auth, provider } from './Firebase.js'
+
+function loginWithGoogle() {
+    auth.signInWithPopup(provider).then(function(result) {
+        var user = result.user;
+        console.log(user);
+        // ...
+      }).catch(function(error) {
+        console.log(error);
+      });
+      
+}
+
 const useStyles = makeStyles(theme => ({
     loginBody: {
         flexGrow: 1,
@@ -72,7 +87,7 @@ function App() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Button variant='contained' color='primary' className={classes.button}>Log in</Button>
-                                    <Button variant='contained' className={classes.button}>Log in with Google</Button>
+                                    <Button variant='contained' className={classes.button} onClick={loginWithGoogle} >Log in with Google</Button>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <ResetPasswordDialog />
