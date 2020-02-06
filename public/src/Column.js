@@ -19,6 +19,54 @@ const placeholderTasks = [
     {
         title: 'Third title',
         description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
+    },
+    {
+        title: 'My title',
+        description: 'My description'
+    },
+    {
+        title: 'Second title',
+        description: 'A slightly longer description'
+    },
+    {
+        title: 'Third title',
+        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
+    },
+    {
+        title: 'My title',
+        description: 'My description'
+    },
+    {
+        title: 'Second title',
+        description: 'A slightly longer description'
+    },
+    {
+        title: 'Third title',
+        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
+    },
+    {
+        title: 'My title',
+        description: 'My description'
+    },
+    {
+        title: 'Second title',
+        description: 'A slightly longer description'
+    },
+    {
+        title: 'Third title',
+        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
+    },
+    {
+        title: 'My title',
+        description: 'My description'
+    },
+    {
+        title: 'Second title',
+        description: 'A slightly longer description'
+    },
+    {
+        title: 'Third title',
+        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
     }
 ];
 
@@ -34,9 +82,11 @@ class Column extends React.Component {
                     {this.props.columnName}
                     <EditColumnDialog />
                 </Typography>
-                {placeholderTasks.map(task => (
-                    <TaskListing title={task.title} description={task.description} />
-                ))}
+                <div style={{overflow: 'auto', height: '800px'}}> {/*yeah I know, this is very very bad. css is awful to work with, this height definition needs to be fixed*/}
+                    {placeholderTasks.map(task => (
+                        <TaskListing title={task.title} description={task.description} />
+                    ))}
+                </div>
             </GridListTile>
         );
     }

@@ -28,7 +28,7 @@ class NavBar extends React.Component {
                         <Typography variant='h6' color='inherit' style={{flexGrow: 1}}>
                             Managemit
                             {this.showNavigation &&
-                                <Button color='inherit' style={{marginLeft: 5}}>Boards</Button>
+                                <Button href='/boards' color='inherit' style={{marginLeft: 5}}>Boards</Button>
                             }
                         </Typography>
                         {this.showBoardFeatures && <>

@@ -14,7 +14,7 @@ class BoardSettingsBreadcrumbs extends React.Component {
         return (
             <Grid container style={{padding: '10px 10px 0px 10px'}}>
                 <Breadcrumbs aria-label='breadcrumbs'>
-                    <Link color='inherit'>
+                    <Link color='inherit' href='/boards'>
                         Boards
                     </Link>
                     <Link color='inherit'>

@@ -12,7 +12,7 @@ class BoardBreadcrumbs extends React.Component {
     render() {
         return (
             <Breadcrumbs aria-label='breadcrumbs'>
-                <Link color='inherit'>
+                <Link color='inherit' href='/boards'>
                     Boards
                 </Link>
                 <Typography color='textPrimary'>
