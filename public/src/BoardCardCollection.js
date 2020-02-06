@@ -75,11 +75,13 @@ class BoardCardCollection extends React.Component {
     }
     render() {
         return (
-            <Grid container spacing={3} style={{padding: '10px 10px 0px 10px'}}>
-                {placeholderBoards.map(board => (
-                    <BoardCard title={board.title} description={board.description} />
-                ))}
-            </Grid>
+            <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>
+                <Grid container spacing={3}>
+                    {placeholderBoards.map(board => (
+                        <BoardCard title={board.title} description={board.description} />
+                    ))}
+                </Grid>
+            </div>
         );
     }
 }

@@ -16,6 +16,9 @@ class NavBar extends React.Component {
     constructor(props) {
         super(props);
         this.props = props;
+
+        this.showNavigation = !(['/login', '/register'].includes(props.location));
+        this.showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards';
     }
     render() {
         return (
@@ -24,11 +27,11 @@ class NavBar extends React.Component {
                     <Toolbar variant='dense'>
                         <Typography variant='h6' color='inherit' style={{flexGrow: 1}}>
                             Managemit
-                            {this.props.onLandingPage != 'true' &&
+                            {this.showNavigation &&
                                 <Button color='inherit' style={{marginLeft: 5}}>Boards</Button>
                             }
                         </Typography>
-                        {this.props.onBoardPage == 'true' && <>
+                        {this.showBoardFeatures && <>
                             <TextField placeholder='Search for task' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
                             <IconButton
                                 edge='end'
@@ -37,7 +40,7 @@ class NavBar extends React.Component {
                                 <SortIcon />
                             </IconButton>
                         </>}
-                        {this.props.onLandingPage != 'true' && <>
+                        {this.showNavigation && <>
                             <IconButton
                                 edge='end'
                                 aria-label='notifications'

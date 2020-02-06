@@ -13,7 +13,7 @@ class ColumnGroup extends React.Component {
     }
     render() {
         return (
-            <div style={{padding: '10px 10px 0px 10px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', overflow: 'hidden'}}>
+            <div style={{height: 100 + '%', padding: '10px 10px 0px 10px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', overflow: 'hidden'}}>
                 <GridList style={{flexWrap: 'nowrap'}}>
                     <Column columnName='Test Column' />
                     <Column columnName='another column' />

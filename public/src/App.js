@@ -3,8 +3,10 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    Redirect,
     Link
-  } from "react-router-dom";
+  } from 'react-router-dom';
+  import { createBrowserHistory } from 'history';
 
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -17,18 +19,12 @@ import './App.css';
 import NavBar from './NavBar.js';
 import ResetPasswordDialog from './ResetPasswordDialog.js';
 
-// test imports - not actually needed on this page. These can be removed later
-import ColumnGroup from './ColumnGroup.js';
-import BoardsActions from './BoardsActions.js';
-import BoardActions from './BoardActions.js';
-import BoardCardCollection from './BoardCardCollection.js';
-import BoardSettingsBreadcrumbs from './BoardSettingsBreadcrumbs.js';
-import BoardSettings from './BoardSettings.js';
-
 // Firebase imports
 import firebase, { auth, provider } from './Firebase.js'
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Boards from './pages/Boards';
+import Board from './pages/Board';
 
 function loginWithGoogle() {
     auth.signInWithPopup(provider).then(function(result) {
@@ -42,44 +38,30 @@ function loginWithGoogle() {
 }
 
 const useStyles = makeStyles(theme => ({
-    loginBody: {
-        flexGrow: 1,
-        padding: 20,
-        paddingRight: 200,
-        paddingLeft: 200
-    },
-    paper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary
-    },
-    loginPaper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-        height: 100 + '%' // Keeps the boxes at the same height
-    },
-    button: {
-        marginRight: 5,
-        marginLeft: 5
-    },
-    textField: {
-        width: 80 + '%'
-    }
 }));
 
 function App() {
     const classes = useStyles();
+    const history = createBrowserHistory();
 
     return (
         <Router>
-            <NavBar onLandingPage='true' />
+            <NavBar location={history.location.pathname} />
             <Switch>
-                <Route path="/login">
-                    <Login></Login>
+                <Route path='/login'>
+                    <Login />
                 </Route>
-                <Route path="/register">
-                    <Register></Register>
+                <Route path='/register'>
+                    <Register />
+                </Route>
+                <Route path='/boards'>
+                    <Boards />
+                </Route>
+                <Route path='/board'>
+                    <Board />
+                </Route>
+                <Route path='/'>
+                    <Redirect to='/login' />
                 </Route>
             </Switch>
         </Router>
