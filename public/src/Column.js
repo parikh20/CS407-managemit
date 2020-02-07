@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
 import GridListTile from '@material-ui/core/GridListTile';
 import Typography from '@material-ui/core/Typography';
 

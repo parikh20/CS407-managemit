@@ -1,45 +1,20 @@
 import React from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import NavBar from '../NavBar';
-import ResetPasswordDialog from '../ResetPasswordDialog';
 
-const useStyles = makeStyles(theme => ({
-    loginBody: {
-        margin: 20,
-    },
-    paper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary
-    },
-    loginPaper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-        height: 100 + '%' // Keeps the boxes at the same height
-    },
-    button: {
-        marginRight: 5,
-        marginLeft: 5
-    },
-    textField: {
-        width: 80 + '%'
-    }
-}));
+import getStyles from '../styling/getStyles';
 
 function Register(props) {
-    const classes = useStyles();
+    const classes = getStyles();
     return (
         <div className={classes.loginBody}>
             <Grid container justify="center" xs={12}>
                 <Grid container spacing={3} xs={4}>
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.loginPaper}>
                             <h2>Welcome to Managemit</h2>
                             <p>Keep track of your tasks and work collaboratively. Log in or register to get started.</p>
                         </Paper>
@@ -49,16 +24,16 @@ function Register(props) {
                              <h2>Register</h2>
                              <Grid container spacing={3}>
                                  <Grid item xs={12}>
-                                     <TextField label='Email' type='email' variant='outlined' className={classes.textField} />
+                                     <TextField label='Email' type='email' variant='outlined' className={classes.loginTextField} />
                                  </Grid>
                                  <Grid item xs={12}>
-                                     <TextField label='Password' type='password' variant='outlined' className={classes.textField} />
+                                     <TextField label='Password' type='password' variant='outlined' className={classes.loginTextField} />
                                  </Grid>
                                  <Grid item xs={12}>
-                                     <TextField label='Re-enter password' type='password' variant='outlined' className={classes.textField} />
+                                     <TextField label='Re-enter password' type='password' variant='outlined' className={classes.loginTextField} />
                                  </Grid>
                                  <Grid item xs={12}>
-                                     <Button variant='contained' color='primary' className={classes.button}>Register</Button>
+                                     <Button variant='contained' color='primary' className={classes.loginButton}>Register</Button>
                                  </Grid>
                              </Grid>
                          </Paper>

@@ -1,8 +1,5 @@
 import React from 'react';
 
-import BoardBreadcrumbs from './BoardBreadcrumbs.js';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
