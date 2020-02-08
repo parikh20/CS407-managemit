@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserHistory } from 'history';
 
 import NavBar from './component/NavBar';
-import Board from './pageBody/Boards';
+import Board from './pageBody/Board';
 
 export default (props) => {
     const history = createBrowserHistory();

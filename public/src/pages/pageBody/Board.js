@@ -1,7 +1,7 @@
 import React from 'react';
 
-import BoardActions from '../BoardActions';
-import ColumnGroup from '../ColumnGroup';
+import BoardActions from '../component/BoardActions';
+import ColumnGroup from '../component/ColumnGroup';
 
 function Boards(props) {
     return (
