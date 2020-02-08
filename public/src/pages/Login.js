@@ -16,11 +16,16 @@ import firebase, { auth, provider } from '../Firebase.js'
 function Login(props) {
     const classes = getStyles();
 
+    const signInWithEmailAndPassword = (email, password) => {
+        auth.signInWithEmailAndPassword(email, password).then(result => {
+            console.log(result);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
     const loginWithGoogle = () => {
         auth.signInWithPopup(provider).then(result => {
-            var user = result.user;
-            console.log(user);
-            // ...
         }).catch(error => {
             console.log(error);
         });
@@ -41,14 +46,14 @@ function Login(props) {
                             <h2>Log in</h2>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
-                                    <TextField label='Email' type='email' variant='outlined' className={classes.loginTextField} />
+                                    <TextField id='email' label='Email' type='email' variant='outlined' className={classes.loginTextField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <TextField label='Password' variant='outlined' type='password' className={classes.loginTextField} />
+                                    <TextField id='password' label='Password' variant='outlined' type='password' className={classes.loginTextField} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button variant='contained' color='primary' className={classes.loginButton}>Log in</Button>
-                                    <Button variant='contained' className={classes.loginButton} onClick={loginWithGoogle} >Log in with Google</Button>
+                                    <Button variant='contained' color='primary' className={classes.loginButton} onClick={() => signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value)}>Log in</Button>
+                                    <Button variant='contained' className={classes.loginButton} onClick={loginWithGoogle()}>Log in with Google</Button>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Link to='/register'><Button variant='contained' color='primary' className={classes.loginButton}>Register a new account</Button></Link>
