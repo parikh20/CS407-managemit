@@ -7,11 +7,9 @@ import Button from '@material-ui/core/Button';
 import ResetPasswordDialog from '../ResetPasswordDialog';
 import { Link } from 'react-router-dom';
 
-import { connect } from 'react-redux';
-
 import getStyles from '../styling/getStyles';
 
-import firebase, { auth, provider } from '../Firebase.js'
+import { auth, provider } from '../Firebase.js'
 
 function Login(props) {
     const classes = getStyles();

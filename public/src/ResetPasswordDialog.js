@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import { auth, provider } from './Firebase.js'
 
 function ResetPasswordDialog() {
     const [open, setOpen] = React.useState(false);
@@ -19,10 +20,18 @@ function ResetPasswordDialog() {
         setOpen(false);
     };
 
+    function sendPasswordResetEmail(email) {
+        auth.sendPasswordResetEmail(email).then(result => {
+            handleClose();
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
     return (
         <div>
             <Button onClick={handleClickOpen}>Forgot password?</Button>
-            <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
+            <Dialog open={open} onExit={() => sendPasswordResetEmail(document.getElementById("forgotPasswordEmail").value)}onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>Reset password</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
