@@ -12,12 +12,36 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 function NewBoardDialog() {
     const [open, setOpen] = React.useState(false);
 
+    const [nameError, setNameError] = React.useState(false);
+    const [nameHelperText, setNameHelperText] = React.useState('');
+
     const handleClickOpen = () => {
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleSubmit = () => {
+        const name = document.getElementById('newBoardName').value;
+        const description = document.getElementById('newBoardDescription').value;
+
+        clearState();
+
+        if (name.trim() === '') {
+            setNameError(true);
+            setNameHelperText('Board name is required');
+        } else {
+            // actually create the board here. description is not validated as it is not required
+
+            setOpen(false);
+        }
+    };
+
+    const clearState = () => {
+        setNameError(false);
+        setNameHelperText('');
     };
 
     return (
@@ -29,7 +53,7 @@ function NewBoardDialog() {
                 <DialogTitle id='form-dialog-title'>New board</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                    Enter a name and description for your new board.
+                    Enter a name for your new board.
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -38,11 +62,13 @@ function NewBoardDialog() {
                         label='Board name'
                         variant='outlined'
                         fullWidth
+                        error={nameError}
+                        helperText={nameHelperText}
                     />
                     <TextField
                         margin='dense'
                         id='newBoardDescription'
-                        label='Board description'
+                        label='Board description (optional)'
                         rows='5'
                         variant='outlined'
                         multiline
@@ -53,7 +79,7 @@ function NewBoardDialog() {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color='primary'>
+                    <Button onClick={handleSubmit} color='primary'>
                         Create board
                     </Button>
                 </DialogActions>

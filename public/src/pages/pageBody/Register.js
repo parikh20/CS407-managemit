@@ -62,7 +62,7 @@ function Register(props) {
         setSecondPasswordHelperText('');
         setEmailError(false);
         setEmailHelperText('');
-    }
+    };
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -71,7 +71,7 @@ function Register(props) {
 
         setErrorSnackbar(false);
         setSuccessSnackbar(false);
-    }
+    };
 
     return (    
         <div className={classes.loginBody}>
