@@ -4,30 +4,74 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Snackbar from "@material-ui/core/Snackbar"
+import MuiAlert from '@material-ui/lab/Alert';
 
 import firebase, { auth, provider } from "../Firebase.js";
 
 import getStyles from "../styling/getStyles";
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function Register(props) {
   const classes = getStyles();
 
+  const regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const [firstPasswordError, setFirstPasswordError] = React.useState(false);
+  const [firstPasswordHelperText, setFirstPasswordHelperText] = React.useState('');
+  const [secondPasswordError, setSecondPasswordError] = React.useState(false);
+  const [secondPasswordHelperText, setSecondPasswordHelperText] = React.useState('');
+  const [emailError, setEmailError] = React.useState(false);
+  const [emailHelperText, setEmailHelperText] = React.useState('');
+  const [errorSnackbar, setErrorSnackbar] = React.useState(false);
+  const [successSnackbar, setSuccessSnackbar] = React.useState(false);
+
   const signUpUser = (email, password, repassword) => {
-    password === repassword
-      ? firebase
-          .auth()
-          .createUserWithEmailAndPassword(email, password)
-          .catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode);
-            console.log(errorMessage);
-          })
-      : alert("Passwords don't match");
+    clearState();
+    if (!regexp.test(email)) {
+      setEmailError(true);
+      setEmailHelperText('Email must be properly formatted');
+    } else if (password.length < 6) {
+      setFirstPasswordError(true);
+      setFirstPasswordHelperText('Password must be greater 6 characters long')
+    } else if (password !== repassword) {
+      setFirstPasswordError(true);
+      setFirstPasswordHelperText('Passwords must match')
+      setSecondPasswordError(true);
+      setSecondPasswordHelperText('Passwords must match')
+    } else {
+      auth.createUserWithEmailAndPassword(email, password).then(result => {
+        setSuccessSnackbar(true);
+      }).catch(error => {
+        console.log(error);
+        if (error.code === 'auth/email-already-in-use') {
+          setErrorSnackbar(true);
+        }
+      });
+    }
   };
 
-  return (
+  const clearState = () => {
+    setFirstPasswordError(false);
+    setFirstPasswordHelperText('');
+    setSecondPasswordError(false);
+    setSecondPasswordHelperText('');
+    setEmailError(false);
+    setEmailHelperText('');
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setErrorSnackbar(false);
+    setSuccessSnackbar(false);
+  }
+
+  return (  
     <div className={classes.loginBody}>
       <Grid container justify="center" xs={12}>
         <Grid container spacing={3} xs={4}>
@@ -46,6 +90,8 @@ function Register(props) {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <TextField
+                    error={emailError}
+                    helperText={emailHelperText}
                     label="Email"
                     type="email"
                     variant="outlined"
@@ -55,6 +101,8 @@ function Register(props) {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
+                    error={firstPasswordError}
+                    helperText={firstPasswordHelperText}
                     label="Password"
                     type="password"
                     variant="outlined"
@@ -64,6 +112,8 @@ function Register(props) {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
+                    error={secondPasswordError}
+                    helperText={secondPasswordHelperText}
                     label="Re-enter password"
                     type="password"
                     variant="outlined"
@@ -92,6 +142,16 @@ function Register(props) {
           </Grid>
         </Grid>
       </Grid>
+      <Snackbar open={errorSnackbar} onClose={handleClose}>
+        <Alert onClose={handleClose} autoHideDuration={6000} severity="error">
+          An account with this email already exists
+        </Alert>
+      </Snackbar>
+      <Snackbar open={successSnackbar} onClose={handleClose}>
+        <Alert onClose={handleClose} autoHideDuration={6000} severity="success">
+          Success!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
