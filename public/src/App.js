@@ -5,46 +5,65 @@ import {
     Route,
     Redirect
   } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
-import { Provider } from 'react-redux';
-
-import store from './store/store';
 
 import './App.css';
 
-// Pages and components
-import NavBar from './NavBar';
+// Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Boards from './pages/Boards';
 import Board from './pages/Board';
 
+// Used to ensure users must log in
+class ProtectedRoute extends React.Component {
+    render() {
+        const { component: Component, ...props } = this.props;
+        return (
+            <Route 
+                {...props} 
+                render={props => (
+                    localStorage.getItem('user') !== null ?
+                    <Component {...props} /> :
+                    <Redirect to='/login' />
+                )} 
+            />
+        );
+    }
+}
+
+// Used to keep logged in users off the login/register pages
+class RedirectRoute extends React.Component {
+    render() {
+        const { component: Component, ...props } = this.props;
+        return (
+            <Route 
+                {...props} 
+                render={props => (
+                    localStorage.getItem('user') === null ?
+                    <Component {...props} /> :
+                    <Redirect to='/boards' />
+                )} 
+            />
+        );
+    }
+}
+
+
 function App() {
-    const history = createBrowserHistory();
+    const isLoggedIn = localStorage.getItem('user') !== null;
 
     return (
-        <Provider store={store}>
-            <Router>
-                <NavBar location={history.location.pathname}  />
-                <Switch>
-                    <Route path='/login'>
-                        <Login />
-                    </Route>
-                    <Route path='/register'>
-                        <Register />
-                    </Route>
-                    <Route path='/boards'>
-                        <Boards />
-                    </Route>
-                    <Route path='/board'>
-                        <Board />
-                    </Route>
-                    <Route path='/'>
-                        <Redirect to='/login' />
-                    </Route>
-                </Switch>
-            </Router>
-        </Provider>
+        <Router>
+            <Switch>
+                <RedirectRoute path='/login' component={Login} />
+                <RedirectRoute path='/register' component={Register} />
+                <ProtectedRoute path='/boards' component={Boards} />
+                <ProtectedRoute path='/board' component={Board} />
+                <Route path='/'>
+                    <Redirect to='/login' />
+                </Route>
+            </Switch>
+        </Router>
 
 
         //     <div>

@@ -1,15 +1,16 @@
 import React from 'react';
+import { createBrowserHistory } from 'history';
 
-import BoardsActions from '../BoardsActions';
-import BoardCardCollection from '../BoardCardCollection';
+import NavBar from './component/NavBar';
+import Boards from './pageBody/Boards';
 
-function Boards(props) {
+export default (props) => {
+    const history = createBrowserHistory();
+
     return (
         <div>
-            <BoardsActions />
-            <BoardCardCollection />
+            <NavBar location={history.location.pathname}  />
+            <Boards />
         </div>
     );
-}
-
-export default Boards;
+};
