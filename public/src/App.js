@@ -25,7 +25,7 @@ function App() {
     return (
         <Provider store={store}>
             <Router>
-                <NavBar location={history.location.pathname} />
+                <NavBar location={history.location.pathname}  />
                 <Switch>
                     <Route path='/login'>
                         <Login />
