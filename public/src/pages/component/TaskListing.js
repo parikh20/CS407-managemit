@@ -34,7 +34,7 @@ function TaskListing(props) {
 
     return (
         <Card variant='outlined' style={{marginBottom: 5}}>
-            <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}}>
+            <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
                 <Typography variant='h6' component='h2'>
                     {props.title}
                 </Typography>

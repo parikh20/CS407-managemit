@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.search_matches {
+    opacity: 1;
+    background-color: #BAC5FF;
+}
+
+.search_no_matches {
+    opacity: 0.2;
+}

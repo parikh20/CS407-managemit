@@ -12,16 +12,53 @@ import MailIcon from '@material-ui/icons/Mail';
 import SortIcon from '@material-ui/icons/Sort';
 import TextField from '@material-ui/core/TextField';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import Tooltip from '@material-ui/core/Tooltip';
+import Switch from '@material-ui/core/Switch';
 
 function NavBar(props) {
     const showNavigation = !(['/login', '/register'].includes(props.location));
     const showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards';
     const history = useHistory();
 
+    const [caseSensitiveChecked, setCaseSensitiveChecked] = React.useState(false);
+
+    const toggleCaseSensitiveChecked = () => {
+        setCaseSensitiveChecked(prev => !prev);
+    };
+
     const logOut = () => {
         localStorage.removeItem('user');
         history.push('/login');
     }
+
+    const searchTasks = () => {
+        let searchInput = document.getElementById('taskSearchInput').value.trim();
+        if (!caseSensitiveChecked) {
+            searchInput = searchInput.toLowerCase();
+        }
+        const taskElements = document.getElementsByClassName('taskListing');
+
+        if (searchInput === '') {
+            for (let i = 0; i < taskElements.length; i++) {
+                taskElements[i].classList.remove('search_matches');
+                taskElements[i].classList.remove('search_no_matches');
+            }
+        } else {
+            for (let i = 0; i < taskElements.length; i++) {
+                let content = taskElements[i].innerText;
+                if (!caseSensitiveChecked) {
+                    content = content.toLowerCase();
+                }
+                if (content.includes(searchInput)) {
+                    taskElements[i].classList.remove('search_no_matches');
+                    taskElements[i].classList.add('search_matches');
+                } else {
+                    taskElements[i].classList.remove('search_matches');
+                    taskElements[i].classList.add('search_no_matches');
+                }
+            }
+        }
+    };
 
     return (
         <div style={{flexGrow: 1}}>
@@ -34,7 +71,10 @@ function NavBar(props) {
                         }
                     </Typography>
                     {showBoardFeatures && <>
-                        <TextField placeholder='Search for task' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                        <TextField placeholder='Search for task' onChange={searchTasks} id='taskSearchInput' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                        <Tooltip title='Case sensitive' arrow>
+                            <Switch size='small' color='secondary' checked={caseSensitiveChecked} onChange={toggleCaseSensitiveChecked} />
+                        </Tooltip>
                         <IconButton
                             edge='end'
                             aria-label='sort'
