@@ -1,9 +1,11 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+
 const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(2)
@@ -12,14 +14,21 @@ const useStyles = makeStyles(theme => ({
 
 function BoardCard(props) {
     const classes = useStyles();
+    const history = useHistory();
+
+    const boardPath = '/board/' + props.board.id;
+    const goToBoardPage = () => {
+        history.push(boardPath);
+    }
+
     return (
         <Grid item xs={3}>
-            <Paper className={classes.paper}>
+            <Paper className={classes.paper} style={{cursor: 'pointer'}} onClick={goToBoardPage}>
                 <Typography variant='h6' component='h2' style={{textAlign: 'center'}} color='inherit'>
-                    {props.title}
+                    {props.board.label}
                 </Typography>
                 <Typography variant='body2' component='p'>
-                    {props.description}
+                    {props.board.description}
                 </Typography>
             </Paper>
         </Grid>

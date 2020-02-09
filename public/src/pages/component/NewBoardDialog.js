@@ -8,6 +8,61 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import firebase from '../../Firebase';
+
+
+const createBoard = async (name, description, user) => {
+    const userId = user.uid;
+
+    const db = firebase.firestore();
+    try {
+
+        // This is not a great way to do this. We should probably be using a transaction
+        // here instead. That's a TODO
+        let col1Ref = await db.collection('columns').doc();
+        await col1Ref.set({
+            label: 'Backlog',
+            taskRefs: [],
+        });
+        let col2Ref = await db.collection('columns').doc();
+        await col2Ref.set({
+            label: 'In Progress',
+            taskRefs: []
+        });
+        let col3Ref = await db.collection('columns').doc();
+        await col3Ref.set({
+            label: 'Reviewing',
+            taskRefs: []
+        });
+        let col4Ref = await db.collection('columns').doc();
+        await col4Ref.set({
+            label: 'Complete',
+            taskRefs: []
+        });
+        let colGroupRef = await db.collection('columnGroups').doc();
+        await colGroupRef.set({
+            columnRefs: [col1Ref.id, col2Ref.id, col3Ref.id, col4Ref.id]
+        });
+        let boardRef = await db.collection('boards').doc().set({
+            owner: userId,
+            label: name,
+            description: description,
+            columnGroups: [colGroupRef.id],
+            defaultColumnGroup: colGroupRef.id,
+            taskRefs: [],
+            userRefs: [userId]
+        });
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    } catch (err) {
+        return new Promise((resolve, reject) => {
+            reject(false);
+        });
+    }
+
+};
+
 
 function NewBoardDialog() {
     const [open, setOpen] = React.useState(false);
@@ -23,9 +78,10 @@ function NewBoardDialog() {
         setOpen(false);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const name = document.getElementById('newBoardName').value;
         const description = document.getElementById('newBoardDescription').value;
+        const user = JSON.parse(localStorage.getItem('user'));
 
         clearState();
 
@@ -33,9 +89,13 @@ function NewBoardDialog() {
             setNameError(true);
             setNameHelperText('Board name is required');
         } else {
-            // actually create the board here. description is not validated as it is not required
-
-            setOpen(false);
+            try {
+                let result = await createBoard(name, description, user);
+                setOpen(false);
+            } catch (err) {
+                setNameError(true);
+                setNameHelperText('Board could not be created!');
+            }
         }
     };
 

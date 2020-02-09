@@ -39,7 +39,7 @@ function Login(props) {
             setLoginPasswordError(true);
         } else {
             auth.signInWithEmailAndPassword(email, password).then(result => {
-                localStorage.setItem('user', result.user);
+                localStorage.setItem('user', JSON.stringify(result.user));
                 history.push('/boards');
             }).catch(error => {
                 console.log(error);
@@ -50,7 +50,7 @@ function Login(props) {
 
     const loginWithGoogle = () => {
         auth.signInWithPopup(provider).then(result => {
-            localStorage.setItem('user', result.user);
+            localStorage.setItem('user', JSON.stringify(result.user));
             history.push('/boards');
         }).catch(error => {
             console.log(error);

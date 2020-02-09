@@ -1,88 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 
 import BoardCard from './BoardCard.js'
 
-const placeholderBoards = [
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    }
-];
+import firebase from '../../Firebase';
 
-class BoardCardCollection extends React.Component {
-    constructor(props) {
-        super(props);
-        this.props = props;
+const useStyles = makeStyles(theme => ({
+    paper: {
+        padding: theme.spacing(2)
     }
-    render() {
-        return (
-            <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>
-                <Grid container spacing={3}>
-                    {placeholderBoards.map(board => (
-                        <BoardCard title={board.title} description={board.description} />
-                    ))}
-                </Grid>
-            </div>
-        );
-    }
+}));
+
+function BoardCardCollection(props) {
+    const [boards, setBoards] = useState([]);
+    const classes = useStyles();
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const db = firebase.firestore();
+    let query = db.collection('boards').where('userRefs', 'array-contains', user.uid).orderBy('label', 'asc');
+    let observer = query.onSnapshot(querySnapshot => {
+        let newBoards = [];
+        querySnapshot.docs.forEach(doc => {
+            let data = doc.data();
+            data.id = doc.id;
+            newBoards.push(data);
+        });
+        setBoards(newBoards);
+    }, err => {
+        console.log('Error fetching boards: ' + JSON.stringify(err));
+    });
+
+    return (
+        <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>
+            <Grid container spacing={3}>
+                {boards.map(board => (
+                    <BoardCard board={board} />
+                ))}
+            </Grid>
+        </div>
+    );
 }
 
 export default BoardCardCollection;

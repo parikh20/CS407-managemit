@@ -58,7 +58,7 @@ function App() {
                 <RedirectRoute path='/login' component={Login} />
                 <RedirectRoute path='/register' component={Register} />
                 <ProtectedRoute path='/boards' component={Boards} />
-                <ProtectedRoute path='/board' component={Board} />
+                <ProtectedRoute path='/board/:boardId' component={Board} />
                 <Route path='/'>
                     <Redirect to='/login' />
                 </Route>
