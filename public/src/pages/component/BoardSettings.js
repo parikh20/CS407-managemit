@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 
-import './App.css';
+import '../../App.css';
 
 import DeleteBoardDialog from './DeleteBoardDialog.js';
 
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function BoardSettings() {
+function BoardSettings(props) {
     const classes = useStyles();
 
     return (
@@ -49,10 +49,10 @@ function BoardSettings() {
                         <h2>Board details</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField label='Name' variant='outlined' className={classes.textField} />
+                        <TextField label='Name' variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} value={props.board.label} />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField label='Description' variant='outlined' className={classes.textField} multiline rows={5} />
+                        <TextField label='Description' variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} value={props.board.description} />
                     </Grid>
                     <Grid item xs={12}>
                         <Button variant='contained' color='primary'>Save changes</Button>
@@ -65,8 +65,8 @@ function BoardSettings() {
                         <h2>Users</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField label='Add a user by email address' type='email' variant='outlined' className={classes.textField} />
-                        <Button variant='contained' color='primary' style={{height: 100 + '%'}}>Add user</Button>
+                        <TextField label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
+                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}}>Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
                         <Chip label='John Doe' color='primary' className={classes.chip} />

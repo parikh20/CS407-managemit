@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Boards from './pages/Boards';
 import Board from './pages/Board';
+import BoardSettings from './pages/BoardSettings';
 
 // Used to ensure users must log in
 class ProtectedRoute extends React.Component {
@@ -58,6 +59,7 @@ function App() {
                 <RedirectRoute path='/login' component={Login} />
                 <RedirectRoute path='/register' component={Register} />
                 <ProtectedRoute path='/boards' component={Boards} />
+                <ProtectedRoute path='/board/:boardId/settings' component={BoardSettings} />
                 <ProtectedRoute path='/board/:boardId' component={Board} />
                 <Route path='/'>
                     <Redirect to='/login' />

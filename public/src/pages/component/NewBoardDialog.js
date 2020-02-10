@@ -10,7 +10,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import firebase from '../../Firebase';
 
-
 const createBoard = async (name, description, user) => {
     const userId = user.uid;
 
@@ -43,7 +42,8 @@ const createBoard = async (name, description, user) => {
         await colGroupRef.set({
             columnRefs: [col1Ref.id, col2Ref.id, col3Ref.id, col4Ref.id]
         });
-        let boardRef = await db.collection('boards').doc().set({
+        let boardRef = await db.collection('boards').doc();
+        await boardRef.set({
             owner: userId,
             label: name,
             description: description,
@@ -52,10 +52,23 @@ const createBoard = async (name, description, user) => {
             taskRefs: [],
             userRefs: [userId]
         });
+        await col1Ref.update({
+            boardRef: boardRef.id
+        });
+        await col2Ref.update({
+            boardRef: boardRef.id
+        });
+        await col3Ref.update({
+            boardRef: boardRef.id
+        });
+        await col4Ref.update({
+            boardRef: boardRef.id
+        });
         return new Promise((resolve, reject) => {
             resolve(true);
         });
     } catch (err) {
+        console.log(err);
         return new Promise((resolve, reject) => {
             reject(false);
         });

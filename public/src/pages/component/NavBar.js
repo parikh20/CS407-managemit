@@ -17,7 +17,7 @@ import Switch from '@material-ui/core/Switch';
 
 function NavBar(props) {
     const showNavigation = !(['/login', '/register'].includes(props.location));
-    const showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards';
+    const showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards' && !props.location.endsWith('settings');
     const history = useHistory();
 
     const [caseSensitiveChecked, setCaseSensitiveChecked] = React.useState(false);

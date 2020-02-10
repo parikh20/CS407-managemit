@@ -9,68 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import TaskListing from './TaskListing.js'
 import EditColumnDialog from './EditColumnDialog.js';
 
-const placeholderTasks = [
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    },
-    {
-        title: 'My title',
-        description: 'My description'
-    },
-    {
-        title: 'Second title',
-        description: 'A slightly longer description'
-    },
-    {
-        title: 'Third title',
-        description: 'Once descriptions get long enough, we will need to do some truncation. This is fine though.'
-    }
-];
+const placeholderTasks = [];
 
 class Column extends React.Component {
     constructor(props) {

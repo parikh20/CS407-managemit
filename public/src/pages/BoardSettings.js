@@ -3,7 +3,7 @@ import { createBrowserHistory } from 'history';
 import { useHistory } from 'react-router-dom';
 
 import NavBar from './component/NavBar';
-import Board from './pageBody/Board';
+import BoardSettings from './pageBody/BoardSettings';
 
 import firebase from '../Firebase';
 
@@ -12,7 +12,6 @@ export default (props) => {
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
 
-    console.log(props.params);
     const db = firebase.firestore();
     db.collection('boards').where('userRefs', 'array-contains', user.uid).get().then(snapshot => {
         for (const doc of snapshot.docs) {
@@ -29,7 +28,7 @@ export default (props) => {
     return (
         <div>
             <NavBar location={viewableHistory.location.pathname}  />
-            <Board boardId={props.match.params.boardId} />
+            <BoardSettings boardId={props.match.params.boardId} />
         </div>
     );
 };

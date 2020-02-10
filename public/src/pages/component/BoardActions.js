@@ -8,27 +8,21 @@ import Grid from '@material-ui/core/Grid';
 import EditTaskDialog from './EditTaskDialog.js';
 import NewColumnDialog from './NewColumnDialog.js';
 
-class BoardActions extends React.Component {
-    constructor(props) {
-        super(props);
-        this.props = props;
-    }
-
-    render() {
-        return (
-            <Grid container style={{padding: '10px 10px 0px 10px'}}>
-                <div style={{flexGrow: 1}}>
-                    <BoardBreadcrumbs boardName="Placeholder name" />
-                </div>
-                <ButtonGroup size='small'>
-                    <EditTaskDialog />
-                    <NewColumnDialog />
-                    <Button>Select view</Button>
-                    <Button>View history</Button>
-                </ButtonGroup>
-            </Grid>
-        );
-    }
+function BoardActions(props) {
+    return (
+        <Grid container style={{padding: '10px 10px 0px 10px'}}>
+            <div style={{flexGrow: 1}}>
+                <BoardBreadcrumbs board={props.board} />
+            </div>
+            <ButtonGroup size='small'>
+                <EditTaskDialog />
+                <NewColumnDialog />
+                <Button>Select view</Button>
+                <Button>View history</Button>
+                <Button href={'/board/' + props.board.id + '/settings'}>Settings</Button>
+            </ButtonGroup>
+        </Grid>
+    );
 }
 
 export default BoardActions;
