@@ -14,31 +14,40 @@ function Boards(props) {
     const db = firebase.firestore();
 
     let boardQuery = db.collection('boards').doc(props.boardId);
-    boardQuery.onSnapshot(docSnapshot => {
+    boardQuery.get().then(docSnapshot => {
         const boardUpdate = docSnapshot.data();
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
+
+        let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
+        columnGroupQuery.onSnapshot(docSnapshot => {
+            const colGroupUpdate = docSnapshot.data() || {};
+            colGroupUpdate.id = boardUpdate.defaultColumnGroup;
+            setColGroup(colGroupUpdate);
+        }, err => {
+            console.log('Error fetching column group: ' + JSON.stringify(err));
+        });
+
+        let columnsQuery = db.collection('columns').where('boardRef', '==', props.boardId);
+        columnsQuery.onSnapshot(docSnapshot => {
+            let newColumns = [];
+            docSnapshot.docs.forEach(doc => {
+                let data = doc.data();
+                data.id = doc.id;
+                newColumns.push(data);
+            });
+            setColumns(newColumns);
+        }, err => {
+            console.log('Error fetching columns: ' + JSON.stringify(err));
+        });
     }, err => {
         console.log('Error fetching board: ' + JSON.stringify(err));
-    });
-
-    let columnsQuery = db.collection('columns').where('boardRef', '==', props.boardId);
-    columnsQuery.onSnapshot(docSnapshot => {
-        let newColumns = [];
-        docSnapshot.docs.forEach(doc => {
-            let data = doc.data();
-            data.id = doc.id;
-            newColumns.push(data);
-        });
-        setColumns(newColumns);
-    }, err => {
-        console.log('Error fetching columns: ' + JSON.stringify(err));
     });
     
     return (
         <div>
             <BoardActions board={board} />
-            <ColumnGroup board={board} columns={columns} />
+            <ColumnGroup board={board} columnGroup={colGroup} columns={columns} />
         </div>
     );
 }
