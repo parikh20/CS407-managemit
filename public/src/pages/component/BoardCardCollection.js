@@ -38,7 +38,7 @@ function BoardCardCollection(props) {
         <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>
             <Grid container spacing={3}>
                 {boards.map(board => (
-                    <BoardCard board={board} />
+                    <BoardCard key={board.id} board={board} />
                 ))}
             </Grid>
         </div>
