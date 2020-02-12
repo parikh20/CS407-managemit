@@ -12,7 +12,6 @@ export default (props) => {
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
 
-    console.log(props.params);
     const db = firebase.firestore();
     db.collection('boards').where('userRefs', 'array-contains', user.uid).get().then(snapshot => {
         for (const doc of snapshot.docs) {
