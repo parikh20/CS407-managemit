@@ -22,7 +22,6 @@ function Login(props) {
     const classes = getStyles();
     const history = useHistory();
 
-    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const [loginEmailError, setLoginEmailError] = React.useState(false);
     const [loginEmailErrorHelperText, setLoginEmailErrorHelperText] = React.useState('');
     const [loginPasswordError, setLoginPasswordError] = React.useState(false);
@@ -31,13 +30,18 @@ function Login(props) {
 
     const signInWithEmailAndPassword = (email, password) => {
         clearState();
-        if (!regexp.test(email)) {
-            setLoginEmailErrorHelperText('Email must be properly formatted');
+        let hasError = false;
+        if (email === '') {
+            setLoginEmailErrorHelperText('Email is required');
             setLoginEmailError(true);
-        } else if (password.length < 6) {
-            setLoginPasswordErrorHelperText('Password must be greater than 6 characters long');
+            hasError = true;
+        }
+        if (password === '') {
+            setLoginPasswordErrorHelperText('Password is required');
             setLoginPasswordError(true);
-        } else {
+            hasError = true;
+        }
+        if (!hasError) {
             auth.signInWithEmailAndPassword(email, password).then(result => {
                 localStorage.setItem('user', JSON.stringify(result.user));
                 history.push('/boards');

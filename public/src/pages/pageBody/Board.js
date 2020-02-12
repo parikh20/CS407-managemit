@@ -12,13 +12,13 @@ function Boards(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const db = firebase.firestore();
-
+    
     let boardQuery = db.collection('boards').doc(props.boardId);
     boardQuery.get().then(docSnapshot => {
         const boardUpdate = docSnapshot.data();
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
-
+        
         let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
         columnGroupQuery.onSnapshot(docSnapshot => {
             const colGroupUpdate = docSnapshot.data() || {};
