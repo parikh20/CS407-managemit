@@ -16,12 +16,18 @@ function Boards(props) {
     let boardQuery = db.collection('boards').doc(props.boardId);
     boardQuery.get().then(docSnapshot => {
         const boardUpdate = docSnapshot.data();
+        if (!boardUpdate) {
+            return;
+        }
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
         
         let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
         columnGroupQuery.onSnapshot(docSnapshot => {
-            const colGroupUpdate = docSnapshot.data() || {};
+            const colGroupUpdate = docSnapshot.data();
+            if (!colGroupUpdate) {
+                return;
+            }
             colGroupUpdate.id = boardUpdate.defaultColumnGroup;
             setColGroup(colGroupUpdate);
         }, err => {
