@@ -103,9 +103,10 @@ function NewBoardDialog() {
             setNameHelperText('Board name is required');
         } else {
             try {
-                let result = await createBoard(name, description, user);
                 setOpen(false);
+                let result = await createBoard(name, description, user);
             } catch (err) {
+                setOpen(true);
                 setNameError(true);
                 setNameHelperText('Board could not be created!');
             }
