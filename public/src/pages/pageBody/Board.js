@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import BoardActions from '../component/BoardActions';
 import ColumnGroup from '../component/ColumnGroup';
@@ -9,6 +9,9 @@ function Board(props) {
     const [board, setBoard] = React.useState({});
     const [columns, setColumns] = React.useState([]);
     const [colGroup, setColGroup] = React.useState({});
+
+    let unsubscribeColGroup = null;
+    let unsubscribeCols = null;
 
     const db = firebase.firestore();
     
@@ -25,7 +28,7 @@ function Board(props) {
     });
 
     let columnGroupQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').limit(1); // TODO: limit 1 is temporary - we'll move to querying this differently later
-    columnGroupQuery.onSnapshot(docSnapshot => {
+    unsubscribeColGroup = columnGroupQuery.onSnapshot(docSnapshot => {
         docSnapshot.forEach(colGroup => {
             const colGroupUpdate = colGroup.data();
             if (!colGroupUpdate) {
@@ -41,7 +44,7 @@ function Board(props) {
 
     if (colGroup.id !== undefined) {
         let columnsQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').doc(colGroup.id).collection('columns');
-        columnsQuery.onSnapshot(docSnapshot => {
+        unsubscribeCols = columnsQuery.onSnapshot(docSnapshot => {
             let newColumns = [];
             docSnapshot.forEach(doc => {
                 let data = doc.data();
@@ -53,6 +56,13 @@ function Board(props) {
             console.log('Error fetching columns: ' + JSON.stringify(err));
         });
     }
+
+    useEffect(() => {
+        return () => {
+            unsubscribeColGroup && unsubscribeColGroup();
+            unsubscribeCols && unsubscribeCols();
+        };
+    }, [unsubscribeColGroup, unsubscribeCols]);
     
     return (
         <div>
