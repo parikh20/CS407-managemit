@@ -51,8 +51,6 @@ class RedirectRoute extends React.Component {
 
 
 function App() {
-    const isLoggedIn = localStorage.getItem('user') !== null;
-
     return (
         <Router>
             <Switch>
@@ -66,24 +64,6 @@ function App() {
                 </Route>
             </Switch>
         </Router>
-
-
-        //     <div>
-        //         <br /><br /><br /><br />everything below is a testing area<br /><br /><br /><br />
-        //         <p>Boards page WIP:</p>
-        //         <NavBar />
-        //         <BoardsActions />
-        //         <BoardCardCollection />
-        //         <p>Board page WIP:</p>
-        //         <NavBar onBoardPage='true' />
-        //         <BoardActions/>
-        //         <ColumnGroup />
-        //         <p>Board settings page WIP:</p>
-        //         <NavBar />
-        //         <BoardSettingsBreadcrumbs boardName='Placeholder name' />
-        //         <BoardSettings />
-        //     </div>
-        // </div>
     );
 }
 
