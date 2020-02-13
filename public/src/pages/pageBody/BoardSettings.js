@@ -12,6 +12,9 @@ function BoardSettings(props) {
     const db = firebase.firestore();
     let query = db.collection('boards').doc(props.boardId).get().then(docSnapshot => {
         const boardUpdate = docSnapshot.data();
+        if (!boardUpdate) {
+            return;
+        }
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
     }, err => {
