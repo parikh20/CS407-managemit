@@ -8,7 +8,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import MuiAlert from '@material-ui/lab/Alert';
 import Link from '@material-ui/core/Link';
 
-import firebase, { auth, provider } from '../../Firebase.js';
+import { auth } from '../../Firebase.js';
 
 import getStyles from '../../styling/getStyles';
 

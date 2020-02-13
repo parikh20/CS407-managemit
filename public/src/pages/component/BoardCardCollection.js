@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 
 import BoardCard from './BoardCard.js'
 
@@ -22,7 +20,7 @@ function BoardCardCollection(props) {
 
     const db = firebase.firestore();
     let query = db.collection('boards').where('userRefs', 'array-contains', user.uid).orderBy('label', 'asc');
-    let observer = query.onSnapshot(querySnapshot => {
+    let unsubscribe = query.onSnapshot(querySnapshot => {
         let newBoards = [];
         querySnapshot.docs.forEach(doc => {
             let data = doc.data();
@@ -33,6 +31,12 @@ function BoardCardCollection(props) {
     }, err => {
         console.log('Error fetching boards: ' + JSON.stringify(err));
     });
+
+    useEffect(() => {
+        return () => {
+            unsubscribe();
+        };
+    }, []);
 
     return (
         <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>

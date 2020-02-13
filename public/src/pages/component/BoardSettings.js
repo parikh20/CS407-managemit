@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 
 import '../../App.css';
@@ -39,24 +38,28 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-// TODO: Should be refined
-// Potentially put a button on the card
-const user = JSON.parse(localStorage.getItem('user'));
-function saveBoardSettings(props) {
-    const db = firebase.firestore();
-    let id = props.board.id;
-    db.collection('boards').doc(id).update(
-        {
-            label: document.getElementById('boardName').value,
-            description: document.getElementById('boardDescription').value
-        }
-    ).catch(err => {
-        console.log(err);
-    });
-}
-
 function BoardSettings(props) {
     const classes = useStyles();
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const db = firebase.firestore();
+
+    const [nameError, setNameError] = React.useState(false);
+    const [nameHelperText, setNameHelperText] = React.useState('');
+
+    const handleSettingsSubmit = () => {
+        if (!props.board) {
+            return; // sanity check
+        }
+        db.collection('boards').doc(props.board.id).update(
+            {
+                label: document.getElementById('boardName').value,
+                description: document.getElementById('boardDescription').value
+            }
+        ).catch(err => {
+            console.log(err);
+        });
+    };
 
     return (
         <div className={classes.settingsBody}>
@@ -72,7 +75,7 @@ function BoardSettings(props) {
                         <TextField id='boardDescription' label='Description' variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant='contained' color='primary' onClick={() => saveBoardSettings(props)}>Save changes</Button>
+                        <Button variant='contained' color='primary' onClick={handleSettingsSubmit}>Save changes</Button>
                     </Grid>
                 </Grid>
             </Paper>
