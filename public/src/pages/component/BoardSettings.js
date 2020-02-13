@@ -49,7 +49,6 @@ const useStyles = makeStyles(theme => ({
 function BoardSettings(props) {
     const classes = useStyles();
 
-    const user = JSON.parse(localStorage.getItem('user'));
     const db = firebase.firestore();
 
     const [nameError, setNameError] = React.useState(false);
@@ -67,9 +66,20 @@ function BoardSettings(props) {
         const name = document.getElementById('boardName').value.trim();
         const description = document.getElementById('boardDescription').value.trim();
 
-        if (name === '') {
+        if (name === props.board.label && description === props.board.description) {
+            setNameError(true);
+            setNameHelperText('Name must be changed to save!');
+            setDescriptionError(true);
+            setDescriptionHelperText('Description must be changed to save!');
+        } else if (name === '') {
             setNameError(true);
             setNameHelperText('Name cannot be empty!');
+        } else if (name.length > 50) {
+            setNameError(true);
+            setNameHelperText("Name must be less than 50 characters long!");
+        } else if (description.length > 150) {
+            setDescriptionError(true);
+            setDescriptionHelperText("Description must be less than 150 characters long!");
         } else if (description === '') {
             setDescriptionError(true);
             setDescriptionHelperText("Description cannot be empty!");
@@ -86,7 +96,6 @@ function BoardSettings(props) {
             });
             setSuccessSnackbar(true);
         }
-
     };
 
     function clearState() {

@@ -50,6 +50,8 @@ function Register(props) {
                 if (error.code === 'auth/email-already-in-use') {
                     setEmailError(true);
                     setEmailHelperText('Email already in use - have you already registered an account?');
+                } else {
+                    
                 }
             });
         }
