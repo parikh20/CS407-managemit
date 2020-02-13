@@ -36,7 +36,7 @@ function BoardCardCollection(props) {
         return () => {
             unsubscribe();
         };
-    }, []);
+    }, [unsubscribe]);
 
     return (
         <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>

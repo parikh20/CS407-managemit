@@ -5,7 +5,7 @@ import ColumnGroup from '../component/ColumnGroup';
 
 import firebase from '../../Firebase';
 
-function Boards(props) {
+function Board(props) {
     const [board, setBoard] = React.useState({});
     const [columns, setColumns] = React.useState([]);
     const [colGroup, setColGroup] = React.useState({});
@@ -57,4 +57,4 @@ function Boards(props) {
     );
 }
 
-export default Boards;
+export default Board;
