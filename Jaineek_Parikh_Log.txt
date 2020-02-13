@@ -1,0 +1,5 @@
+Week 1:
+    Worked on Authentication UI and backend functionality to connect to Firebase
+
+Week 2: 
+    Working on the Board Settings UI and functionality
