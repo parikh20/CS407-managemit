@@ -44,8 +44,7 @@ const useStyles = makeStyles(theme => ({
 const user = JSON.parse(localStorage.getItem('user'));
 function saveBoardSettings(props) {
     const db = firebase.firestore();
-    let id = window.location.href;
-    id = id.substring(28, 48)
+    let id = props.board.id;
     db.collection('boards').doc(id).update(
         {
             label: document.getElementById('boardName').value,
@@ -67,13 +66,13 @@ function BoardSettings(props) {
                         <h2>Board Details</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id='boardName' label='Name' variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} defaultValue={props.board.label} />
+                        <TextField id='boardName' label='Name' variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} key={props.board.label} defaultValue={props.board.label} />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id='boardDescription' label='Description' variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} value={props.board.description} />
+                        <TextField id='boardDescription' label='Description' variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant='contained' color='primary' onClick={saveBoardSettings}>Save changes</Button>
+                        <Button variant='contained' color='primary' onClick={() => saveBoardSettings(props)}>Save changes</Button>
                     </Grid>
                 </Grid>
             </Paper>
