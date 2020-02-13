@@ -86,44 +86,44 @@ function NewBoardDialog() {
     
     return (
         <div>
-        <ButtonGroup size='small'>
-        <Button onClick={handleClickOpen}>New board</Button>
-        </ButtonGroup>
-        <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-        <DialogTitle id='form-dialog-title'>New board</DialogTitle>
-        <DialogContent>
-        <DialogContentText>
-        Enter a name for your new board.
-        </DialogContentText>
-        <TextField
-        autoFocus
-        margin='dense'
-        id='newBoardName'
-        label='Board name'
-        variant='outlined'
-        fullWidth
-        error={nameError}
-        helperText={nameHelperText}
-        />
-        <TextField
-        margin='dense'
-        id='newBoardDescription'
-        label='Board description (optional)'
-        rows='5'
-        variant='outlined'
-        multiline
-        fullWidth
-        />
-        </DialogContent>
-        <DialogActions>
-        <Button onClick={handleClose}>
-        Cancel
-        </Button>
-        <Button onClick={handleSubmit} color='primary'>
-        Create board
-        </Button>
-        </DialogActions>
-        </Dialog>
+            <ButtonGroup size='small'>
+                <Button onClick={handleClickOpen}>New board</Button>
+            </ButtonGroup>
+            <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
+                <DialogTitle id='form-dialog-title'>New board</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enter a name for your new board.
+                    </DialogContentText>
+                    <TextField
+                    autoFocus
+                    margin='dense'
+                    id='newBoardName'
+                    label='Board name'
+                    variant='outlined'
+                    fullWidth
+                    error={nameError}
+                    helperText={nameHelperText}
+                    />
+                    <TextField
+                    margin='dense'
+                    id='newBoardDescription'
+                    label='Board description (optional)'
+                    rows='5'
+                    variant='outlined'
+                    multiline
+                    fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit} color='primary'>
+                        Create board
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
         );
     }
