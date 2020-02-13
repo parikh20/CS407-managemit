@@ -39,7 +39,8 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-// Should be refined
+// TODO: Should be refined
+// Potentially put a button on the card
 const user = JSON.parse(localStorage.getItem('user'));
 function saveBoardSettings(props) {
     const db = firebase.firestore();
