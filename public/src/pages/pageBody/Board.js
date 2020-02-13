@@ -36,31 +36,29 @@ function Board(props) {
             }
             colGroupUpdate.id = colGroup.id;
             setColGroup(colGroupUpdate);
+
+            let columnsQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').doc(colGroupUpdate.id).collection('columns');
+            unsubscribeCols = columnsQuery.onSnapshot(docSnapshot => {
+                let newColumns = [];
+                docSnapshot.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
+                    newColumns.push(data);
+                });
+                setColumns(newColumns);
+            }, err => {
+                console.log('Error fetching columns: ' + JSON.stringify(err));
+            });
         });
 
     }, err => {
         console.log('Error fetching column group: ' + JSON.stringify(err));
     });
 
-    if (colGroup.id !== undefined) {
-        let columnsQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').doc(colGroup.id).collection('columns');
-        unsubscribeCols = columnsQuery.onSnapshot(docSnapshot => {
-            let newColumns = [];
-            docSnapshot.forEach(doc => {
-                let data = doc.data();
-                data.id = doc.id;
-                newColumns.push(data);
-            });
-            setColumns(newColumns);
-        }, err => {
-            console.log('Error fetching columns: ' + JSON.stringify(err));
-        });
-    }
-
     useEffect(() => {
         return () => {
             unsubscribeColGroup && unsubscribeColGroup();
-            unsubscribeCols && unsubscribeCols();
+            //unsubscribeCols && unsubscribeCols();
         };
     }, [unsubscribeColGroup, unsubscribeCols]);
     
