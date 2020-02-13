@@ -21,17 +21,17 @@ function Boards(props) {
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
         
-        let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
-        columnGroupQuery.onSnapshot(docSnapshot => {
-            const colGroupUpdate = docSnapshot.data();
-            if (!colGroupUpdate) {
-                return;
-            }
-            colGroupUpdate.id = boardUpdate.defaultColumnGroup;
-            setColGroup(colGroupUpdate);
-        }, err => {
-            console.log('Error fetching column group: ' + JSON.stringify(err));
-        });
+        // let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
+        // columnGroupQuery.onSnapshot(docSnapshot => {
+        //     const colGroupUpdate = docSnapshot.data();
+        //     if (!colGroupUpdate) {
+        //         return;
+        //     }
+        //     colGroupUpdate.id = boardUpdate.defaultColumnGroup;
+        //     setColGroup(colGroupUpdate);
+        // }, err => {
+        //     console.log('Error fetching column group: ' + JSON.stringify(err));
+        // });
 
         let columnsQuery = db.collection('columns').where('boardRef', '==', props.boardId);
         columnsQuery.onSnapshot(docSnapshot => {

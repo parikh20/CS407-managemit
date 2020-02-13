@@ -6,11 +6,19 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar'
+import Link from '@material-ui/core/Link';
 
 import '../../App.css';
 
 import DeleteBoardDialog from './DeleteBoardDialog.js';
 import firebase from '../../Firebase';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
+
 
 const useStyles = makeStyles(theme => ({
     settingsBody: {
@@ -46,19 +54,58 @@ function BoardSettings(props) {
 
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
+    const [descriptionError, setDescriptionError] = React.useState(false);
+    const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
+    const [successSnackbar, setSuccessSnackbar] = React.useState(false);
+    const [errorSnackbar, setErrorSnackbar] = React.useState(false);
 
     const handleSettingsSubmit = () => {
+        clearState();
         if (!props.board) {
             return; // sanity check
         }
-        db.collection('boards').doc(props.board.id).update(
-            {
-                label: document.getElementById('boardName').value,
-                description: document.getElementById('boardDescription').value
-            }
-        ).catch(err => {
-            console.log(err);
-        });
+        const name = document.getElementById('boardName').value.trim();
+        const description = document.getElementById('boardDescription').value.trim();
+
+        if (name === '') {
+            setNameError(true);
+            setNameHelperText('Name cannot be empty!');
+        } else if (description === '') {
+            setDescriptionError(true);
+            setDescriptionHelperText("Description cannot be empty!");
+        } else {
+            db.collection('boards').doc(props.board.id).update(
+                {
+                    label: name,
+                    description: description
+                }
+            ).catch(err => {
+                setErrorSnackbar(true);
+                console.log(err);
+                return;
+            });
+            setSuccessSnackbar(true);
+        }
+
+    };
+
+    function clearState() {
+        setNameError(false);
+        setNameHelperText('');
+        setDescriptionError(false);
+        setDescriptionHelperText('');
+        setSuccessSnackbar(false);
+        setErrorSnackbar(false);
+    }
+
+    
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setErrorSnackbar(false);
+        setSuccessSnackbar(false);
     };
 
     return (
@@ -69,10 +116,10 @@ function BoardSettings(props) {
                         <h2>Board Details</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id='boardName' label='Name' variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} key={props.board.label} defaultValue={props.board.label} />
+                        <TextField id='boardName' label='Name' error={nameError} helperText={nameHelperText} variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} key={props.board.label} defaultValue={props.board.label} />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id='boardDescription' label='Description' variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
+                        <TextField id='boardDescription' label='Description' error={descriptionError} helperText={descriptionHelperText} variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
                     </Grid>
                     <Grid item xs={12}>
                         <Button variant='contained' color='primary' onClick={handleSettingsSubmit}>Save changes</Button>
@@ -110,6 +157,18 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
+            <Snackbar open={successSnackbar} onClose={handleClose}>
+                <Link href='/boards' color='inherit'>
+                    <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
+                        Successfully saved board details!
+                    </Alert>
+                </Link>
+            </Snackbar>
+            <Snackbar open={errorSnackbar} onClose={handleClose}>
+                <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
+                    There was an error saving board details!
+                </Alert>
+            </Snackbar>
         </div>
     );
 }
