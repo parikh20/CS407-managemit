@@ -1,24 +1,22 @@
+import '../../App.css';
 import React from 'react';
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Chip from '@material-ui/core/Chip';
-import MuiAlert from '@material-ui/lab/Alert';
-import Snackbar from '@material-ui/core/Snackbar'
-import Link from '@material-ui/core/Link';
-
-import '../../App.css';
-
 import DeleteBoardDialog from './DeleteBoardDialog.js';
+
+import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import MuiAlert from '@material-ui/lab/Alert';
+import Paper from '@material-ui/core/Paper';
+import Snackbar from '@material-ui/core/Snackbar'
+import TextField from '@material-ui/core/TextField';
+
 import firebase from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
-
 
 const useStyles = makeStyles(theme => ({
     settingsBody: {
@@ -76,13 +74,13 @@ function BoardSettings(props) {
             setNameHelperText('Name cannot be empty!');
         } else if (name.length > 50) {
             setNameError(true);
-            setNameHelperText("Name must be less than 50 characters long!");
+            setNameHelperText('Name must be less than 50 characters long!');
         } else if (description.length > 150) {
             setDescriptionError(true);
-            setDescriptionHelperText("Description must be less than 150 characters long!");
+            setDescriptionHelperText('Description must be less than 150 characters long!');
         } else if (description === '') {
             setDescriptionError(true);
-            setDescriptionHelperText("Description cannot be empty!");
+            setDescriptionHelperText('Description cannot be empty!');
         } else {
             db.collection('boards').doc(props.board.id).update(
                 {
@@ -167,11 +165,9 @@ function BoardSettings(props) {
                 </Grid>
             </Paper>
             <Snackbar open={successSnackbar} onClose={handleClose}>
-                <Link href='/boards' color='inherit'>
-                    <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
-                        Successfully saved board details!
-                    </Alert>
-                </Link>
+                <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
+                    Successfully saved board details!
+                </Alert>
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
