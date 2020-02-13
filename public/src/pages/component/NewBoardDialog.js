@@ -63,14 +63,17 @@ function NewBoardDialog() {
     };
     
     const handleSubmit = async () => {
-        const name = document.getElementById('newBoardName').value;
-        const description = document.getElementById('newBoardDescription').value;
+        const name = document.getElementById('newBoardName').value.trim();
+        const description = document.getElementById('newBoardDescription').value.trim();
         
         clearState();
         
-        if (name.trim() === '') {
+        if (name === '') {
             setNameError(true);
             setNameHelperText('Board name is required');
+        } else if (name.length > 50) {
+            setNameError(true);
+            setNameHelperText('Board name must be less than 50 characters long')
         } else {
             try {
                 setOpen(false);
