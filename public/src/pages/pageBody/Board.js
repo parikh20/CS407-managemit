@@ -10,7 +10,6 @@ function Boards(props) {
     const [columns, setColumns] = React.useState([]);
     const [colGroup, setColGroup] = React.useState({});
 
-    const user = JSON.parse(localStorage.getItem('user'));
     const db = firebase.firestore();
     
     let boardQuery = db.collection('boards').doc(props.boardId);
