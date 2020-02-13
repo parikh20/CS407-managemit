@@ -12,7 +12,7 @@ import {auth, db} from '../../Firebase';
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
-const createBoard = (name, description) => {
+const createBoard = async (name, description) => {
     let defaultColumnPromises = [];
     
     return new Promise((res,rej) => {
@@ -27,14 +27,18 @@ const createBoard = (name, description) => {
             return boardRef.collection("columnGroups").add({
                 label: "Default Group"
             });
-        }).then((columnGroupRef) => {
-            defaultColumns.forEach((title) => {
-                defaultColumnPromises.push(columnGroupRef.collection("columns").add({
+        }).then(async (columnGroupRef) => {
+            let columnRefs = [];
+            for (const title of defaultColumns) {
+                let colRef = await columnGroupRef.collection("columns").add({
                     label: title,
                     taskRefs: [],        
-                }));
-            });
-            return Promise.all(defaultColumnPromises);
+                });
+                columnRefs.push(colRef.id);
+            }
+            await columnGroupRef.set({
+                columnOrder: columnRefs
+            }, {merge: true});
         }).then(() => {
             res();
         }).catch((err) => {

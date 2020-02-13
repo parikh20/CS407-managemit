@@ -20,23 +20,30 @@ function Board(props) {
         }
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
-        
-        // let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
-        // columnGroupQuery.onSnapshot(docSnapshot => {
-        //     const colGroupUpdate = docSnapshot.data();
-        //     if (!colGroupUpdate) {
-        //         return;
-        //     }
-        //     colGroupUpdate.id = boardUpdate.defaultColumnGroup;
-        //     setColGroup(colGroupUpdate);
-        // }, err => {
-        //     console.log('Error fetching column group: ' + JSON.stringify(err));
-        // });
+    }, err => {
+        console.log('Error fetching board: ' + JSON.stringify(err));
+    });
 
-        let columnsQuery = db.collection('columns').where('boardRef', '==', props.boardId);
+    let columnGroupQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').limit(1); // TODO: limit 1 is temporary - we'll move to querying this differently later
+    columnGroupQuery.onSnapshot(docSnapshot => {
+        docSnapshot.forEach(colGroup => {
+            const colGroupUpdate = colGroup.data();
+            if (!colGroupUpdate) {
+                return;
+            }
+            colGroupUpdate.id = colGroup.id;
+            setColGroup(colGroupUpdate);
+        });
+
+    }, err => {
+        console.log('Error fetching column group: ' + JSON.stringify(err));
+    });
+
+    if (colGroup.id !== undefined) {
+        let columnsQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').doc(colGroup.id).collection('columns');
         columnsQuery.onSnapshot(docSnapshot => {
             let newColumns = [];
-            docSnapshot.docs.forEach(doc => {
+            docSnapshot.forEach(doc => {
                 let data = doc.data();
                 data.id = doc.id;
                 newColumns.push(data);
@@ -45,9 +52,7 @@ function Board(props) {
         }, err => {
             console.log('Error fetching columns: ' + JSON.stringify(err));
         });
-    }, err => {
-        console.log('Error fetching board: ' + JSON.stringify(err));
-    });
+    }
     
     return (
         <div>
