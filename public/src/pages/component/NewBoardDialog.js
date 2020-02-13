@@ -8,72 +8,41 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import firebase from '../../Firebase';
+import firebase, {auth, db} from '../../Firebase';
 
-const createBoard = async (name, description, user) => {
-    const userId = user.uid;
+const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
-    const db = firebase.firestore();
-    try {
+const createBoard = (name, description) => {
+    let defaultColumnPromises = [];
 
-        // This is not a great way to do this. We should probably be using a transaction
-        // here instead. That's a TODO
-        let col1Ref = await db.collection('columns').doc();
-        await col1Ref.set({
-            label: 'Backlog',
-            taskRefs: [],
+    return new Promise((res,rej) => {
+        defaultColumns.forEach((title) => {
+            defaultColumnPromises.push(db.collection("columns").add({
+                label: title,
+                taskRefs: [],        
+            }));
         });
-        let col2Ref = await db.collection('columns').doc();
-        await col2Ref.set({
-            label: 'In Progress',
-            taskRefs: []
+    
+        Promise.all(defaultColumnPromises).then((docRefs) => {
+            return db.collection("columnGroups").add({
+                columnRefs: docRefs.map((ref) => ref.id)
+            });
+        }).then((columnGroupRef) => {
+            return db.collection("boards").add({
+                owner: auth.currentUser.uid,
+                label: name,
+                description: description,
+                columnGroups: [columnGroupRef.id],
+                defaultColumnGroup: columnGroupRef.id,
+                taskRefs: [],
+                userRefs: [auth.currentUser.uid]
+            });
+        }).then(() => {
+            res()
+        }).catch((err) => {
+            rej(err);
         });
-        let col3Ref = await db.collection('columns').doc();
-        await col3Ref.set({
-            label: 'Reviewing',
-            taskRefs: []
-        });
-        let col4Ref = await db.collection('columns').doc();
-        await col4Ref.set({
-            label: 'Complete',
-            taskRefs: []
-        });
-        let colGroupRef = await db.collection('columnGroups').doc();
-        await colGroupRef.set({
-            columnRefs: [col1Ref.id, col2Ref.id, col3Ref.id, col4Ref.id]
-        });
-        let boardRef = await db.collection('boards').doc();
-        await boardRef.set({
-            owner: userId,
-            label: name,
-            description: description,
-            columnGroups: [colGroupRef.id],
-            defaultColumnGroup: colGroupRef.id,
-            taskRefs: [],
-            userRefs: [userId]
-        });
-        await col1Ref.update({
-            boardRef: boardRef.id
-        });
-        await col2Ref.update({
-            boardRef: boardRef.id
-        });
-        await col3Ref.update({
-            boardRef: boardRef.id
-        });
-        await col4Ref.update({
-            boardRef: boardRef.id
-        });
-        return new Promise((resolve, reject) => {
-            resolve(true);
-        });
-    } catch (err) {
-        console.log(err);
-        return new Promise((resolve, reject) => {
-            reject(false);
-        });
-    }
-
+    });
 };
 
 
@@ -87,14 +56,14 @@ function NewBoardDialog() {
         setOpen(true);
     };
 
-    const handleClose = () => {
+    const handleClose = (name,description) => {
         setOpen(false);
+        createBoard(name,description);
     };
 
     const handleSubmit = async () => {
         const name = document.getElementById('newBoardName').value;
         const description = document.getElementById('newBoardDescription').value;
-        const user = JSON.parse(localStorage.getItem('user'));
 
         clearState();
 
@@ -104,7 +73,8 @@ function NewBoardDialog() {
         } else {
             try {
                 setOpen(false);
-                let result = await createBoard(name, description, user);
+                handleClose(name,description);
+                // let result = await createBoard(name, description, user);
             } catch (err) {
                 setOpen(true);
                 setNameError(true);
