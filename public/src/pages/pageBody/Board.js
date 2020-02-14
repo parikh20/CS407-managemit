@@ -65,9 +65,9 @@ class Board extends React.Component {
 
     // When the component is destroyed, unsubscribe from all subscriptions
     componentWillUnmount() {
-        this.boardSub();
-        this.colSub();
-        this.colGroupSub();
+        this.boardSub && this.boardSub();
+        this.colSub && this.colSub();
+        this.colGroupSub && this.colGroupSub();
     }
 
     render() {

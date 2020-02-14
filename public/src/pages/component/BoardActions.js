@@ -19,7 +19,7 @@ function BoardActions(props) {
                 <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
                 <Button>Select view</Button>
                 <Button>View history</Button>
-                <Button href={'/board/' + props.board.id + '/settings'}>Settings</Button>
+                <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
             </ButtonGroup>
         </Grid>
     );
