@@ -13,7 +13,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField';
 
 import firebase from '../../Firebase';
-import { auth, provider } from '../../Firebase.js'
+import { db, auth } from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -48,8 +48,6 @@ const useStyles = makeStyles(theme => ({
 function BoardSettings(props) {
     const classes = useStyles();
 
-    const db = firebase.firestore();
-
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
     const [descriptionError, setDescriptionError] = React.useState(false);
@@ -71,11 +69,9 @@ function BoardSettings(props) {
         const name = document.getElementById('boardName').value.trim();
         const description = document.getElementById('boardDescription').value.trim();
 
-        if (name === props.board.label && description === props.board.description) {
+        if (name === props.board.label) {
             setNameError(true);
             setNameHelperText('Board name must be changed to save!');
-            setDescriptionError(true);
-            setDescriptionHelperText('Board description must be changed to save!');
         } else if (name === '') {
             setNameError(true);
             setNameHelperText('Board name cannot be empty!');
@@ -175,7 +171,7 @@ function BoardSettings(props) {
                         <TextField id='boardName' label='Name' error={nameError} helperText={nameHelperText} variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} key={props.board.label} defaultValue={props.board.label} />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id='boardDescription' label='Description' error={descriptionError} helperText={descriptionHelperText} variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
+                        <TextField id='boardDescription' label='Description (optional)' error={descriptionError} helperText={descriptionHelperText} variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
                     </Grid>
                     <Grid item xs={12}>
                         <Button variant='contained' color='primary' onClick={handleSettingsSubmit}>Save changes</Button>
