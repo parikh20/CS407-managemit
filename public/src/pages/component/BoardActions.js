@@ -9,18 +9,24 @@ import EditTaskDialog from './EditTaskDialog.js';
 import NewColumnDialog from './NewColumnDialog.js';
 
 function BoardActions(props) {
+    const user = JSON.parse(localStorage.getItem('user'));
+
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
             <div style={{flexGrow: 1}}>
                 <BoardBreadcrumbs board={props.board} />
             </div>
-            <ButtonGroup size='small'>
-                <EditTaskDialog />
-                <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
-                <Button>Select view</Button>
-                <Button>View history</Button>
-                <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
-            </ButtonGroup>
+            {props.board && (
+                <ButtonGroup size='small'>
+                    <EditTaskDialog />
+                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
+                    <Button>Select view</Button>
+                    <Button>View history</Button>
+                    {props.board.owner === user.email && (
+                        <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
+                    )}
+                </ButtonGroup>
+            )}
         </Grid>
     );
 }

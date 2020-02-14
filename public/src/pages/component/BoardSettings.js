@@ -109,7 +109,11 @@ function BoardSettings(props) {
             setInviteEmailError(true);
             setInviteEmailHelperText('Email must be properly formatted');
         }
-    }
+    };
+
+    const deleteUser = (email) => {
+        console.log('Got email:' + email);
+    };
 
     function clearState() {
         setNameError(false);
@@ -160,14 +164,14 @@ function BoardSettings(props) {
                         <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value)} >Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
-                        <Chip label='John Doe' color='primary' className={classes.chip} />
-                        <Chip label='Joe User' color='primary' className={classes.chip} />
-                        <Chip label='John Doe' color='primary' className={classes.chip} />
-                        <Chip label='Joe User' color='primary' className={classes.chip} />
-                        <Chip label='John Doe' color='primary' className={classes.chip} />
-                        <Chip label='Joe User' color='primary' className={classes.chip} />
-                        <Chip label='John Doe' color='primary' className={classes.chip} />
-                        <Chip label='Joe User' color='primary' className={classes.chip} />
+                        {props.board && <>
+                            <Chip label={props.board.owner} color='primary' className={classes.chip} />
+                        </>}
+                        {props.board && props.board.userRefs && <>
+                            {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
+                                <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
+                            ))}
+                        </>}
                     </Grid>
                 </Grid>
             </Paper>
