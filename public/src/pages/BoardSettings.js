@@ -13,7 +13,7 @@ export default (props) => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     const db = firebase.firestore();
-    db.collection('boards').where('userRefs', 'array-contains', user.uid).get().then(snapshot => {
+    db.collection('boards').where('userRefs', 'array-contains', user.email).get().then(snapshot => {
         for (const doc of snapshot.docs) {
             if (doc.id === props.match.params.boardId) {
                 return;

@@ -17,12 +17,12 @@ const createBoard = async (name, description) => {
     
     return new Promise((res,rej) => {
         db.collection("boards").add({
-            owner: auth.currentUser.uid,
+            owner: auth.currentUser.email,
             label: name,
             description: description,
             defaultColumnGroup: "",
             taskRefs: [],
-            userRefs: [auth.currentUser.uid]
+            userRefs: [auth.currentUser.email]
         }).then((boardRef) => {
             return boardRef.collection("columnGroups").add({
                 label: "Default Group"
