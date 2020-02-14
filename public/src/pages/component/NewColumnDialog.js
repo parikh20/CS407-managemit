@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import TextField from '@material-ui/core/TextField';
@@ -8,15 +8,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 
-import firebase from '../../Firebase';
+import { db } from '../../Firebase';
 
 function NewColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
-
-    const db = firebase.firestore();
-
+    
     const columnNames = [];
     for (let column of props.columns) {
         columnNames.push(column.label);
@@ -36,7 +34,7 @@ function NewColumnDialog(props) {
 
         clearState();
 
-        if (columnName == '') {
+        if (columnName === '') {
             setNameError(true);
             setNameHelperText('Column name is required');
         } else if (columnName.length > 50) {

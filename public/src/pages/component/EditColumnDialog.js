@@ -10,6 +10,8 @@ import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
 
+import { db } from '../../Firebase';
+
 
 function EditColumnDialog() {
     const [open, setOpen] = React.useState(false);
@@ -41,18 +43,20 @@ function EditColumnDialog() {
                         label='Rename column'
                         variant='outlined'
                         fullWidth
+                        InputLabelProps={{shrink: true}} 
                     />
                     <Divider style={{margin: 10}} />
                     <DialogContentText>
                         To delete the column, type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone.
                     </DialogContentText>
                     <TextField
-                        autoFocus
                         margin='dense'
                         id='columnDeleteConfirmation'
                         label='Column name'
                         variant='outlined'
                         fullWidth
+                        color='secondary'
+                        InputLabelProps={{shrink: true}} 
                     />
                 </DialogContent>
                 <DialogActions>

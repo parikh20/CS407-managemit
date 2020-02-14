@@ -36,6 +36,8 @@ function DeleteBoardDialog() {
                         label='Board name'
                         variant='outlined'
                         fullWidth
+                        color='secondary'
+                        InputLabelProps={{shrink: true}} 
                     />
                 </DialogContent>
                 <DialogActions>

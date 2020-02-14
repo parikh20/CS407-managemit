@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import BoardActions from '../component/BoardActions';
 import ColumnGroup from '../component/ColumnGroup';
 
-import {db} from '../../Firebase';
+import { db } from '../../Firebase';
 
 
 class Board extends React.Component {
