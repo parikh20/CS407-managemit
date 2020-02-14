@@ -16,6 +16,11 @@ const getStyles = () => {
         },
         loginTextField: {
             width: 80 + '%'
+        },
+        passwordStrengthBar: {
+            marginRight: 15 + '%',
+            marginLeft: 15 + '%',
+            marginTop: 2 + '%',
         }
     }))();
 };
