@@ -11,6 +11,13 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Switch from '@material-ui/core/Switch';
 
 import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
@@ -69,10 +76,7 @@ function BoardSettings(props) {
         const name = document.getElementById('boardName').value.trim();
         const description = document.getElementById('boardDescription').value.trim();
 
-        if (name === props.board.label) {
-            setNameError(true);
-            setNameHelperText('Board name must be changed to save!');
-        } else if (name === '') {
+        if (name === '') {
             setNameError(true);
             setNameHelperText('Board name cannot be empty!');
         } else if (name.length > 50) {
@@ -188,14 +192,41 @@ function BoardSettings(props) {
                         <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value.trim())} >Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
-                        {props.board && <>
-                            <Chip label={props.board.owner} color='primary' className={classes.chip} />
-                        </>}
-                        {props.board && props.board.userRefs && <>
-                            {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
-                                <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
-                            ))}
-                        </>}
+                        <TableContainer style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}}>
+                            <Table size='small'>
+                                <TableHead>
+                                    <TableCell>Role</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell align='right'>Can edit</TableCell>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell>Owner</TableCell>
+                                        <TableCell>
+                                            {props.board && <>
+                                                <Chip label={props.board.owner} color='primary' className={classes.chip} />
+                                            </>}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <Switch checked={true} disabled={true} color='primary' />
+                                        </TableCell>
+                                    </TableRow>
+                                    {props.board && props.board.userRefs && <>
+                                        {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => <>
+                                            <TableRow>
+                                                <TableCell>Member</TableCell>
+                                                <TableCell>
+                                                    <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
+                                                </TableCell>
+                                                <TableCell align='right'>
+                                                    <Switch checked={true} color='primary' />
+                                                </TableCell>
+                                            </TableRow>
+                                        </>)}
+                                    </>}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Grid>
                 </Grid>
             </Paper>
