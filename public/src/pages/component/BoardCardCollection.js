@@ -4,20 +4,22 @@ import Grid from '@material-ui/core/Grid';
 
 import BoardCard from './BoardCard.js'
 
-import { db } from '../../Firebase';
+import { db, auth, currentUser } from '../../Firebase';
 
 class BoardCardCollection extends React.Component {
 
     boardsSub;
+    userSub;
 
     constructor(props) {
         super(props);
         this.state = {};
-        this.loadBoards();
+        this.userSub = currentUser.subscribe((user) => {
+            this.loadBoards(user);
+        });
     }
 
-    loadBoards() {
-        const user = JSON.parse(localStorage.getItem('user'))
+    loadBoards(user) {
         this.boardsSub = db.collection('boards').where('userRefs', 'array-contains', user.email).orderBy('label', 'asc').onSnapshot((boardsRefs) => {
             this.setState({boardsRefs: boardsRefs.docs.map(boardRef => {
                 let data = boardRef.data();
@@ -29,6 +31,7 @@ class BoardCardCollection extends React.Component {
 
     componentWillUnmount() {
         this.boardsSub && this.boardsSub();
+        this.userSub && this.userSub.unsubscribe();
     }
 
     render() {

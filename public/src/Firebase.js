@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import {ReplaySubject} from 'rxjs';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCEN33oNb29C4H6rUj9H5do_zimBQS7ycI",
@@ -11,8 +12,14 @@ const firebaseConfig = {
     measurementId: "G-Z49YLSWB09"
   };
 
+
 firebase.initializeApp(firebaseConfig);
 export const provider = new firebase.auth.GoogleAuthProvider();
 export const auth = firebase.auth();
+export const currentUser = new ReplaySubject(1);
 export const db = firebase.firestore();
 export default firebase;
+
+auth.onAuthStateChanged((user) => {
+  currentUser.next(user);
+});

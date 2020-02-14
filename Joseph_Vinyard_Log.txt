@@ -1,0 +1,7 @@
+Week 1:
+Worked on register and sign up page
+Worked on initial firebase implementation
+
+Week 2:
+Rewrote firebase implementation to stop infinite calls
+Built out auth state for firebase
