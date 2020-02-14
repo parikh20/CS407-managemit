@@ -20,7 +20,7 @@ class Column extends React.Component {
         return (
             <GridListTile style={{margin: 5, width: 250}}>
                 <Typography variant='h6' color='inherit'>
-                    {this.props.columnName}
+                    {this.props.column.label}
                     <EditColumnDialog />
                     <div style={{float: 'right'}}>
                         <IconButton

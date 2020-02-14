@@ -3,72 +3,87 @@ import React, { useEffect } from 'react';
 import BoardActions from '../component/BoardActions';
 import ColumnGroup from '../component/ColumnGroup';
 
-import firebase from '../../Firebase';
+import {db} from '../../Firebase';
 
-function Board(props) {
-    const [board, setBoard] = React.useState({});
-    const [columns, setColumns] = React.useState([]);
-    const [colGroup, setColGroup] = React.useState({});
 
-    let unsubscribeColGroup = null;
-    let unsubscribeCols = null;
+class Board extends React.Component {
 
-    const db = firebase.firestore();
-    
-    let boardQuery = db.collection('boards').doc(props.boardId);
-    boardQuery.get().then(docSnapshot => {
-        const boardUpdate = docSnapshot.data();
-        if (!boardUpdate) {
-            return;
-        }
-        boardUpdate.id = props.boardId;
-        setBoard(boardUpdate);
-    }, err => {
-        console.log('Error fetching board: ' + JSON.stringify(err));
-    });
+    boardSub;
+    colGroupSub;
+    colSub;
 
-    let columnGroupQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').limit(1); // TODO: limit 1 is temporary - we'll move to querying this differently later
-    unsubscribeColGroup = columnGroupQuery.onSnapshot(docSnapshot => {
-        docSnapshot.forEach(colGroup => {
-            const colGroupUpdate = colGroup.data();
-            if (!colGroupUpdate) {
-                return;
-            }
-            colGroupUpdate.id = colGroup.id;
-            setColGroup(colGroupUpdate);
+    constructor(props) {
+        super(props);
+        this.state = {}
+        this.loadBoard();
+    }
 
-            let columnsQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').doc(colGroupUpdate.id).collection('columns');
-            unsubscribeCols = columnsQuery.onSnapshot(docSnapshot => {
-                let newColumns = [];
-                docSnapshot.forEach(doc => {
-                    let data = doc.data();
-                    data.id = doc.id;
-                    newColumns.push(data);
-                });
-
-                setColumns(newColumns);
-            }, err => {
-                console.log('Error fetching columns: ' + JSON.stringify(err));
-            });
+    // Load board based on boardID, then load column group
+    loadBoard() {
+        this.boardSub = db.collection("boards").doc(this.props.boardId).onSnapshot((boardRef) => {
+            this.setState({boardRef: boardRef});
+            this.loadColGroup();
         });
+    }
 
-    }, err => {
-        console.log('Error fetching column group: ' + JSON.stringify(err));
-    });
+    // Load column group, then load columns
+    loadColGroup(colGroup=null) {
 
-    useEffect(() => {
-        return () => {
-            unsubscribeColGroup && unsubscribeColGroup();
-            //unsubscribeCols && unsubscribeCols();
-        };
-    }, [unsubscribeColGroup, unsubscribeCols]);
-    
-    return (
-        <div>
-            <BoardActions board={board} columnGroup={colGroup} columns={columns} />
-            <ColumnGroup board={board} columnGroup={colGroup} columns={columns} />
-        </div>
-    );
+        // If there is already a subscription, unsubscribe
+        if(this.colGroupSub) {
+            this.colGroupSub();
+        }
+        const collection = this.state.boardRef.ref.collection("columnGroups");
+
+        // If a parameter was supplied to the function use it, otherwise use default
+        colGroup = colGroup || this.state.boardRef.data().defaultColumnGroup;
+
+        // If a default is set (not ""), then use it
+        if(colGroup.length) {
+            this.colGroupSub = collection.doc(colGroup).onSnapshot((colGroupRef) => {
+                this.setState({colGroupRef: colGroupRef});
+                this.loadColumns();
+            });
+        // Otherwise just grab the first colGroup
+        } else {
+            this.colGroupSub = collection.limit(1).onSnapshot((colGroupRef) => {
+                this.setState({colGroupRef: colGroupRef.docs[0]});
+                this.loadColumns();
+            });
+        }
+    }
+
+    loadColumns() {
+        if(this.colSub) {
+            this.colSub();
+        }
+
+        this.state.colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
+            this.setState({columnRefs: columnRefs.docs})
+        })
+    }
+
+    // When the component is destroyed, unsubscribe from all subscriptions
+    componentWillUnmount() {
+        this.boardSub();
+        this.colSub();
+        this.colGroupSub();
+    }
+
+    render() {
+        return (
+            <div>
+                <BoardActions
+                    board={this.state.boardRef ? this.state.boardRef.data() : {}}
+                    columnGroup={this.state.columnGroupRef ? this.state.columnGroupRef.data() : {}}
+                    columns={this.state.columnRefs ? this.state.columnRefs.map((c) => c.data()) : []}
+                />
+                <ColumnGroup
+                    columns={this.state.columnRefs ? this.state.columnRefs.map((c) => c.data()) : []} /* Map the column references to actual columns */
+                />
+            </div>
+        ); 
+    }
 }
 
 export default Board;
