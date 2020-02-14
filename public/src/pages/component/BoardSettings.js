@@ -58,8 +58,7 @@ function BoardSettings(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [inviteEmailError, setInviteEmailError] = React.useState(false);
     const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
-    const [shareSuccessSnackbar, setShareSuccessSnackbar] = React.useState(false);
-    const [shareSuccessMessage, setShareSuccessMessage] = React.useState('');
+    const [successMessage, setSuccessMessage] = React.useState('');
 
 
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -100,6 +99,7 @@ function BoardSettings(props) {
                 console.log(err);
                 return;
             });
+            setSuccessMessage('Successfully saved board details!')
             setSuccessSnackbar(true);
         }
     };
@@ -118,8 +118,8 @@ function BoardSettings(props) {
                     db.collection('boards').doc(props.board.id).update({
                         userRefs: firebase.firestore.FieldValue.arrayUnion(email)
                     }).then(result => {
-                        setShareSuccessSnackbar(true);
-                        setShareSuccessMessage('Successfully invited ' + email);
+                        setSuccessSnackbar(true);
+                        setSuccessMessage('Successfully invited ' + email + '!');
                     }).catch(err => {
                         console.log(err);
                     });
@@ -134,7 +134,14 @@ function BoardSettings(props) {
     };
 
     const deleteUser = (email) => {
-        console.log('Got email:' + email);
+        db.collection('boards').doc(props.board.id).update({
+            userRefs: firebase.firestore.FieldValue.arrayRemove(email)
+        }).then(result => {
+            setSuccessSnackbar(true);
+            setSuccessMessage('Successfully removed ' + email + '!');
+        }).catch(err => {
+            console.log(err);
+        });
     };
 
     function clearState() {
@@ -146,8 +153,6 @@ function BoardSettings(props) {
         setErrorSnackbar(false);
         setInviteEmailError(false);
         setInviteEmailHelperText('');
-        setShareSuccessMessage('');
-        setShareSuccessSnackbar(false);
     }
     
     const handleClose = (event, reason) => {
@@ -210,12 +215,7 @@ function BoardSettings(props) {
             </Paper>
             <Snackbar open={successSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
-                    Successfully saved board details!
-                </Alert>
-            </Snackbar>
-            <Snackbar open={shareSuccessSnackbar} onClose={handleClose}>
-                <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
-                    {shareSuccessMessage}
+                    {successMessage}
                 </Alert>
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>
