@@ -13,7 +13,7 @@ function ColumnGroup(props) {
         <div style={{maxWidth: 'calc(100% - 10px - 10px)', height: 100 + '%', padding: '10px 10px 0px 10px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', overflow: 'hidden', float: 'left'}}>
             <GridList style={{flexWrap: 'nowrap'}}>
                 {columns.map(column => (
-                    <Column key={column.label} column={column}/>
+                    <Column key={column.label} column={column} columns={columns} boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} />
                 ))}
             </GridList>
         </div> 

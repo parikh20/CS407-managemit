@@ -21,7 +21,7 @@ class Column extends React.Component {
             <GridListTile style={{margin: 5, width: 250}}>
                 <Typography variant='h6' color='inherit'>
                     {this.props.column.label}
-                    <EditColumnDialog />
+                    <EditColumnDialog column={this.props.column} columns={this.props.columns} boardRef={this.props.boardRef} columnGroupRef={this.props.columnGroupRef} />
                     <div style={{float: 'right'}}>
                         <IconButton
                             edge='end'

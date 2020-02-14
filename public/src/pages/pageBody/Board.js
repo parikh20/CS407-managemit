@@ -80,6 +80,8 @@ class Board extends React.Component {
                     columns={this.state.columnRefs ? this.state.columnRefs.map((c) => c.data()) : []}
                 />
                 <ColumnGroup
+                    boardRef={this.state.boardRef ? this.state.boardRef : {}}
+                    columnGroupRef={this.state.colGroupRef ? this.state.colGroupRef : {}}
                     columns={this.state.columnRefs ? this.state.columnRefs.map((c) => {
                         let data = c.data();
                         data.id = c.id;

@@ -13,8 +13,15 @@ import Divider from '@material-ui/core/Divider';
 import { db } from '../../Firebase';
 
 
-function EditColumnDialog() {
+function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
+    const [nameError, setNameError] = React.useState(false);
+    const [nameHelperText, setNameHelperText] = React.useState('');
+    
+    const columnNames = [];
+    for (let column of props.columns) {
+        columnNames.push(column.label);
+    }
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -23,6 +30,35 @@ function EditColumnDialog() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleSubmitChanges = () => {
+        const columnName = document.getElementById('columnName').value.trim();
+
+        clearState();
+
+        if (columnName === '') {
+            setNameError(true);
+            setNameHelperText('Column name is required');
+        } else if (columnName.length > 50) {
+            setNameError(true);
+            setNameHelperText('Column name must be less than 50 characters');
+        } else if (columnNames.includes(columnName) && columnName !== props.column.label) {
+            setNameError(true);
+            setNameHelperText('Column name is already in use');
+        } else {
+            setOpen(false);
+
+            db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id).collection('columns').doc(props.column.id).update({
+                label: columnName
+            });
+        }
+    };
+    
+    const clearState = () => {
+        setNameError(false);
+        setNameHelperText('');
+    };
+
 
     return (
         <div style={{display: 'inline'}}>
@@ -44,6 +80,9 @@ function EditColumnDialog() {
                         variant='outlined'
                         fullWidth
                         InputLabelProps={{shrink: true}} 
+                        error={nameError}
+                        helperText={nameHelperText}
+                        defaultValue={props.column.label}
                     />
                     <Divider style={{margin: 10}} />
                     <DialogContentText>
@@ -66,7 +105,7 @@ function EditColumnDialog() {
                     <Button onClick={handleClose} color='secondary'>
                         Delete column
                     </Button>
-                    <Button onClick={handleClose} color='primary'>
+                    <Button onClick={handleSubmitChanges} color='primary'>
                         Save changes
                     </Button>
                 </DialogActions>
