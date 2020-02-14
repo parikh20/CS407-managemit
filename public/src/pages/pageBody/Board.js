@@ -46,9 +46,6 @@ function Board(props) {
                     newColumns.push(data);
                 });
 
-                const columnRefs = colGroupUpdate.columnOrder;
-                newColumns.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
-
                 setColumns(newColumns);
             }, err => {
                 console.log('Error fetching columns: ' + JSON.stringify(err));
