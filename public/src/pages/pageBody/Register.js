@@ -32,7 +32,6 @@ function Register(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [passwordStrength, setPasswordStrength] = React.useState(0);
-    const [passwordColor, setPasswordColor] = React.useState('primary');
 
     const signUpUser = (email, password, repassword) => {
         clearState();

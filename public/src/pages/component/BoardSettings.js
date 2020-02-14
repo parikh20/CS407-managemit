@@ -55,6 +55,10 @@ function BoardSettings(props) {
     const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
+    const [inviteEmailError, setInviteEmailError] = React.useState(false);
+    const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
+
+    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleSettingsSubmit = () => {
         clearState();
@@ -96,6 +100,17 @@ function BoardSettings(props) {
         }
     };
 
+    const inviteUser = (email) => {
+        console.log(email);
+        if (email === '') {
+            setInviteEmailError(true);
+            setInviteEmailHelperText('Email is required');
+        } else if (!regexp.test(email)) {
+            setInviteEmailError(true);
+            setInviteEmailHelperText('Email must be properly formatted');
+        }
+    }
+
     function clearState() {
         setNameError(false);
         setNameHelperText('');
@@ -103,6 +118,8 @@ function BoardSettings(props) {
         setDescriptionHelperText('');
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
+        setInviteEmailError(false);
+        setInviteEmailHelperText('');
     }
 
     
@@ -139,8 +156,8 @@ function BoardSettings(props) {
                         <h2>Collaborators</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
-                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}}>Add user</Button>
+                        <TextField id='inviteEmail' error={inviteEmailError} helperText={inviteEmailHelperText} label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
+                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value)} >Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
                         <Chip label='John Doe' color='primary' className={classes.chip} />
