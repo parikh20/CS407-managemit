@@ -66,21 +66,21 @@ function BoardSettings(props) {
 
         if (name === props.board.label && description === props.board.description) {
             setNameError(true);
-            setNameHelperText('Name must be changed to save!');
+            setNameHelperText('Board name must be changed to save!');
             setDescriptionError(true);
-            setDescriptionHelperText('Description must be changed to save!');
+            setDescriptionHelperText('Board description must be changed to save!');
         } else if (name === '') {
             setNameError(true);
-            setNameHelperText('Name cannot be empty!');
+            setNameHelperText('Board name cannot be empty!');
         } else if (name.length > 50) {
             setNameError(true);
-            setNameHelperText('Name must be less than 50 characters long!');
+            setNameHelperText('Board name must be less than 50 characters long!');
         } else if (description.length > 150) {
             setDescriptionError(true);
-            setDescriptionHelperText('Description must be less than 150 characters long!');
+            setDescriptionHelperText('Board description must be less than 150 characters long!');
         } else if (description === '') {
             setDescriptionError(true);
-            setDescriptionHelperText('Description cannot be empty!');
+            setDescriptionHelperText('Board description cannot be empty!');
         } else {
             db.collection('boards').doc(props.board.id).update(
                 {

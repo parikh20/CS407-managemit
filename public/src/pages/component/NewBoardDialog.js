@@ -12,7 +12,7 @@ import {auth, db} from '../../Firebase';
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
-const createBoard = (name, description) => {
+const createBoard = async (name, description) => {
     let defaultColumnPromises = [];
     
     return new Promise((res,rej) => {
@@ -27,14 +27,18 @@ const createBoard = (name, description) => {
             return boardRef.collection("columnGroups").add({
                 label: "Default Group"
             });
-        }).then((columnGroupRef) => {
-            defaultColumns.forEach((title) => {
-                defaultColumnPromises.push(columnGroupRef.collection("columns").add({
+        }).then(async (columnGroupRef) => {
+            let columnRefs = [];
+            for (const title of defaultColumns) {
+                let colRef = await columnGroupRef.collection("columns").add({
                     label: title,
                     taskRefs: [],        
-                }));
-            });
-            return Promise.all(defaultColumnPromises);
+                });
+                columnRefs.push(colRef.id);
+            }
+            await columnGroupRef.set({
+                columnOrder: columnRefs
+            }, {merge: true});
         }).then(() => {
             res();
         }).catch((err) => {
@@ -49,7 +53,9 @@ function NewBoardDialog() {
     
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
-    
+    const [descriptionError, setDescriptionError] = React.useState(false);
+    const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -59,14 +65,20 @@ function NewBoardDialog() {
     };
     
     const handleSubmit = async () => {
-        const name = document.getElementById('newBoardName').value;
-        const description = document.getElementById('newBoardDescription').value;
+        const name = document.getElementById('newBoardName').value.trim();
+        const description = document.getElementById('newBoardDescription').value.trim();
         
         clearState();
         
-        if (name.trim() === '') {
+        if (name === '') {
             setNameError(true);
             setNameHelperText('Board name is required');
+        } else if (name.length > 50) {
+            setNameError(true);
+            setNameHelperText('Board name must be less than 50 characters long')
+        } else if (description.length > 150) {
+            setDescriptionError(true);
+            setDescriptionHelperText('Board description must be greater than 150 characters long')
         } else {
             try {
                 setOpen(false);
@@ -82,6 +94,8 @@ function NewBoardDialog() {
     const clearState = () => {
         setNameError(false);
         setNameHelperText('');
+        setDescriptionError(false);
+        setDescriptionHelperText('');
     };
     
     return (
@@ -113,6 +127,8 @@ function NewBoardDialog() {
                     variant='outlined'
                     multiline
                     fullWidth
+                    error={descriptionError}
+                    helperText={descriptionHelperText}
                     />
                 </DialogContent>
                 <DialogActions>

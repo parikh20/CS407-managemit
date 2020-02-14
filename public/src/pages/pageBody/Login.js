@@ -27,21 +27,26 @@ function Login(props) {
     const [loginPasswordError, setLoginPasswordError] = React.useState(false);
     const [loginPasswordErrorHelperText, setLoginPasswordErrorHelperText] = React.useState('');
     const [loginErrorSnackbar, setloginErrorSnackbar] = React.useState(false);
+    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const signInWithEmailAndPassword = (email, password) => {
         clearState();
-        let hasError = false;
         if (email === '') {
-            setLoginEmailErrorHelperText('Email is required');
             setLoginEmailError(true);
-            hasError = true;
-        }
-        if (password === '') {
-            setLoginPasswordErrorHelperText('Password is required');
+            setLoginEmailErrorHelperText('Email is required');
+        } else if (!regexp.test(email)) {
+            setLoginEmailError(true);
+            setLoginEmailErrorHelperText('Email must be properly formatted');
+        } else if (password === '') {
             setLoginPasswordError(true);
-            hasError = true;
-        }
-        if (!hasError) {
+            setLoginPasswordErrorHelperText('Password is required');
+        } else if (password.length < 6) {
+            setLoginPasswordError(true);
+            setLoginPasswordErrorHelperText('Password must be greater than 6 characters long')    
+        } else if (password.length > 128) {
+            setLoginPasswordError(true);
+            setLoginPasswordErrorHelperText('Password must be less than 128 characters long');
+        } else {
             auth.signInWithEmailAndPassword(email, password).then(result => {
                 localStorage.setItem('user', JSON.stringify(result.user));
                 history.push('/boards');
