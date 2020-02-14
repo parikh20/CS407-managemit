@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import TextField from '@material-ui/core/TextField';
@@ -7,10 +8,29 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
+import Chip from '@material-ui/core/Chip';
 
+import { db } from '../../Firebase';
 
-function EditTaskDialog() {
+const useStyles = makeStyles(theme => ({
+    chips: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
+    chip: {
+      margin: 2,
+    }
+  }));
+
+function EditTaskDialog(props) {
+    const classes = useStyles();
     const [open, setOpen] = React.useState(false);
+    const [title, setTitle] = React.useState("");
+    const [desc, setDesc] = React.useState("");
+    const [column, setColumn] = React.useState("");
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -19,6 +39,18 @@ function EditTaskDialog() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value)
+    }
+
+    const handleDescChange = (event) => {
+        setDesc(event.target.value)
+    }
+
+    const handleColumnChange = (event) => {
+        console.log(event.target.value);
+    }
 
     return (
         <div>
@@ -36,6 +68,8 @@ function EditTaskDialog() {
                                 id='taskTitle'
                                 label='Title'
                                 variant='outlined'
+                                onChange={handleTitleChange}
+                                value={title}
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
                             />
@@ -47,20 +81,37 @@ function EditTaskDialog() {
                                 label='Description'
                                 rows='5'
                                 variant='outlined'
+                                onChange={handleDescChange}
+                                value={desc}
                                 multiline
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
+                            <Select
+                                id="taskColumns"
+                                label="Columns"
+                                multiple
+                                fullWidth
+                                value={props.columns}
+                                input={<Input/>}
+                            >
+                               {props.columns.map((column) => (
+                                   <MenuItem key={column.id} value={column}>
+                                       {column.label}
+                                   </MenuItem>
+                               ))} 
+                            </Select>
+                            {/* <TextField
                                 margin='dense'
                                 id='taskColumns'
                                 label='Columns'
                                 variant='outlined'
+                                onChange={handleColumnChange}
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
-                            />
+                            /> */}
                         </Grid>
                         <Grid item xs={6}>
                             <TextField

@@ -18,7 +18,7 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    <EditTaskDialog />
+                    <EditTaskDialog columns={props.columns} />
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
                     <Button>Select view</Button>
                     <Button>View history</Button>
