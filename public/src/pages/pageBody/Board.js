@@ -58,7 +58,7 @@ class Board extends React.Component {
             this.colSub();
         }
 
-        this.state.colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
+        this.colSub = this.state.colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
             this.setState({columnRefs: columnRefs.docs})
         })
     }
