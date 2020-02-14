@@ -45,6 +45,10 @@ function Board(props) {
                     data.id = doc.id;
                     newColumns.push(data);
                 });
+
+                const columnRefs = colGroupUpdate.columnOrder;
+                newColumns.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
+
                 setColumns(newColumns);
             }, err => {
                 console.log('Error fetching columns: ' + JSON.stringify(err));
@@ -64,7 +68,7 @@ function Board(props) {
     
     return (
         <div>
-            <BoardActions board={board} />
+            <BoardActions board={board} columnGroup={colGroup} columns={columns} />
             <ColumnGroup board={board} columnGroup={colGroup} columns={columns} />
         </div>
     );

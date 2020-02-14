@@ -73,7 +73,7 @@ function NewBoardDialog() {
             setNameHelperText('Board name is required');
         } else if (name.length > 50) {
             setNameError(true);
-            setNameHelperText('Board name must be less than 50 characters long')
+            setNameHelperText('Board name must be less than 50 characters')
         } else {
             try {
                 setOpen(false);
