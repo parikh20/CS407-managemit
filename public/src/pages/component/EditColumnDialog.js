@@ -70,7 +70,7 @@ function EditColumnDialog(props) {
 
             db.runTransaction(async (t) => {
                 const colGroup = await db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id);
-                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef != props.column.id);;
+                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef !== props.column.id);;
                 
                 await colGroup.collection('columns').doc(props.column.id).delete();
 

@@ -3,29 +3,38 @@ import React from 'react';
 import BoardSettingsBreadcrumbs from '../component/BoardSettingsBreadcrumbs';
 import BoardSettingsComponent from '../component/BoardSettings';
 
-import firebase from '../../Firebase';
+import { db } from '../../Firebase';
 
-function BoardSettings(props) {
-    const [board, setBoard] = React.useState({});
+class BoardSettings extends React.Component {
 
-    const db = firebase.firestore();
-    db.collection('boards').doc(props.boardId).get().then(docSnapshot => {
-        const boardUpdate = docSnapshot.data();
-        if (!boardUpdate) {
-            return;
-        }
-        boardUpdate.id = props.boardId;
-        setBoard(boardUpdate);
-    }, err => {
-        console.log('Error fetching board: ' + JSON.stringify(err));
-    });
+    boardSub;
 
-    return (
-        <div>
-            <BoardSettingsBreadcrumbs board={board} />
-            <BoardSettingsComponent board={board} />
-        </div>
-    );
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.loadBoard();
+    }
+
+    loadBoard() {
+        this.boardSub = db.collection('boards').doc(this.props.boardId).onSnapshot((boardRef) => {
+            let data = boardRef.data();
+            data.id = boardRef.id;
+            this.setState({board: data});
+        });
+    }
+
+    componentWillUnmount() {
+        this.boardSub && this.boardSub();
+    }
+
+    render() {
+        return (
+            <div>
+                <BoardSettingsBreadcrumbs board={this.state.board ? this.state.board : {}} />
+                <BoardSettingsComponent board={this.state.board ? this.state.board : {}} />
+            </div>
+        );
+    }
 }
 
 export default BoardSettings;
