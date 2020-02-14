@@ -7,10 +7,9 @@ import firebase from '../../Firebase';
 
 function BoardSettings(props) {
     const [board, setBoard] = React.useState({});
-    const user = JSON.parse(localStorage.getItem('user'));
 
     const db = firebase.firestore();
-    let query = db.collection('boards').doc(props.boardId).get().then(docSnapshot => {
+    db.collection('boards').doc(props.boardId).get().then(docSnapshot => {
         const boardUpdate = docSnapshot.data();
         if (!boardUpdate) {
             return;

@@ -16,7 +16,7 @@ function BoardActions(props) {
             </div>
             <ButtonGroup size='small'>
                 <EditTaskDialog />
-                <NewColumnDialog />
+                <NewColumnDialog board={props.board} columnGroup={props.columnGroup} columns={props.columns} />
                 <Button>Select view</Button>
                 <Button>View history</Button>
                 <Button href={'/board/' + props.board.id + '/settings'}>Settings</Button>

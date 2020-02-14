@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import BoardActions from '../component/BoardActions';
 import ColumnGroup from '../component/ColumnGroup';
 
 import firebase from '../../Firebase';
 
-function Boards(props) {
+function Board(props) {
     const [board, setBoard] = React.useState({});
     const [columns, setColumns] = React.useState([]);
     const [colGroup, setColGroup] = React.useState({});
+
+    let unsubscribeColGroup = null;
+    let unsubscribeCols = null;
 
     const db = firebase.firestore();
     
@@ -20,41 +23,55 @@ function Boards(props) {
         }
         boardUpdate.id = props.boardId;
         setBoard(boardUpdate);
-        
-        // let columnGroupQuery = db.collection('columnGroup').doc(boardUpdate.defaultColumnGroup);
-        // columnGroupQuery.onSnapshot(docSnapshot => {
-        //     const colGroupUpdate = docSnapshot.data();
-        //     if (!colGroupUpdate) {
-        //         return;
-        //     }
-        //     colGroupUpdate.id = boardUpdate.defaultColumnGroup;
-        //     setColGroup(colGroupUpdate);
-        // }, err => {
-        //     console.log('Error fetching column group: ' + JSON.stringify(err));
-        // });
-
-        let columnsQuery = db.collection('columns').where('boardRef', '==', props.boardId);
-        columnsQuery.onSnapshot(docSnapshot => {
-            let newColumns = [];
-            docSnapshot.docs.forEach(doc => {
-                let data = doc.data();
-                data.id = doc.id;
-                newColumns.push(data);
-            });
-            setColumns(newColumns);
-        }, err => {
-            console.log('Error fetching columns: ' + JSON.stringify(err));
-        });
     }, err => {
         console.log('Error fetching board: ' + JSON.stringify(err));
     });
+
+    let columnGroupQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').limit(1); // TODO: limit 1 is temporary - we'll move to querying this differently later
+    unsubscribeColGroup = columnGroupQuery.onSnapshot(docSnapshot => {
+        docSnapshot.forEach(colGroup => {
+            const colGroupUpdate = colGroup.data();
+            if (!colGroupUpdate) {
+                return;
+            }
+            colGroupUpdate.id = colGroup.id;
+            setColGroup(colGroupUpdate);
+
+            let columnsQuery = db.collection('boards').doc(props.boardId).collection('columnGroups').doc(colGroupUpdate.id).collection('columns');
+            unsubscribeCols = columnsQuery.onSnapshot(docSnapshot => {
+                let newColumns = [];
+                docSnapshot.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
+                    newColumns.push(data);
+                });
+
+                const columnRefs = colGroupUpdate.columnOrder;
+                newColumns.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
+
+                setColumns(newColumns);
+            }, err => {
+                console.log('Error fetching columns: ' + JSON.stringify(err));
+            });
+        });
+
+    }, err => {
+        console.log('Error fetching column group: ' + JSON.stringify(err));
+    });
+
+    useEffect(() => {
+        return () => {
+            unsubscribeColGroup && unsubscribeColGroup();
+            //unsubscribeCols && unsubscribeCols();
+        };
+    }, [unsubscribeColGroup, unsubscribeCols]);
     
     return (
         <div>
-            <BoardActions board={board} />
+            <BoardActions board={board} columnGroup={colGroup} columns={columns} />
             <ColumnGroup board={board} columnGroup={colGroup} columns={columns} />
         </div>
     );
 }
 
-export default Boards;
+export default Board;

@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
 import BoardCard from './BoardCard.js'
 
 import firebase from '../../Firebase';
 
-const useStyles = makeStyles(theme => ({
-    paper: {
-        padding: theme.spacing(2)
-    }
-}));
-
 function BoardCardCollection(props) {
     const [boards, setBoards] = useState([]);
-    const classes = useStyles();
     const user = JSON.parse(localStorage.getItem('user'));
 
     const db = firebase.firestore();
@@ -36,7 +28,7 @@ function BoardCardCollection(props) {
         return () => {
             unsubscribe();
         };
-    }, []);
+    }, [unsubscribe]);
 
     return (
         <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>

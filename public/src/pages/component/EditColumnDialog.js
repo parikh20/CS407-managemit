@@ -59,7 +59,7 @@ function EditColumnDialog() {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onclick={handleClose} color='secondary'>
+                    <Button onClick={handleClose} color='secondary'>
                         Delete column
                     </Button>
                     <Button onClick={handleClose} color='primary'>
