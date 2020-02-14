@@ -13,6 +13,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField';
 
 import firebase from '../../Firebase';
+import { auth, provider } from '../../Firebase.js'
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -57,6 +58,9 @@ function BoardSettings(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [inviteEmailError, setInviteEmailError] = React.useState(false);
     const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
+    const [shareSuccessSnackbar, setShareSuccessSnackbar] = React.useState(false);
+    const [shareSuccessMessage, setShareSuccessMessage] = React.useState('');
+
 
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -101,13 +105,31 @@ function BoardSettings(props) {
     };
 
     const inviteUser = (email) => {
-        console.log(email);
+        clearState();
         if (email === '') {
             setInviteEmailError(true);
             setInviteEmailHelperText('Email is required');
         } else if (!regexp.test(email)) {
             setInviteEmailError(true);
             setInviteEmailHelperText('Email must be properly formatted');
+        } else {
+            auth.fetchSignInMethodsForEmail(email).then(result => {
+                if (result.length >= 1) {
+                    db.collection('boards').doc(props.board.id).update({
+                        userRefs: firebase.firestore.FieldValue.arrayUnion(email)
+                    }).then(result => {
+                        setShareSuccessSnackbar(true);
+                        setShareSuccessMessage('Successfully invited ' + email);
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                } else if (result.length === 0) {
+                    setInviteEmailError(true);
+                    setInviteEmailHelperText('User does not exist!');
+                }
+            }).catch(err => {
+                console.log(err);
+            });
         }
     };
 
@@ -125,7 +147,6 @@ function BoardSettings(props) {
         setInviteEmailError(false);
         setInviteEmailHelperText('');
     }
-
     
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -161,7 +182,7 @@ function BoardSettings(props) {
                     </Grid>
                     <Grid item xs={12}>
                         <TextField id='inviteEmail' error={inviteEmailError} helperText={inviteEmailHelperText} label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
-                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value)} >Add user</Button>
+                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value.trim())} >Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
                         {props.board && <>
@@ -188,6 +209,11 @@ function BoardSettings(props) {
             <Snackbar open={successSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
                     Successfully saved board details!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={shareSuccessSnackbar} onClose={handleClose}>
+                <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
+                    {shareSuccessMessage}
                 </Alert>
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>
