@@ -17,7 +17,7 @@ const createBoard = async (name, description) => {
     
     return new Promise((res,rej) => {
         db.collection("boards").add({
-            owner: auth.currentUser.uid,
+            owner: auth.currentUser.email,
             label: name,
             description: description,
             defaultColumnGroup: "",
