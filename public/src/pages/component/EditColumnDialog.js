@@ -17,6 +17,8 @@ function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
+    const [verifyError, setVerifyError] = React.useState(false);
+    const [verifyHelperText, setVerifyHelperText] = React.useState('');
     
     const columnNames = [];
     for (let column of props.columns) {
@@ -24,6 +26,7 @@ function EditColumnDialog(props) {
     }
 
     const handleClickOpen = () => {
+        clearState();
         setOpen(true);
     };
 
@@ -53,10 +56,36 @@ function EditColumnDialog(props) {
             });
         }
     };
+
+    const handleSubmitDelete = () => {
+        const verifyName = document.getElementById('columnDeleteConfirmation').value;
+
+        clearState();
+
+        if (verifyName !== props.column.label) {
+            setVerifyError(true);
+            setVerifyHelperText('Column name does not match');
+        } else {
+            setOpen(false);
+
+            db.runTransaction(async (t) => {
+                const colGroup = await db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id);
+                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef != props.column.id);;
+                
+                await colGroup.collection('columns').doc(props.column.id).delete();
+
+                await colGroup.update({
+                    'columnOrder': columnOrder
+                });
+            });
+        }
+    }
     
     const clearState = () => {
         setNameError(false);
         setNameHelperText('');
+        setVerifyError(false);
+        setVerifyHelperText('');
     };
 
 
@@ -91,18 +120,20 @@ function EditColumnDialog(props) {
                     <TextField
                         margin='dense'
                         id='columnDeleteConfirmation'
-                        label='Column name'
+                        label='Column name confirmation'
                         variant='outlined'
                         fullWidth
                         color='secondary'
-                        InputLabelProps={{shrink: true}} 
+                        InputLabelProps={{shrink: true}}
+                        error={verifyError} 
+                        helperText={verifyHelperText}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color='secondary'>
+                    <Button onClick={handleSubmitDelete} color='secondary'>
                         Delete column
                     </Button>
                     <Button onClick={handleSubmitChanges} color='primary'>

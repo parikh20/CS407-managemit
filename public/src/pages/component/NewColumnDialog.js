@@ -14,7 +14,7 @@ function NewColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
-    
+
     const columnNames = [];
     for (let column of props.columns) {
         columnNames.push(column.label);
