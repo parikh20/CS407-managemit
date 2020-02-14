@@ -23,6 +23,7 @@ function NewColumnDialog(props) {
     }
 
     const handleClickOpen = () => {
+        clearState();
         setOpen(true);
     };
 
@@ -48,7 +49,7 @@ function NewColumnDialog(props) {
             setOpen(false);
 
             db.runTransaction(async (t) => {
-                let columnGroupRef = await db.collection('boards').doc(props.board.id).collection('columnGroups').doc(props.columnGroup.id);
+                let columnGroupRef = await db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id);
                 let colRef = await columnGroupRef.collection('columns').add({
                     label: columnName,
                     taskRefs: [],        
