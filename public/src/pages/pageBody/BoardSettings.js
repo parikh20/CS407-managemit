@@ -16,6 +16,10 @@ class BoardSettings extends React.Component {
     }
 
     loadBoard() {
+        if (this.boardSub) {
+            this.boardSub();
+        }
+        
         this.boardSub = db.collection('boards').doc(this.props.boardId).onSnapshot((boardRef) => {
             let data = boardRef.data();
             data.id = boardRef.id;

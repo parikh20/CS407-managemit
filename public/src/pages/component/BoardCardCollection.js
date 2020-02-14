@@ -20,6 +20,10 @@ class BoardCardCollection extends React.Component {
     }
 
     loadBoards(user) {
+        if (this.boardsSub) {
+            this.boardsSub();
+        }
+        
         this.boardsSub = db.collection('boards').where('userRefs', 'array-contains', user.email).orderBy('label', 'asc').onSnapshot((boardsRefs) => {
             this.setState({boardsRefs: boardsRefs.docs.map(boardRef => {
                 let data = boardRef.data();
