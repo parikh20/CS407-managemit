@@ -146,6 +146,8 @@ function BoardSettings(props) {
         setErrorSnackbar(false);
         setInviteEmailError(false);
         setInviteEmailHelperText('');
+        setShareSuccessMessage('');
+        setShareSuccessSnackbar(false);
     }
     
     const handleClose = (event, reason) => {
