@@ -22,7 +22,7 @@ const createBoard = async (name, description) => {
             description: description,
             defaultColumnGroup: "",
             taskRefs: [],
-            userRefs: [auth.currentUser.uid]
+            userRefs: [auth.currentUser.email]
         }).then((boardRef) => {
             return boardRef.collection("columnGroups").add({
                 label: "Default Group"
@@ -53,7 +53,9 @@ function NewBoardDialog() {
     
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
-    
+    const [descriptionError, setDescriptionError] = React.useState(false);
+    const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -73,7 +75,10 @@ function NewBoardDialog() {
             setNameHelperText('Board name is required');
         } else if (name.length > 50) {
             setNameError(true);
-            setNameHelperText('Board name must be less than 50 characters')
+            setNameHelperText('Board name must be less than 50 characters long')
+        } else if (description.length > 150) {
+            setDescriptionError(true);
+            setDescriptionHelperText('Board description must be greater than 150 characters long')
         } else {
             try {
                 setOpen(false);
@@ -89,6 +94,8 @@ function NewBoardDialog() {
     const clearState = () => {
         setNameError(false);
         setNameHelperText('');
+        setDescriptionError(false);
+        setDescriptionHelperText('');
     };
     
     return (
@@ -120,6 +127,8 @@ function NewBoardDialog() {
                     variant='outlined'
                     multiline
                     fullWidth
+                    error={descriptionError}
+                    helperText={descriptionHelperText}
                     />
                 </DialogContent>
                 <DialogActions>

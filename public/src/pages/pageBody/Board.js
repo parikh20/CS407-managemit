@@ -33,7 +33,6 @@ class Board extends React.Component {
         if(this.colGroupSub) {
             this.colGroupSub();
         }
-
         const collection = this.state.boardRef.ref.collection("columnGroups");
 
         // If a parameter was supplied to the function use it, otherwise use default

@@ -33,7 +33,10 @@ function ResetPasswordDialog() {
 
     function sendPasswordResetEmail(email) {
         clearState();
-        if (!regexp.test(email)) {
+        if (email === '') {
+            setResetPasswordEmailError(true);
+            setResetPasswordEmailHelperText('Email is required');
+        } else if (!regexp.test(email)) {
             setResetPasswordEmailError(true);
             setResetPasswordEmailHelperText('Email must be properly formatted');
         } else {

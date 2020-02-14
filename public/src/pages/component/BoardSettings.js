@@ -55,6 +55,10 @@ function BoardSettings(props) {
     const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
+    const [inviteEmailError, setInviteEmailError] = React.useState(false);
+    const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
+
+    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleSettingsSubmit = () => {
         clearState();
@@ -66,18 +70,21 @@ function BoardSettings(props) {
 
         if (name === props.board.label && description === props.board.description) {
             setNameError(true);
-            setNameHelperText('Name must be changed to save!');
+            setNameHelperText('Board name must be changed to save!');
             setDescriptionError(true);
-            setDescriptionHelperText('Description must be changed to save!');
+            setDescriptionHelperText('Board description must be changed to save!');
         } else if (name === '') {
             setNameError(true);
-            setNameHelperText('Name cannot be empty!');
+            setNameHelperText('Board name cannot be empty!');
         } else if (name.length > 50) {
             setNameError(true);
-            setNameHelperText('Name must be less than 50 characters long!');
+            setNameHelperText('Board name must be less than 50 characters long!');
         } else if (description.length > 150) {
             setDescriptionError(true);
-            setDescriptionHelperText('Description must be less than 150 characters long!');
+            setDescriptionHelperText('Board description must be less than 150 characters long!');
+        } else if (description === '') {
+            setDescriptionError(true);
+            setDescriptionHelperText('Board description cannot be empty!');
         } else {
             db.collection('boards').doc(props.board.id).update(
                 {
@@ -93,6 +100,17 @@ function BoardSettings(props) {
         }
     };
 
+    const inviteUser = (email) => {
+        console.log(email);
+        if (email === '') {
+            setInviteEmailError(true);
+            setInviteEmailHelperText('Email is required');
+        } else if (!regexp.test(email)) {
+            setInviteEmailError(true);
+            setInviteEmailHelperText('Email must be properly formatted');
+        }
+    }
+
     function clearState() {
         setNameError(false);
         setNameHelperText('');
@@ -100,6 +118,8 @@ function BoardSettings(props) {
         setDescriptionHelperText('');
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
+        setInviteEmailError(false);
+        setInviteEmailHelperText('');
     }
 
     
@@ -136,8 +156,8 @@ function BoardSettings(props) {
                         <h2>Collaborators</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
-                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}}>Add user</Button>
+                        <TextField id='inviteEmail' error={inviteEmailError} helperText={inviteEmailHelperText} label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
+                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value)} >Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
                         <Chip label='John Doe' color='primary' className={classes.chip} />

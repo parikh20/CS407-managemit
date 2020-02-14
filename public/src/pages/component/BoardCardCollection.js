@@ -11,7 +11,7 @@ function BoardCardCollection(props) {
     const user = JSON.parse(localStorage.getItem('user'));
 
     const db = firebase.firestore();
-    let query = db.collection('boards').where('userRefs', 'array-contains', user.uid).orderBy('label', 'asc');
+    let query = db.collection('boards').where('userRefs', 'array-contains', user.email).orderBy('label', 'asc');
     let unsubscribe = query.onSnapshot(querySnapshot => {
         let newBoards = [];
         querySnapshot.docs.forEach(doc => {
