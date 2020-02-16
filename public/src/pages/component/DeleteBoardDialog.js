@@ -1,4 +1,6 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,18 +8,43 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { db } from '../../Firebase';
 
 
-function DeleteBoardDialog() {
+function DeleteBoardDialog(props) {
     const [open, setOpen] = React.useState(false);
-
+    const [deleteDisable, setDeleteDisable] = React.useState(true);
+    const history = useHistory();
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    const handleClose = () => {
+    const handleClose = (boardName) => {
         setOpen(false);
+        console.log(boardName)
+        if (boardName === props.board.label) {
+            const boardId = props.board.id
+            const boardRef = db.collection("boards").doc(boardId)
+            boardRef.delete().then(function() {
+                history.push("/board")
+                console.log("Board deleted")
+            }).catch((error) => {
+                console.error(error)
+            })
+        } else {
+
+        }
+        
     };
+
+    const inputListener = (event) => {
+        console.log(event.target.value)
+        if (event.target.value === props.board.label) {
+            setDeleteDisable(false);
+        } else {
+            setDeleteDisable(true);
+        }
+    }
 
     return (
         <div>
@@ -30,6 +57,7 @@ function DeleteBoardDialog() {
                     Warning: this cannot be undone.
                     </DialogContentText>
                     <TextField
+                        onChange={inputListener}
                         autoFocus
                         margin='dense'
                         id='confirmDeleteBoard'
@@ -42,7 +70,9 @@ function DeleteBoardDialog() {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color='secondary'>
+                    <Button onClick={() =>
+                        handleClose(document.getElementById("confirmDeleteBoard").value)
+                        } color='secondary' disabled={deleteDisable}>
                         Delete board
                     </Button>
                 </DialogActions>
