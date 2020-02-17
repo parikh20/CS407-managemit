@@ -2,7 +2,8 @@
 
 Week 2: This week I plan to refine some functionality I implemented last week, in particular parts
 of the UI need to be cleaned up and made more responsive to user input. I then plan to shift to
-implementing parts of the board settings page.
+implementing parts of the board settings page. I also worked on column functionality, adding the
+ability to add, rename, and delete columns.
 
 Week 1:
 This week I focused on learning the tools I will be using for the project. I have not worked with
