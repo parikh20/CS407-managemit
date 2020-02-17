@@ -1,12 +1,13 @@
 import React from 'react';
 
-import BoardBreadcrumbs from './BoardBreadcrumbs.js';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Grid from '@material-ui/core/Grid';
 
-import EditTaskDialog from './EditTaskDialog.js';
-import NewColumnDialog from './NewColumnDialog.js';
+import BoardBreadcrumbs from './BoardBreadcrumbs';
+import EditTaskDialog from './EditTaskDialog';
+import NewColumnDialog from './NewColumnDialog';
+import SelectViewDialog from './SelectViewDialog'
 
 function BoardActions(props) {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -20,9 +21,10 @@ function BoardActions(props) {
                 <ButtonGroup size='small'>
                     <EditTaskDialog />
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
-                    <Button>Select view</Button>
+                    <Button>New view</Button>
+                    <SelectViewDialog />
                     <Button>View calendar</Button>
-                    <Button>View history</Button>
+                    <Button href={'/board/' + props.boardRef.id + '/history'}>View history</Button>
                     {props.board.owner === user.email && (
                         <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
                     )}
