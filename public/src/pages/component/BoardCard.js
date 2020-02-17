@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
 function BoardCard(props) {
     const classes = useStyles();
     const history = useHistory();
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const boardPath = '/board/' + props.board.id;
     const goToBoardPage = () => {
@@ -24,12 +25,19 @@ function BoardCard(props) {
     return (
         <Grid item xs={3}>
             <Paper className={classes.paper} style={{cursor: 'pointer'}} onClick={goToBoardPage}>
-                <Typography variant='h6' component='h2' style={{textAlign: 'center'}} color='inherit'>
+                <Typography variant='h6' component='h2' style={{textAlign: 'center'}}>
                     {props.board.label}
                 </Typography>
-                <Typography variant='body2' component='p'>
-                    {props.board.description}
+                <Typography variant='body2' component='p' size='small' style={{textAlign: 'center'}}>
+                    {props.board.owner === user.email ? 'Owner - ' : ''}
+                    {props.board.userRefs.length} collaborator{props.board.userRefs.length > 1 ? 's' : ''}
                 </Typography>
+                {props.board.description !== '' && (
+                    <Typography variant='body2' component='p'>
+                        <br />
+                        {props.board.description}
+                    </Typography>
+                )}
             </Paper>
         </Grid>
     );
