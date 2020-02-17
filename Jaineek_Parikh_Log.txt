@@ -5,4 +5,4 @@ Week 2:
     Working on the Board Settings UI and functionality
     
  Week 3:
-    Working on board history functionality
+    Working on board history functionality. Also going to work on automated testing for previous user stories.
