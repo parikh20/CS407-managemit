@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 
 import BoardCard from './BoardCard.js'
 
-import { db, auth, currentUser } from '../../Firebase';
+import { db, currentUser } from '../../Firebase';
 
 class BoardCardCollection extends React.Component {
 

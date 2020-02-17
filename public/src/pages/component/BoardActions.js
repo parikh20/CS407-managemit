@@ -21,6 +21,7 @@ function BoardActions(props) {
                     <EditTaskDialog />
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
                     <Button>Select view</Button>
+                    <Button>View calendar</Button>
                     <Button>View history</Button>
                     {props.board.owner === user.email && (
                         <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>

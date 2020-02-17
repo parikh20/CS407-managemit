@@ -32,12 +32,10 @@ function BoardCard(props) {
                     {props.board.owner === user.email ? 'Owner - ' : ''}
                     {props.board.userRefs.length} collaborator{props.board.userRefs.length > 1 ? 's' : ''}
                 </Typography>
-                {props.board.description !== '' && (
-                    <Typography variant='body2' component='p'>
-                        <br />
-                        {props.board.description}
-                    </Typography>
-                )}
+                <Typography variant='body2' component='p'>
+                    <br />
+                    {props.board.description === '' ? '(No description provided)' : props.board.description}
+                </Typography>
             </Paper>
         </Grid>
     );
