@@ -80,7 +80,6 @@ function NewColumnDialog(props) {
                         <Grid item xs={12}>
                             <TextField
                                 autoFocus
-                                margin='dense'
                                 id='columnName'
                                 label='Column name'
                                 variant='outlined'

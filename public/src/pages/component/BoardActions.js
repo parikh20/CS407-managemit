@@ -8,6 +8,7 @@ import BoardBreadcrumbs from './BoardBreadcrumbs';
 import EditTaskDialog from './EditTaskDialog';
 import NewColumnDialog from './NewColumnDialog';
 import SelectViewDialog from './SelectViewDialog'
+import NewViewDialog from './NewViewDialog';
 import {auth} from "../../Firebase";
 
 function BoardActions(props) {
@@ -22,8 +23,8 @@ function BoardActions(props) {
                 <ButtonGroup size='small'>
                     <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} />
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
-                    <Button>New view</Button>
-                    <SelectViewDialog />
+                    <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                    <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
                     <Button>View calendar</Button>
                     <Button href={'/board/' + props.boardRef.id + '/history'}>View history</Button>
                     {props.board.owner === user.email && (
