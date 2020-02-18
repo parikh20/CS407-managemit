@@ -11,26 +11,26 @@ import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
-
-import { db } from '../../Firebase';
 
 const useStyles = makeStyles(theme => ({
-    chips: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    chip: {
-      margin: 2,
+    select: {
+        marginTop: 2
     }
-  }));
+}));
 
 function EditTaskDialog(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState("");
     const [desc, setDesc] = React.useState("");
-    const [column, setColumn] = React.useState("");
+    const [columns, setColumns] = React.useState([]);
+    const [date, setDate] = React.useState("");
+    const [users, setUsers] = React.useState([]);
+
+    const errors = {
+        title: null,
+        columns: null
+    }
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -40,7 +40,32 @@ function EditTaskDialog(props) {
         setOpen(false);
     };
 
+    const handleSubmit = () => {
+        if(!title.length) {
+            errors.title = "Please provide a title for the task!";
+        }
+        if(!columns.length) {
+            errors.columns = "Please select a column"
+        }
+
+        if(!errors.title && !errors.columns) {
+            props.boardRef.ref.collection("tasks").add({
+                title: title,
+                desc: desc,
+                columns: columns.map((c) => c.id),
+                date: date,
+                users: users
+            }).catch((err) => {
+                throw err;
+            });
+            setOpen(false);
+        } else {
+            console.log(errors);
+        }
+    }
+
     const handleTitleChange = (event) => {
+        errors.title = null;
         setTitle(event.target.value)
     }
 
@@ -48,8 +73,17 @@ function EditTaskDialog(props) {
         setDesc(event.target.value)
     }
 
-    const handleColumnChange = (event) => {
-        console.log(event.target.value);
+    const handleColumnsChange = (event) => {
+        errors.columns = null;
+        setColumns(event.target.value);
+    }
+
+    const handleDateChange = (event) => {
+        setDate(event.target.value);
+    }
+
+    const handleUsersChange = (event) => {
+        setUsers(event.target.value);
     }
 
     return (
@@ -94,8 +128,10 @@ function EditTaskDialog(props) {
                                 label="Columns"
                                 multiple
                                 fullWidth
-                                value={props.columns}
+                                value={columns}
+                                onChange={handleColumnsChange}
                                 input={<Input/>}
+                                style={{marginTop: 12}}
                             >
                                {props.columns.map((column) => (
                                    <MenuItem key={column.id} value={column}>
@@ -103,15 +139,6 @@ function EditTaskDialog(props) {
                                    </MenuItem>
                                ))} 
                             </Select>
-                            {/* <TextField
-                                margin='dense'
-                                id='taskColumns'
-                                label='Columns'
-                                variant='outlined'
-                                onChange={handleColumnChange}
-                                fullWidth
-                                InputLabelProps={{shrink: true}}
-                            /> */}
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
@@ -121,6 +148,8 @@ function EditTaskDialog(props) {
                                 type='date'
                                 variant='outlined'
                                 fullWidth
+                                value={date}
+                                onChange={handleDateChange}
                                 InputLabelProps={{shrink: true}}
                             />
                         </Grid>
@@ -136,15 +165,22 @@ function EditTaskDialog(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
-                                margin='dense'
-                                id='taskUsers'
-                                label='Users'
-                                type='text'
-                                variant='outlined'
+                            <Select
+                                id="taskUsers"
+                                label="Users"
+                                multiple
                                 fullWidth
-                                InputLabelProps={{shrink: true}}
-                            />
+                                value={users}
+                                onChange={handleUsersChange}
+                                input={<Input/>}
+                                style={{marginTop: 12}}
+                            >
+                               {props.board.userRefs && props.board.userRefs.map((user) => (
+                                   <MenuItem key={user} value={user}>
+                                       {user}
+                                   </MenuItem>
+                               ))} 
+                            </Select>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -182,7 +218,7 @@ function EditTaskDialog(props) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color='primary'>
+                    <Button onClick={handleSubmit} color='primary'>
                         Create task
                     </Button>
                 </DialogActions>

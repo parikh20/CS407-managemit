@@ -7,9 +7,10 @@ import Grid from '@material-ui/core/Grid';
 
 import EditTaskDialog from './EditTaskDialog.js';
 import NewColumnDialog from './NewColumnDialog.js';
+import {auth} from "../../Firebase";
 
 function BoardActions(props) {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = auth.currentUser;
 
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
@@ -18,11 +19,11 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    <EditTaskDialog columns={props.columns} />
-                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
+                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} />
+                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
                     <Button>Select view</Button>
                     <Button>View history</Button>
-                    {props.board.owner === user.email && (
+                    {user && props.board.owner === user.email && (
                         <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
                     )}
                 </ButtonGroup>
