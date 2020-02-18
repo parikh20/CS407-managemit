@@ -17,8 +17,7 @@ function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
-    const [verifyError, setVerifyError] = React.useState(false);
-    const [verifyHelperText, setVerifyHelperText] = React.useState('');
+    const [deleteDisable, setDeleteDisable] = React.useState(true);
     
     const columnNames = [];
     for (let column of props.columns) {
@@ -59,13 +58,7 @@ function EditColumnDialog(props) {
 
     const handleSubmitDelete = () => {
         const verifyName = document.getElementById('columnDeleteConfirmation').value;
-
-        clearState();
-
-        if (verifyName !== props.column.label) {
-            setVerifyError(true);
-            setVerifyHelperText('Column name does not match');
-        } else {
+        if (verifyName === props.column.label) {
             setOpen(false);
 
             db.runTransaction(async (t) => {
@@ -79,15 +72,20 @@ function EditColumnDialog(props) {
                 });
             });
         }
-    }
+    };
     
     const clearState = () => {
         setNameError(false);
         setNameHelperText('');
-        setVerifyError(false);
-        setVerifyHelperText('');
     };
 
+    const inputListener = (event) => {
+        if (event.target.value === props.column.label) {
+            setDeleteDisable(false);
+        } else {
+            setDeleteDisable(true);
+        }
+    };
 
     return (
         <div style={{display: 'inline'}}>
@@ -124,16 +122,15 @@ function EditColumnDialog(props) {
                         variant='outlined'
                         fullWidth
                         color='secondary'
+                        onChange={inputListener}
                         InputLabelProps={{shrink: true}}
-                        error={verifyError} 
-                        helperText={verifyHelperText}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmitDelete} color='secondary'>
+                    <Button onClick={handleSubmitDelete} disabled={deleteDisable} color='secondary'>
                         Delete column
                     </Button>
                     <Button onClick={handleSubmitChanges} color='primary'>

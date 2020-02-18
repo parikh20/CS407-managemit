@@ -15,36 +15,29 @@ function DeleteBoardDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [deleteDisable, setDeleteDisable] = React.useState(true);
     const history = useHistory();
+
     const handleClickOpen = () => {
         setOpen(true);
     };
 
     const handleClose = (boardName) => {
         setOpen(false);
-        console.log(boardName)
         if (boardName === props.board.label) {
-            const boardId = props.board.id
-            const boardRef = db.collection("boards").doc(boardId)
+            const boardId = props.board.id;
+            const boardRef = db.collection("boards").doc(boardId);
             boardRef.delete().then(function() {
                 history.push("/boards")
-                console.log("Board deleted")
-            }).catch((error) => {
-                console.error(error)
-            })
-        } else {
-
+            });
         }
-        
     };
 
     const inputListener = (event) => {
-        console.log(event.target.value)
         if (event.target.value === props.board.label) {
             setDeleteDisable(false);
         } else {
             setDeleteDisable(true);
         }
-    }
+    };
 
     return (
         <div>
