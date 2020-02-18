@@ -8,9 +8,10 @@ import BoardBreadcrumbs from './BoardBreadcrumbs';
 import EditTaskDialog from './EditTaskDialog';
 import NewColumnDialog from './NewColumnDialog';
 import SelectViewDialog from './SelectViewDialog'
+import {auth} from "../../Firebase";
 
 function BoardActions(props) {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = auth.currentUser;
 
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
@@ -19,8 +20,8 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    <EditTaskDialog />
-                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns} />
+                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} />
+                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
                     <Button>New view</Button>
                     <SelectViewDialog />
                     <Button>View calendar</Button>
