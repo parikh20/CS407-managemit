@@ -22,6 +22,12 @@ class BoardSettings extends React.Component {
         
         this.boardSub = db.collection('boards').doc(this.props.boardId).onSnapshot((boardRef) => {
             let data = boardRef.data();
+
+            // fix for erroring on board delete
+            if (data === undefined) {
+                return;
+            }
+            
             data.id = boardRef.id;
             this.setState({board: data});
         });

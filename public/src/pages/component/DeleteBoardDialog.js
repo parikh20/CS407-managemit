@@ -26,7 +26,7 @@ function DeleteBoardDialog(props) {
             const boardId = props.board.id
             const boardRef = db.collection("boards").doc(boardId)
             boardRef.delete().then(function() {
-                history.push("/board")
+                history.push("/boards")
                 console.log("Board deleted")
             }).catch((error) => {
                 console.error(error)
