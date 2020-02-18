@@ -12,9 +12,7 @@ import {auth, db} from '../../Firebase';
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
-const createBoard = async (name, description) => {
-    let defaultColumnPromises = [];
-    
+const createBoard = async (name, description) => {    
     return new Promise((res,rej) => {
         db.collection("boards").add({
             owner: auth.currentUser.email,

@@ -1,11 +1,11 @@
 import React from 'react';
 
 import BoardSubpageBreadcrumbs from '../component/BoardSubpageBreadcrumbs';
-import BoardSettingsComponent from '../component/BoardSettings';
+import BoardHistoryComponent from '../component/BoardHistoryComponent';
 
 import { db } from '../../Firebase';
 
-class BoardSettings extends React.Component {
+class BoardHistory extends React.Component {
 
     boardSub;
 
@@ -34,11 +34,11 @@ class BoardSettings extends React.Component {
     render() {
         return (
             <div>
-                <BoardSubpageBreadcrumbs currentPageName='Settings' board={this.state.board ? this.state.board : {}} />
-                <BoardSettingsComponent board={this.state.board ? this.state.board : {}} />
+                <BoardSubpageBreadcrumbs currentPageName='History' board={this.state.board ? this.state.board : {}} />
+                <BoardHistoryComponent board={this.state.board} />
             </div>
         );
     }
 }
 
-export default BoardSettings;
+export default BoardHistory;

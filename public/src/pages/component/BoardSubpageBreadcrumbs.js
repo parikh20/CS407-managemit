@@ -4,7 +4,7 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 
-function BoardSettingsBreadcrumbs(props) {
+function BoardSubpageBreadcrumbs(props) {
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
             <Breadcrumbs aria-label='breadcrumbs'>
@@ -15,11 +15,11 @@ function BoardSettingsBreadcrumbs(props) {
                     {props.board.label}
                 </Link>
                 <Typography color='textPrimary'>
-                    Settings
+                    {props.currentPageName}
                 </Typography>
             </Breadcrumbs>
         </Grid>
     );
 }
 
-export default BoardSettingsBreadcrumbs;
+export default BoardSubpageBreadcrumbs;

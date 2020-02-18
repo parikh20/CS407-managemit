@@ -11,8 +11,16 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Switch from '@material-ui/core/Switch';
 
 import firebase from '../../Firebase';
+import { db, auth } from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -47,8 +55,6 @@ const useStyles = makeStyles(theme => ({
 function BoardSettings(props) {
     const classes = useStyles();
 
-    const db = firebase.firestore();
-
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
     const [descriptionError, setDescriptionError] = React.useState(false);
@@ -57,6 +63,8 @@ function BoardSettings(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [inviteEmailError, setInviteEmailError] = React.useState(false);
     const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
+    const [successMessage, setSuccessMessage] = React.useState('');
+
 
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -68,12 +76,7 @@ function BoardSettings(props) {
         const name = document.getElementById('boardName').value.trim();
         const description = document.getElementById('boardDescription').value.trim();
 
-        if (name === props.board.label && description === props.board.description) {
-            setNameError(true);
-            setNameHelperText('Board name must be changed to save!');
-            setDescriptionError(true);
-            setDescriptionHelperText('Board description must be changed to save!');
-        } else if (name === '') {
+        if (name === '') {
             setNameError(true);
             setNameHelperText('Board name cannot be empty!');
         } else if (name.length > 50) {
@@ -96,23 +99,49 @@ function BoardSettings(props) {
                 console.log(err);
                 return;
             });
+            setSuccessMessage('Successfully saved board details!')
             setSuccessSnackbar(true);
         }
     };
 
     const inviteUser = (email) => {
-        console.log(email);
+        clearState();
         if (email === '') {
             setInviteEmailError(true);
             setInviteEmailHelperText('Email is required');
         } else if (!regexp.test(email)) {
             setInviteEmailError(true);
             setInviteEmailHelperText('Email must be properly formatted');
+        } else {
+            auth.fetchSignInMethodsForEmail(email).then(result => {
+                if (result.length >= 1) {
+                    db.collection('boards').doc(props.board.id).update({
+                        userRefs: firebase.firestore.FieldValue.arrayUnion(email)
+                    }).then(result => {
+                        setSuccessSnackbar(true);
+                        setSuccessMessage('Successfully invited ' + email + '!');
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                } else if (result.length === 0) {
+                    setInviteEmailError(true);
+                    setInviteEmailHelperText('User does not exist!');
+                }
+            }).catch(err => {
+                console.log(err);
+            });
         }
     };
 
     const deleteUser = (email) => {
-        console.log('Got email:' + email);
+        db.collection('boards').doc(props.board.id).update({
+            userRefs: firebase.firestore.FieldValue.arrayRemove(email)
+        }).then(result => {
+            setSuccessSnackbar(true);
+            setSuccessMessage('Successfully removed ' + email + '!');
+        }).catch(err => {
+            console.log(err);
+        });
     };
 
     function clearState() {
@@ -125,7 +154,6 @@ function BoardSettings(props) {
         setInviteEmailError(false);
         setInviteEmailHelperText('');
     }
-
     
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -147,7 +175,7 @@ function BoardSettings(props) {
                         <TextField id='boardName' label='Name' error={nameError} helperText={nameHelperText} variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} key={props.board.label} defaultValue={props.board.label} />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField id='boardDescription' label='Description' error={descriptionError} helperText={descriptionHelperText} variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
+                        <TextField id='boardDescription' label='Description (optional)' error={descriptionError} helperText={descriptionHelperText} variant='outlined' className={classes.textField} multiline rows={5} InputLabelProps={{shrink: true}} key={props.board.description} defaultValue={props.board.description} />
                     </Grid>
                     <Grid item xs={12}>
                         <Button variant='contained' color='primary' onClick={handleSettingsSubmit}>Save changes</Button>
@@ -161,17 +189,44 @@ function BoardSettings(props) {
                     </Grid>
                     <Grid item xs={12}>
                         <TextField id='inviteEmail' error={inviteEmailError} helperText={inviteEmailHelperText} label='Add a user by email address' type='email' variant='outlined' className={classes.textField} style={{width: 70 + '%'}}/>
-                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value)} >Add user</Button>
+                        <Button variant='contained' color='primary' style={{height: 100 + '%', width: 10 + '%'}} onClick={() => inviteUser(document.getElementById('inviteEmail').value.trim())} >Add user</Button>
                     </Grid>
                     <Grid item xs={12}>
-                        {props.board && <>
-                            <Chip label={props.board.owner} color='primary' className={classes.chip} />
-                        </>}
-                        {props.board && props.board.userRefs && <>
-                            {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
-                                <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
-                            ))}
-                        </>}
+                        <TableContainer style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}}>
+                            <Table size='small'>
+                                <TableHead>
+                                    <TableCell>Role</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell align='right'>Can edit</TableCell>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell>Owner</TableCell>
+                                        <TableCell>
+                                            {props.board && <>
+                                                <Chip label={props.board.owner} color='primary' className={classes.chip} />
+                                            </>}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <Switch checked={true} disabled={true} color='primary' />
+                                        </TableCell>
+                                    </TableRow>
+                                    {props.board && props.board.userRefs && <>
+                                        {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => <>
+                                            <TableRow>
+                                                <TableCell>Member</TableCell>
+                                                <TableCell>
+                                                    <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
+                                                </TableCell>
+                                                <TableCell align='right'>
+                                                    <Switch checked={true} color='primary' />
+                                                </TableCell>
+                                            </TableRow>
+                                        </>)}
+                                    </>}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Grid>
                 </Grid>
             </Paper>
@@ -187,7 +242,7 @@ function BoardSettings(props) {
             </Paper>
             <Snackbar open={successSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
-                    Successfully saved board details!
+                    {successMessage}
                 </Alert>
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>

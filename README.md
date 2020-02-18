@@ -2,6 +2,8 @@
 
 ### Meeting log
 
+2/17 - Sprint 1 week 2. Another planning meeting. Pretty much the same as the others. We re-planned some tasks this week, as we had worked ahead of plans slightly in some and not completed others. Otherwise the past week went very well and we are on track for the sprint.
+
 2/10 - Sprint 1 week 2. In this meeting we reviewed work done in the previous week, and then discussed what each team member planned on working on for the next sprint. We also discussed issues we had run into on the previous sprint, design issues, and longer term planning.
 
 2/5 - Sprint 1 week 1. In this meeting we discussed what each team member planned on working on for the next week. We also discussed progress made in learning the tools we needed for the project.
