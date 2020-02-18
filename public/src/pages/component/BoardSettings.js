@@ -236,7 +236,7 @@ function BoardSettings(props) {
                         <h2>Here be dragons</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <DeleteBoardDialog />
+                        <DeleteBoardDialog board={props.board}/>
                     </Grid>
                 </Grid>
             </Paper>

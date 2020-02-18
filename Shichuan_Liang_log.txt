@@ -4,3 +4,4 @@ Setting up dev env includes: Firebase functions, cloud storage as React app.
 Week 2:
 Finished signing up function.
 Created backend API to add column.
+Finished deleting board.
