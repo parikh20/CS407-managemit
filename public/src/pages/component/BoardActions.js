@@ -11,7 +11,7 @@ import SelectViewDialog from './SelectViewDialog'
 import {auth} from "../../Firebase";
 
 function BoardActions(props) {
-    const user = auth.currentUser;
+    const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
 
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
@@ -20,7 +20,7 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} />
+                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} />
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
                     <Button>New view</Button>
                     <SelectViewDialog />

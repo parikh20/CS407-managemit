@@ -11,6 +11,9 @@ import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(theme => ({
     select: {
@@ -23,16 +26,17 @@ function EditTaskDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState("");
     const [desc, setDesc] = React.useState("");
-    const [columns, setColumns] = React.useState([]);
+    const [columns, setColumns] = React.useState({});
     const [date, setDate] = React.useState("");
     const [users, setUsers] = React.useState([]);
 
-    const errors = {
-        title: null,
-        columns: null
-    }
+    const [titleError, setTitleError] = React.useState(false);
+    const [titleHelperText, setTitleHelperText] = React.useState('');
+    const [columnError, setColumnError] = React.useState(false);
+    const [columnHelperText, setColumnHelperText] = React.useState('');
 
     const handleClickOpen = () => {
+        clearState();
         setOpen(true);
     };
 
@@ -41,14 +45,21 @@ function EditTaskDialog(props) {
     };
 
     const handleSubmit = () => {
-        if(!title.length) {
-            errors.title = "Please provide a title for the task!";
+        clearState();
+        let hasError = false;
+
+        if (!title.length) {
+            hasError = true;
+            setTitleError(true);
+            setTitleHelperText("Please provide a title for the task!");
         }
-        if(!columns.length) {
-            errors.columns = "Please select a column"
+        if (!columns.length) {
+            hasError = true;
+            setColumnError(true);
+            setColumnHelperText("Please select at least one column");
         }
 
-        if(!errors.title && !errors.columns) {
+        if (!hasError) {
             props.boardRef.ref.collection("tasks").add({
                 title: title,
                 desc: desc,
@@ -59,32 +70,38 @@ function EditTaskDialog(props) {
                 throw err;
             });
             setOpen(false);
-        } else {
-            console.log(errors);
         }
     }
 
     const handleTitleChange = (event) => {
-        errors.title = null;
         setTitle(event.target.value)
-    }
+    };
 
     const handleDescChange = (event) => {
         setDesc(event.target.value)
-    }
+    };
 
     const handleColumnsChange = (event) => {
-        errors.columns = null;
-        setColumns(event.target.value);
-    }
+        let updatedColumns = Object.assign({}, columns);
+        columns[event.target.name] = event.target.value;
+        setColumns(updatedColumns);
+        console.log(columns);
+    };
 
     const handleDateChange = (event) => {
         setDate(event.target.value);
-    }
+    };
 
     const handleUsersChange = (event) => {
         setUsers(event.target.value);
-    }
+    };
+
+    const clearState = () => {
+        setTitleError(false);
+        setTitleHelperText('');
+        setColumnError(false);
+        setColumnHelperText('');
+    };
 
     return (
         <div>
@@ -92,9 +109,13 @@ function EditTaskDialog(props) {
                 <Button onClick={handleClickOpen}>New task</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>New task</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                            <Typography variant='h6' component='h2'>
+                                Basic details
+                            </Typography>
+                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 autoFocus
@@ -106,6 +127,8 @@ function EditTaskDialog(props) {
                                 value={title}
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
+                                error={titleError}
+                                helperText={titleHelperText}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -121,24 +144,6 @@ function EditTaskDialog(props) {
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
                             />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Select
-                                id="taskColumns"
-                                label="Columns"
-                                multiple
-                                fullWidth
-                                value={columns}
-                                onChange={handleColumnsChange}
-                                input={<Input/>}
-                                style={{marginTop: 12}}
-                            >
-                               {props.columns.map((column) => (
-                                   <MenuItem key={column.id} value={column}>
-                                       {column.label}
-                                   </MenuItem>
-                               ))} 
-                            </Select>
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
@@ -164,24 +169,6 @@ function EditTaskDialog(props) {
                                 InputLabelProps={{shrink: true}}
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <Select
-                                id="taskUsers"
-                                label="Users"
-                                multiple
-                                fullWidth
-                                value={users}
-                                onChange={handleUsersChange}
-                                input={<Input/>}
-                                style={{marginTop: 12}}
-                            >
-                               {props.board.userRefs && props.board.userRefs.map((user) => (
-                                   <MenuItem key={user} value={user}>
-                                       {user}
-                                   </MenuItem>
-                               ))} 
-                            </Select>
-                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 margin='dense'
@@ -191,6 +178,71 @@ function EditTaskDialog(props) {
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
                             />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant='h6' component='h2'>
+                                Columns and collaborators
+                            </Typography>
+                        </Grid>
+                        {props.allColGroups && Array.isArray(props.allColGroups) && props.allColGroups.map((colGroup, index) => (<>
+                            {columnHelperText && (
+                                <Grid item xs={12}>
+                                    <Typography variant='small' color='secondary'>
+                                        {columnHelperText}
+                                    </Typography>
+                                </Grid>
+                            )}
+                            <Grid item xs={12}>
+                                <FormControl key={colGroup.id} style={{width: '100%'}}>
+                                    <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.label}</InputLabel>
+                                    <Select
+                                        id={'taskColumns-' + colGroup.id}
+                                        fullWidth
+                                        value={columns[colGroup.id]}
+                                        onChange={handleColumnsChange}
+                                        margin='dense'
+                                        labelId={'group-input-label-' + colGroup.id}
+                                        error={columnError}
+                                        name={colGroup.id}
+                                    >
+                                        <MenuItem value=''>
+                                            (None)
+                                        </MenuItem>
+                                       {props.allCols && Array.isArray(props.allCols) && props.allCols[index].map((column) => (
+                                           <MenuItem key={column.id} value={column}>
+                                               {column.label}
+                                           </MenuItem>
+                                       ))} 
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </>))}
+                        <Grid item xs={12}>
+                            <FormControl style={{width: '100%'}}>
+                                <InputLabel id='users-input-label'>Users</InputLabel>
+                                <Select
+                                    id="taskUsers"
+                                    label="Users"
+                                    multiple
+                                    margin='dense'
+                                    fullWidth
+                                    value={users}
+                                    onChange={handleUsersChange}
+                                    style={{marginTop: 12}}
+                                    labelId='users-input-label'
+                                >
+                                   {props.board.userRefs && props.board.userRefs.map((user) => (
+                                       <MenuItem key={user} value={user}>
+                                           {user}
+                                       </MenuItem>
+                                   ))} 
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant='h6' component='h2'>
+                                Task relations
+                            </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
