@@ -5,3 +5,7 @@ Worked on initial firebase implementation
 Week 2:
 Rewrote firebase implementation to stop infinite calls
 Built out auth state for firebase
+Started on creating new tasks
+
+Week 3:
+Finished task creation
