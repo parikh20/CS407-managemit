@@ -1,15 +1,12 @@
 import React from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -17,14 +14,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { db } from '../../Firebase';
 
-const useStyles = makeStyles(theme => ({
-    select: {
-        marginTop: 2
-    }
-}));
-
 function EditTaskDialog(props) {
-    const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [titleError, setTitleError] = React.useState(false);
     const [titleHelperText, setTitleHelperText] = React.useState('');
@@ -201,7 +191,7 @@ function EditTaskDialog(props) {
                                             <MenuItem value=''>
                                                 (None)
                                             </MenuItem>
-                                           {props.allCols && Array.isArray(props.allCols) && props.allCols[index].map((column) => (
+                                           {props.allCols && Array.isArray(props.allCols) && props.allCols[index] && props.allCols[index].map((column) => (
                                                <MenuItem key={column.id} value={column.id}>
                                                    {column.label}
                                                </MenuItem>

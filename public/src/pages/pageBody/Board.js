@@ -12,12 +12,14 @@ class Board extends React.Component {
     colGroupSub;
     colSub;
     allColGroupsSub;
+    allColsSubs = [];
     taskSubs = {};
 
     constructor(props) {
         super(props);
         this.state = {
-            taskRefs: {}
+            taskRefs: {},
+            allCols: []
         };
         this.loadBoard();
     }
@@ -101,21 +103,30 @@ class Board extends React.Component {
 
             this.setState({allColGroups: allColGroups});
 
-            for (let i = 0; i < this.state.allColGroups.length; i++) {
-                this.state.allColGroups[i].ref.collection('columns').get().then(colRefs => {
-                    let allCols = colRefs.docs.map(colRef => {
-                        let data = colRef.data();
-                        data.id = colRef.id;
-                        return data;
-                    });
-
-                    const columnRefs = this.state.allColGroups[i].columnOrder || [];
-                    allCols.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
-
-                    this.setState({allCols: [...(this.state.allCols || []), allCols]});
-                });
-            }
+            this.loadAllCols();
         });
+    }
+
+    loadAllCols() {
+        for (let i = 0; i < this.state.allColGroups.length; i++) {
+            if (i < this.allColsSubs.length && this.allColsSubs[i]) {
+                this.allColsSubs[i]();
+            }
+            this.allColsSubs = this.state.allColGroups[i].ref.collection('columns').onSnapshot(colRefs => {
+                let newAllCols = colRefs.docs.map(colRef => {
+                    let data = colRef.data();
+                    data.id = colRef.id;
+                    return data;
+                });
+
+                const columnRefs = this.state.allColGroups[i].columnOrder || [];
+                newAllCols.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
+
+                let prevAllCols = [...this.state.allCols];
+                prevAllCols[i] = newAllCols;
+                this.setState({allCols: prevAllCols});
+            });
+        }
     }
 
     // When the component is destroyed, unsubscribe from all subscriptions
@@ -126,6 +137,9 @@ class Board extends React.Component {
         this.allColGroupsSub && this.allColGroupsSub();
         Object.keys(this.taskSubs).forEach(columnId => {
             this.taskSubs[columnId]();
+        });
+        this.allColsSubs.forEach(colSub => {
+            colSub && colSub();
         });
     }
 

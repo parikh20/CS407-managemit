@@ -9,7 +9,6 @@ import EditTaskDialog from './EditTaskDialog';
 import NewColumnDialog from './NewColumnDialog';
 import SelectViewDialog from './SelectViewDialog'
 import NewViewDialog from './NewViewDialog';
-import {auth} from "../../Firebase";
 
 function BoardActions(props) {
     const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
