@@ -43,7 +43,7 @@ function EditTaskDialog(props) {
     const handleSubmit = () => {
         let label = document.getElementById('taskTitle').value.trim();
         let desc = document.getElementById('taskDescription').value.trim();
-        let date = document.getElementById('taskDueDate').value;
+        let date = document.getElementById('taskDueDate').valueAsDate;
 
         let columnElements = document.querySelectorAll('[name="taskColumnGroup"]');
         let columns = {};
@@ -57,6 +57,7 @@ function EditTaskDialog(props) {
 
         let usersElement = document.getElementById('taskUsers');
         let users = usersElement.textContent.split(', '); // temporary solution - this is unpleasant
+        users = users.filter(user => user.trim().length > 1);
 
         clearState();
         let hasError = false;

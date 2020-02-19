@@ -154,6 +154,7 @@ class Board extends React.Component {
                     }) : []} /* Map the column references to actual columns */
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
+                    allCols={this.state.allCols ? this.state.allCols : {}}
                 />
             </div>
         ); 
