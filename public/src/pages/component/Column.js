@@ -19,7 +19,7 @@ function Column(props) {
             </Typography>
             <div style={{overflow: 'auto', height: '800px'}}> {/*yeah I know, this is very very bad. css is awful to work with, this height definition needs to be fixed*/}
                 {taskRefs.map(taskRef => (
-                    <TaskListing key={taskRef.id} taskRef={taskRef} task={taskRef.data()} allColumnNames={props.allColumnNames} />
+                    <TaskListing boardRef={props.boardRef} key={taskRef.id} taskRef={taskRef} task={taskRef.data()} allColumnNames={props.allColumnNames} />
                 ))}
             </div>
         </GridListTile>

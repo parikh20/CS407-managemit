@@ -23,6 +23,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import dateFormat from 'dateformat';
 
+import { db } from '../../Firebase';
+
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
 
@@ -31,6 +33,13 @@ function TaskListing(props) {
     };
 
     const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleDelete = () => {
+        db.runTransaction(async (t) => {
+            props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
+        });
         setOpen(false);
     };
 
@@ -160,6 +169,12 @@ function TaskListing(props) {
                 <DialogActions>
                     <Button onClick={handleClose}>
                         View connected tasks
+                    </Button>
+                    <Button onClick={handleDelete} color='secondary'>
+                        Delete
+                    </Button>
+                    <Button onClick={handleClose}>
+                        Edit
                     </Button>
                     <Button onClick={handleClose} color='primary'>
                         Close
