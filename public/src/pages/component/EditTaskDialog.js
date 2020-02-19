@@ -47,9 +47,11 @@ function EditTaskDialog(props) {
 
         let columnElements = document.querySelectorAll('[name="taskColumnGroup"]');
         let columns = {};
+        let columnIds = [];
         for (let columnElement of columnElements) {
             if (columnElement.value !== '') {
                 columns[columnElement.previousSibling.id] = columnElement.value;
+                columnIds.push(columnElement.value);
             }
         }
 
@@ -78,7 +80,8 @@ function EditTaskDialog(props) {
                     title: label,
                     desc: desc,
                     date: date,
-                    users: users
+                    users: users,
+                    columnRefs: columnIds
                 });
                 Object.keys(columns).forEach(async (colGroupId) => {
                     let colRef = await props.boardRef.ref.collection('columnGroups').doc(colGroupId).collection('columns').doc(columns[colGroupId]);
