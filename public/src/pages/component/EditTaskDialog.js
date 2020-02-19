@@ -15,6 +15,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
 
+import { db } from '../../Firebase';
+
 const useStyles = makeStyles(theme => ({
     select: {
         marginTop: 2
@@ -24,12 +26,6 @@ const useStyles = makeStyles(theme => ({
 function EditTaskDialog(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [title, setTitle] = React.useState("");
-    const [desc, setDesc] = React.useState("");
-    const [columns, setColumns] = React.useState({});
-    const [date, setDate] = React.useState("");
-    const [users, setUsers] = React.useState([]);
-
     const [titleError, setTitleError] = React.useState(false);
     const [titleHelperText, setTitleHelperText] = React.useState('');
     const [columnError, setColumnError] = React.useState(false);
@@ -45,56 +41,55 @@ function EditTaskDialog(props) {
     };
 
     const handleSubmit = () => {
+        let label = document.getElementById('taskTitle').value.trim();
+        let desc = document.getElementById('taskDescription').value.trim();
+        let date = document.getElementById('taskDueDate').value;
+
+        let columnElements = document.querySelectorAll('[name="taskColumnGroup"]');
+        let columns = {};
+        for (let columnElement of columnElements) {
+            if (columnElement.value !== '') {
+                columns[columnElement.previousSibling.id] = columnElement.value;
+            }
+        }
+
+        let usersElement = document.getElementById('taskUsers');
+        let users = usersElement.textContent.split(', '); // temporary solution - this is unpleasant
+
         clearState();
         let hasError = false;
 
-        if (!title.length) {
+        if (!label.length) {
             hasError = true;
             setTitleError(true);
             setTitleHelperText("Please provide a title for the task!");
         }
-        if (!columns.length) {
+        if (!Object.keys(columns).length) {
             hasError = true;
             setColumnError(true);
             setColumnHelperText("Please select at least one column");
         }
 
         if (!hasError) {
-            props.boardRef.ref.collection("tasks").add({
-                title: title,
-                desc: desc,
-                columns: columns.map((c) => c.id),
-                date: date,
-                users: users
-            }).catch((err) => {
-                throw err;
-            });
             setOpen(false);
+
+            db.runTransaction(async (t) => {
+                let taskRef = await props.boardRef.ref.collection("tasks").add({
+                    title: label,
+                    desc: desc,
+                    date: date,
+                    users: users
+                });
+                Object.keys(columns).forEach(async (colGroupId) => {
+                    let colRef = await props.boardRef.ref.collection('columnGroups').doc(colGroupId).collection('columns').doc(columns[colGroupId]);
+                    let taskRefs = (await colRef.get()).data().taskRefs;
+                    await colRef.update({
+                        taskRefs: [...taskRefs, taskRef.id]
+                    });
+                });
+            });
         }
     }
-
-    const handleTitleChange = (event) => {
-        setTitle(event.target.value)
-    };
-
-    const handleDescChange = (event) => {
-        setDesc(event.target.value)
-    };
-
-    const handleColumnsChange = (event) => {
-        let updatedColumns = Object.assign({}, columns);
-        columns[event.target.name] = event.target.value;
-        setColumns(updatedColumns);
-        console.log(columns);
-    };
-
-    const handleDateChange = (event) => {
-        setDate(event.target.value);
-    };
-
-    const handleUsersChange = (event) => {
-        setUsers(event.target.value);
-    };
 
     const clearState = () => {
         setTitleError(false);
@@ -123,8 +118,6 @@ function EditTaskDialog(props) {
                                 id='taskTitle'
                                 label='Title'
                                 variant='outlined'
-                                onChange={handleTitleChange}
-                                value={title}
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
                                 error={titleError}
@@ -138,8 +131,6 @@ function EditTaskDialog(props) {
                                 label='Description'
                                 rows='5'
                                 variant='outlined'
-                                onChange={handleDescChange}
-                                value={desc}
                                 multiline
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
@@ -153,8 +144,6 @@ function EditTaskDialog(props) {
                                 type='date'
                                 variant='outlined'
                                 fullWidth
-                                value={date}
-                                onChange={handleDateChange}
                                 InputLabelProps={{shrink: true}}
                             />
                         </Grid>
@@ -184,39 +173,40 @@ function EditTaskDialog(props) {
                                 Columns and collaborators
                             </Typography>
                         </Grid>
-                        {props.allColGroups && Array.isArray(props.allColGroups) && props.allColGroups.map((colGroup, index) => (<>
-                            {columnHelperText && (
+                        {props.allColGroups && Array.isArray(props.allColGroups) && props.allColGroups.map((colGroup, index) => (
+                            <div key={colGroup.id} style={{width: '100%'}}>
+                                {columnHelperText && (
+                                    <Grid item xs={12}>
+                                        <Typography variant='caption' color='secondary'>
+                                            {columnHelperText}
+                                        </Typography>
+                                    </Grid>
+                                )}
                                 <Grid item xs={12}>
-                                    <Typography variant='small' color='secondary'>
-                                        {columnHelperText}
-                                    </Typography>
+                                    <FormControl key={colGroup.id} style={{width: '100%'}}>
+                                        <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.label}</InputLabel>
+                                        <Select
+                                            id={colGroup.id}
+                                            fullWidth
+                                            defaultValue=''
+                                            margin='dense'
+                                            labelId={'group-input-label-' + colGroup.id}
+                                            error={columnError}
+                                            name='taskColumnGroup'
+                                        >
+                                            <MenuItem value=''>
+                                                (None)
+                                            </MenuItem>
+                                           {props.allCols && Array.isArray(props.allCols) && props.allCols[index].map((column) => (
+                                               <MenuItem key={column.id} value={column.id}>
+                                                   {column.label}
+                                               </MenuItem>
+                                           ))} 
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-                            )}
-                            <Grid item xs={12}>
-                                <FormControl key={colGroup.id} style={{width: '100%'}}>
-                                    <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.label}</InputLabel>
-                                    <Select
-                                        id={'taskColumns-' + colGroup.id}
-                                        fullWidth
-                                        value={columns[colGroup.id]}
-                                        onChange={handleColumnsChange}
-                                        margin='dense'
-                                        labelId={'group-input-label-' + colGroup.id}
-                                        error={columnError}
-                                        name={colGroup.id}
-                                    >
-                                        <MenuItem value=''>
-                                            (None)
-                                        </MenuItem>
-                                       {props.allCols && Array.isArray(props.allCols) && props.allCols[index].map((column) => (
-                                           <MenuItem key={column.id} value={column}>
-                                               {column.label}
-                                           </MenuItem>
-                                       ))} 
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        </>))}
+                            </div>
+                        ))}
                         <Grid item xs={12}>
                             <FormControl style={{width: '100%'}}>
                                 <InputLabel id='users-input-label'>Users</InputLabel>
@@ -226,8 +216,7 @@ function EditTaskDialog(props) {
                                     multiple
                                     margin='dense'
                                     fullWidth
-                                    value={users}
-                                    onChange={handleUsersChange}
+                                    defaultValue={[]}
                                     style={{marginTop: 12}}
                                     labelId='users-input-label'
                                 >
