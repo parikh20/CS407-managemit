@@ -15,6 +15,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
 
+import Checklist from './Checklist';
+
 const useStyles = makeStyles(theme => ({
     select: {
         marginTop: 2
@@ -179,6 +181,7 @@ function EditTaskDialog(props) {
                                 InputLabelProps={{shrink: true}}
                             />
                         </Grid>
+                        <Checklist/>
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Columns and collaborators
