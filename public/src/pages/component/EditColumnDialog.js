@@ -113,7 +113,7 @@ function EditColumnDialog(props) {
                     />
                     <Divider style={{margin: 10}} />
                     <DialogContentText>
-                        To delete the column, type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone.
+                        Type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone.
                     </DialogContentText>
                     <TextField
                         margin='dense'
