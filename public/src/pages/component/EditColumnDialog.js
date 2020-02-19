@@ -63,7 +63,21 @@ function EditColumnDialog(props) {
 
             db.runTransaction(async (t) => {
                 const colGroup = await db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id);
-                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef !== props.column.id);;
+                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef !== props.column.id);
+
+                props.column.taskRefs.forEach(async (taskId) => {
+                    const taskRef = db.collection('boards').doc(props.boardRef.id).collection('tasks').doc(taskId);
+                    let columnRefs = (await taskRef.get()).data().columnRefs;
+
+                    // If this task is only in this column, delete it. Otherwise, just remove this column from its list.
+                    if (columnRefs.length === 1) {
+                        taskRef.delete();
+                    } else {
+                        taskRef.update({
+                            columnRefs: columnRefs.filter(columnRef => columnRef !== props.column.id)
+                        });
+                    }
+                });
                 
                 await colGroup.collection('columns').doc(props.column.id).delete();
 
@@ -113,7 +127,7 @@ function EditColumnDialog(props) {
                     />
                     <Divider style={{margin: 10}} />
                     <DialogContentText>
-                        Type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone.
+                        Type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone. Any tasks associated with only this column will be lost.
                     </DialogContentText>
                     <TextField
                         margin='dense'
