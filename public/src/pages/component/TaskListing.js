@@ -45,9 +45,7 @@ function TaskListing(props) {
 
     const handleChecklistItemStatusChange = (event, index) => {
         let checklistCopy = props.task.checklist.slice(0);
-        console.log(checklistCopy);
         checklistCopy[index].completed = event.target.checked;
-        console.log(checklistCopy);
         props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
             checklist: checklistCopy
         });
