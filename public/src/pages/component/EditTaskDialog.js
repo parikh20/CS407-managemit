@@ -8,9 +8,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Grid from '@material-ui/core/Grid';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import IconButton from '@material-ui/core/IconButton';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { db } from '../../Firebase';
 
@@ -24,9 +30,14 @@ function EditTaskDialog(props) {
     const [dateHelperText, setDateHelperText] = React.useState('');
     const [columnError, setColumnError] = React.useState(false);
     const [columnHelperText, setColumnHelperText] = React.useState('');
+    const [checklistError, setChecklistError] = React.useState(false);
+    const [checklistHelperText, setChecklistHelperText] = React.useState('');
+    const [checklistItems, setChecklistItems] = React.useState([]);
 
     const handleClickOpen = () => {
         clearState();
+        clearChecklistErrors();
+        setChecklistItems([]);
         setOpen(true);
     };
 
@@ -93,7 +104,8 @@ function EditTaskDialog(props) {
                     desc: desc,
                     date: date,
                     users: users,
-                    columnRefs: columnIds
+                    columnRefs: columnIds,
+                    checklist: checklistItems
                 });
                 Object.keys(columns).forEach(async (colGroupId) => {
                     let colRef = await props.boardRef.ref.collection('columnGroups').doc(colGroupId).collection('columns').doc(columns[colGroupId]);
@@ -106,6 +118,35 @@ function EditTaskDialog(props) {
         }
     }
 
+    const handleAddChecklistItem = () => {
+        let checklistItem = document.getElementById('taskChecklist').value.trim();
+
+        clearChecklistErrors();
+
+        if (checklistItem === '') {
+            setChecklistError(true);
+            setChecklistHelperText('Checklist item cannot be blank');
+        } else if (checklistItem.length > 500) {
+            setChecklistError(true);
+            setChecklistHelperText('Checklist item must be less than 500 characters');
+        } else {
+            setChecklistItems([...checklistItems, {text: checklistItem, completed: false}]);
+            document.getElementById('taskChecklist').value = '';
+        }
+    };
+
+    const handleChecklistItemStatusChange = (event, index) => {
+        let checklistItemsCopy = checklistItems.slice(0);
+        checklistItemsCopy[index].completed = event.target.checked;
+        setChecklistItems(checklistItemsCopy);
+    };
+
+    const handleChecklistItemDelete = (index) => {
+        let checklistItemsCopy = checklistItems.slice(0);
+        checklistItemsCopy.splice(index, 1);
+        setChecklistItems(checklistItemsCopy);
+    };
+
     const clearState = () => {
         setTitleError(false);
         setTitleHelperText('');
@@ -115,6 +156,11 @@ function EditTaskDialog(props) {
         setDescHelperText('');
         setDateError(false);
         setDateHelperText('');
+    };
+
+    const clearChecklistErrors = () => {
+        setChecklistError(false);
+        setChecklistHelperText('');
     };
 
     return (
@@ -182,15 +228,45 @@ function EditTaskDialog(props) {
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <Typography variant='h6' component='h2'>
+                                Checklist
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
                             <TextField
                                 margin='dense'
                                 id='taskChecklist'
-                                label='Checklist'
+                                label='New checklist item'
                                 variant='outlined'
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
+                                style={{width: '90%'}}
+                                error={checklistError}
+                                helperText={checklistHelperText}
                             />
+                            <IconButton onClick={handleAddChecklistItem} aria-label='add checklist item' style={{float: 'right'}}>
+                                <AddIcon />
+                            </IconButton>
                         </Grid>
+                        {checklistItems.length > 0 && (
+                            <Grid item xs={12}>
+                                <FormControl component='fieldset'>
+                                    <FormGroup>
+                                        {checklistItems.map((checklistItem, index) => (
+                                            <Grid item xs={12} key={index}>
+                                                <FormControlLabel
+                                                    control={<Checkbox defaultValue={checklistItem.completed} onClick={(event) => handleChecklistItemStatusChange(event, index)} />}
+                                                    label={checklistItem.text}
+                                                />
+                                                <IconButton onClick={() => handleChecklistItemDelete(index)}>
+                                                    <RemoveCircleOutlineIcon />
+                                                </IconButton>
+                                            </Grid>
+                                        ))}
+                                    </FormGroup>
+                                </FormControl>
+                            </Grid>
+                        )}
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Columns and collaborators

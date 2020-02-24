@@ -43,6 +43,16 @@ function TaskListing(props) {
         setOpen(false);
     };
 
+    const handleChecklistItemStatusChange = (event, index) => {
+        let checklistCopy = props.task.checklist.slice(0);
+        console.log(checklistCopy);
+        checklistCopy[index].completed = event.target.checked;
+        console.log(checklistCopy);
+        props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
+            checklist: checklistCopy
+        });
+    };
+
     return (
         <Card variant='outlined' style={{marginBottom: 5}}>
             <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
@@ -139,29 +149,31 @@ function TaskListing(props) {
                             <Typography variant='h6' component='h2'>
                                 Checklist
                             </Typography>
-                            <FormControl component='fieldset'>
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={<Checkbox checked={true} value='1' />}
-                                        label='Do the first thing on the list'
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={false} value='2' />}
-                                        label='Complete the second thing'
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={true} value='3' />}
-                                        label='Just do the rest'
-                                    />
-                                </FormGroup>
-                            </FormControl>
+                            {(!props.task.checklist || !Array.isArray(props.task.checklist) || props.task.checklist.length === 0) && (
+                                <Typography variant='body2' component='p'>
+                                    (No checklist items assigned to task)
+                                </Typography>
+                            )}
+                            {props.task.checklist && Array.isArray(props.task.checklist) && props.task.checklist.length > 0 && (
+                                <FormControl component='fieldset'>
+                                    <FormGroup>
+                                        {props.task.checklist.map((checklistItem, index) => (
+                                            <FormControlLabel
+                                                key={index}
+                                                control={<Checkbox checked={checklistItem.completed} onClick={(event) => handleChecklistItemStatusChange(event, index)} />}
+                                                label={checklistItem.text}
+                                            />
+                                        ))}
+                                    </FormGroup>
+                                </FormControl>
+                            )}
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Comments
                             </Typography>
                             <Typography variant='body2' component='p'>
-                            To be designed later
+                                To be designed later
                             </Typography>
                         </Grid>
                      </Grid>
