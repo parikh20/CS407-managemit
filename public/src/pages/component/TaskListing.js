@@ -50,7 +50,7 @@ function TaskListing(props) {
                     {props.task.title.length < 30 ? props.task.title : props.task.title.slice(0, 30) + '...'}
                 </Typography>
                 <Typography variant='body2' component='p'>
-                    {props.task.desc}
+                    {props.task.desc.length < 300 ? props.task.desc : props.task.desc.slice(0, 300) + '...'}
                 </Typography>
             </CardContent>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>

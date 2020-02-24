@@ -18,6 +18,10 @@ function EditTaskDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [titleError, setTitleError] = React.useState(false);
     const [titleHelperText, setTitleHelperText] = React.useState('');
+    const [descError, setDescError] = React.useState(false);
+    const [descHelperText, setDescHelperText] = React.useState('');
+    const [dateError, setDateError] = React.useState(false);
+    const [dateHelperText, setDateHelperText] = React.useState('');
     const [columnError, setColumnError] = React.useState(false);
     const [columnHelperText, setColumnHelperText] = React.useState('');
 
@@ -55,12 +59,29 @@ function EditTaskDialog(props) {
         if (!label.length) {
             hasError = true;
             setTitleError(true);
-            setTitleHelperText("Please provide a title for the task!");
+            setTitleHelperText('Title is required');
+        }
+        if (label.length > 500) {
+            hasError = true;
+            setTitleError(true);
+            setTitleHelperText('Title must be less than 500 characters');
+        }
+        if (desc.length > 5000) {
+            hasError = true;
+            setDescError(true);
+            setDescHelperText('Description must be less than 5000 characters');
         }
         if (!Object.keys(columns).length) {
             hasError = true;
             setColumnError(true);
-            setColumnHelperText("Please select at least one column");
+            setColumnHelperText('At least one column is required');
+        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // We want to check for the current day at midnight
+        if (date !== null && date < today) {
+            hasError = true;
+            setDateError(true);
+            setDateHelperText('Date cannot be in the past');
         }
 
         if (!hasError) {
@@ -90,6 +111,10 @@ function EditTaskDialog(props) {
         setTitleHelperText('');
         setColumnError(false);
         setColumnHelperText('');
+        setDescError(false);
+        setDescHelperText('');
+        setDateError(false);
+        setDateHelperText('');
     };
 
     return (
@@ -128,6 +153,8 @@ function EditTaskDialog(props) {
                                 multiline
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
+                                error={descError}
+                                helperText={descHelperText}
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -139,6 +166,8 @@ function EditTaskDialog(props) {
                                 variant='outlined'
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
+                                error={dateError}
+                                helperText={dateHelperText}
                             />
                         </Grid>
                         <Grid item xs={6}>
