@@ -16,7 +16,7 @@ import Switch from '@material-ui/core/Switch';
 import Chip from '@material-ui/core/Chip';
 
 
-function SelectViewDialog(props) {
+function BoardUsersDialog(props) {
     const user = JSON.parse(localStorage.getItem('user'));
     const [open, setOpen] = React.useState(false);
 
@@ -89,4 +89,4 @@ function SelectViewDialog(props) {
     );
 }
 
-export default SelectViewDialog;
+export default BoardUsersDialog;
