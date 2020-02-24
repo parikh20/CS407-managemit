@@ -1,5 +1,9 @@
 ### Work Log
 
+##### Week 4:
+This week I will work on adding the checklist to the add and view task dialogs, and implementing
+the calls to make that functional. I will also work on UI polish where required.
+
 ##### Week 3:
 This week I will work on implementing the ability to view and delete tasks. I also plan to work
 on some UI refinements, and if possible begin work on automated testing.
