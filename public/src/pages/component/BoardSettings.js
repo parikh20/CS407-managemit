@@ -195,9 +195,11 @@ function BoardSettings(props) {
                         <TableContainer style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}}>
                             <Table size='small'>
                                 <TableHead>
-                                    <TableCell>Role</TableCell>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell align='right'>Can edit</TableCell>
+                                    <TableRow>
+                                        <TableCell>Role</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell align='right'>Can edit</TableCell>
+                                    </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     <TableRow>
