@@ -118,6 +118,7 @@ function BoardSettings(props) {
                     db.collection('boards').doc(props.board.id).update({
                         userRefs: firebase.firestore.FieldValue.arrayUnion(email)
                     }).then(result => {
+                        document.getElementById('inviteEmail').value = ''
                         setSuccessSnackbar(true);
                         setSuccessMessage('Successfully invited ' + email + '!');
                     }).catch(err => {
