@@ -21,6 +21,10 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import dateFormat from 'dateformat';
+
+import { db } from '../../Firebase';
+
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
 
@@ -32,18 +36,33 @@ function TaskListing(props) {
         setOpen(false);
     };
 
+    const handleDelete = () => {
+        db.runTransaction(async (t) => {
+            props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
+        });
+        setOpen(false);
+    };
+
+    const handleChecklistItemStatusChange = (event, index) => {
+        let checklistCopy = props.task.checklist.slice(0);
+        checklistCopy[index].completed = event.target.checked;
+        props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
+            checklist: checklistCopy
+        });
+    };
+
     return (
         <Card variant='outlined' style={{marginBottom: 5}}>
             <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
                 <Typography variant='h6' component='h2'>
-                    {props.title}
+                    {props.task.title.length < 30 ? props.task.title : props.task.title.slice(0, 30) + '...'}
                 </Typography>
                 <Typography variant='body2' component='p'>
-                    {props.description}
+                    {props.task.desc.length < 300 ? props.task.desc : props.task.desc.slice(0, 300) + '...'}
                 </Typography>
             </CardContent>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>{props.title}</DialogTitle>
+                <DialogTitle id='form-dialog-title'>{props.task.title}</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={1}>
                         <Grid item xs={6}>
@@ -51,9 +70,7 @@ function TaskListing(props) {
                                 Description
                             </Typography>
                             <Typography variant='body2' component='p'>
-                                {props.description}
-
-                                <br />Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. Here's a bunch of text to make this longer. 
+                                {props.task.desc !== '' ? props.task.desc : '(No description provided)'}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -62,10 +79,9 @@ function TaskListing(props) {
                                     <Typography variant='h6' component='h2'>
                                         Columns
                                     </Typography>
-                                    <Typography variant='body2' component='p'>
-                                        <Chip label='Placeholder column' color='primary' size='small' />
-                                        <Chip label='Placeholder 2' color='primary' size='small' />
-                                    </Typography>
+                                    {props.task.columnRefs.map(columnId => 
+                                        <Chip key={columnId} label={props.allColumnNames[columnId]} color='primary' size='small' />
+                                    )}
                                 </Grid>
                             </Grid>
                             <Grid container spacing={1}>
@@ -74,8 +90,13 @@ function TaskListing(props) {
                                         Due Date
                                     </Typography>
                                     <Typography variant='body2' component='p'>
-                                        01/01/2020
-                                        <Button variant='outlined' size='small' color='primary' style={{float: 'right'}}>View on calendar</Button>
+                                        {props.task.date === null && (
+                                            '(No due date)'
+                                        )}
+                                        {props.task.date !== null && (<>
+                                            {dateFormat(props.task.date.toDate(), 'mm/dd/yyyy')}
+                                            <Button variant='outlined' size='small' color='primary' style={{float: 'right'}}>View on calendar</Button>
+                                        </>)}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -84,10 +105,14 @@ function TaskListing(props) {
                                     <Typography variant='h6' component='h2'>
                                         Users
                                     </Typography>
-                                    <Typography variant='body2' component='p'>
-                                        <Chip label='John Doe' color='primary' size='small' />
-                                        <Chip label='Joe User' color='primary' size='small' />
-                                    </Typography>
+                                    {props.task.users.length === 0 && (
+                                        <Typography variant='body2' component='p'>
+                                            (No users assigned to task)
+                                        </Typography>
+                                    )}
+                                    {props.task.users.length > 0 && props.task.users.map(user =>
+                                        <Chip key={user} label={user} color='primary' size='small' />
+                                    )}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -122,29 +147,31 @@ function TaskListing(props) {
                             <Typography variant='h6' component='h2'>
                                 Checklist
                             </Typography>
-                            <FormControl component='fieldset'>
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={<Checkbox checked={true} value='1' />}
-                                        label='Do the first thing on the list'
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={false} value='2' />}
-                                        label='Complete the second thing'
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={true} value='3' />}
-                                        label='Just do the rest'
-                                    />
-                                </FormGroup>
-                            </FormControl>
+                            {(!props.task.checklist || !Array.isArray(props.task.checklist) || props.task.checklist.length === 0) && (
+                                <Typography variant='body2' component='p'>
+                                    (No checklist items assigned to task)
+                                </Typography>
+                            )}
+                            {props.task.checklist && Array.isArray(props.task.checklist) && props.task.checklist.length > 0 && (
+                                <FormControl component='fieldset'>
+                                    <FormGroup>
+                                        {props.task.checklist.map((checklistItem, index) => (
+                                            <FormControlLabel
+                                                key={index}
+                                                control={<Checkbox checked={checklistItem.completed} onClick={(event) => handleChecklistItemStatusChange(event, index)} />}
+                                                label={checklistItem.text}
+                                            />
+                                        ))}
+                                    </FormGroup>
+                                </FormControl>
+                            )}
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Comments
                             </Typography>
                             <Typography variant='body2' component='p'>
-                            To be designed later
+                                To be designed later
                             </Typography>
                         </Grid>
                      </Grid>
@@ -152,6 +179,12 @@ function TaskListing(props) {
                 <DialogActions>
                     <Button onClick={handleClose}>
                         View connected tasks
+                    </Button>
+                    <Button onClick={handleDelete} color='secondary'>
+                        Delete
+                    </Button>
+                    <Button onClick={handleClose}>
+                        Edit
                     </Button>
                     <Button onClick={handleClose} color='primary'>
                         Close

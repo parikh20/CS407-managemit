@@ -8,6 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import firebase from '../../Firebase';
 import { db } from '../../Firebase';
 
 
@@ -24,9 +25,12 @@ function DeleteBoardDialog(props) {
         setOpen(false);
         if (boardName === props.board.label) {
             const boardId = props.board.id;
-            const boardRef = db.collection("boards").doc(boardId);
-            boardRef.delete().then(function() {
+            const boardRef = db.collection("boards").doc(boardId).path;
+            const recursiveDelete = firebase.functions().httpsCallable('recursiveDelete');
+            recursiveDelete({path: boardRef}).then(result => {
                 history.push("/boards")
+            }).catch(err => {
+                console.log(err);
             });
         }
     };

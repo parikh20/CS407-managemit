@@ -9,7 +9,7 @@ import EditTaskDialog from './EditTaskDialog';
 import NewColumnDialog from './NewColumnDialog';
 import SelectViewDialog from './SelectViewDialog'
 import NewViewDialog from './NewViewDialog';
-import {auth} from "../../Firebase";
+import BoardUsersDialog from './BoardUsersDialog';
 
 function BoardActions(props) {
     const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
@@ -25,8 +25,9 @@ function BoardActions(props) {
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
                     <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
                     <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
-                    <Button>View calendar</Button>
-                    <Button href={'/board/' + props.boardRef.id + '/history'}>View history</Button>
+                    <Button>Calendar</Button>
+                    <BoardUsersDialog boardRef={props.boardRef} board={props.board} />
+                    <Button href={'/board/' + props.boardRef.id + '/history'}>History</Button>
                     {props.board.owner === user.email && (
                         <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
                     )}
