@@ -11,7 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
 
 import { db } from '../../Firebase';
-
+import firebase from '../../Firebase';
 
 function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -19,6 +19,8 @@ function EditColumnDialog(props) {
     const [nameHelperText, setNameHelperText] = React.useState('');
     const [deleteDisable, setDeleteDisable] = React.useState(true);
     
+    const user = JSON.parse(localStorage.getItem('user'));
+
     const columnNames = [];
     for (let column of props.columns) {
         columnNames.push(column.label);
@@ -52,6 +54,19 @@ function EditColumnDialog(props) {
 
             db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id).collection('columns').doc(props.column.id).update({
                 label: columnName
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).update(
+                    {
+                        history: firebase.firestore.FieldValue.arrayUnion({
+                            user: user.email,
+                            colName: columnName,
+                            action: 5,
+                            timestamp: firebase.database.ServerValue
+                        })
+                    }
+                ).catch(err => {
+                    console.log("Error logging edit column: " + err);
+                });
             });
         }
     };
@@ -83,6 +98,19 @@ function EditColumnDialog(props) {
 
                 await colGroup.update({
                     'columnOrder': columnOrder
+                });
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).update(
+                    {
+                        history: firebase.firestore.FieldValue.arrayUnion({
+                            user: user.email,
+                            colName: props.column.label,
+                            action: 6,
+                            timestamp: firebase.database.ServerValue
+                        })
+                    }
+                ).catch(err => {
+                    console.log("Error logging delete column: " + err);
                 });
             });
         }
