@@ -9,11 +9,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 
 import { db } from '../../Firebase';
+import firebase from '../../Firebase';
 
 function NewColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const columnNames = [];
     for (let column of props.columns) {
@@ -59,6 +62,17 @@ function NewColumnDialog(props) {
                 await columnGroupRef.update({
                     'columnOrder': columnOrder
                 });
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        colName: columnName,
+                        action: 4,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging new column: " + err);
+                });
             });
         }
     };
@@ -69,9 +83,9 @@ function NewColumnDialog(props) {
     };
 
     return (
-        <div>
+        <>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>New column</Button>
+                <Button {...props} onClick={handleClickOpen}>New column</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>New column</DialogTitle>
@@ -84,6 +98,7 @@ function NewColumnDialog(props) {
                                 label='Column name'
                                 variant='outlined'
                                 fullWidth
+                                margin='dense'
                                 InputLabelProps={{shrink: true}}
                                 error={nameError}
                                 helperText={nameHelperText}
@@ -100,7 +115,7 @@ function NewColumnDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }
 

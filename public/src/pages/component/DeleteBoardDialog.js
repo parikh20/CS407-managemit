@@ -18,10 +18,15 @@ function DeleteBoardDialog(props) {
     const history = useHistory();
 
     const handleClickOpen = () => {
+        setDeleteDisable(true);
         setOpen(true);
     };
 
-    const handleClose = (boardName) => {
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleDeleteBoard = (boardName) => {
         setOpen(false);
         if (boardName === props.board.label) {
             const boardId = props.board.id;
@@ -33,7 +38,7 @@ function DeleteBoardDialog(props) {
                 console.log(err);
             });
         }
-    };
+    }
 
     const inputListener = (event) => {
         if (event.target.value === props.board.label) {
@@ -69,9 +74,11 @@ function DeleteBoardDialog(props) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={() =>
-                        handleClose(document.getElementById("confirmDeleteBoard").value)
-                        } color='secondary' disabled={deleteDisable}>
+                    <Button
+                        onClick={() => handleDeleteBoard(document.getElementById("confirmDeleteBoard").value)}
+                        color='secondary'
+                        disabled={deleteDisable}
+                    >
                         Delete board
                     </Button>
                 </DialogActions>

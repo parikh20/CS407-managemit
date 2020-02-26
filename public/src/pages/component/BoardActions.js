@@ -21,15 +21,23 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} />
-                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
-                    <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                    {!props.lockFunctionality && <>
+                        <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} />
+                        <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
+                        <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                    </>}
                     <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
-                    <Button>Calendar</Button>
+                    <ButtonGroup size='small'>
+                        <Button>Calendar</Button>
+                    </ButtonGroup>
                     <BoardUsersDialog boardRef={props.boardRef} board={props.board} />
-                    <Button href={'/board/' + props.boardRef.id + '/history'}>History</Button>
+                    <ButtonGroup size='small'>
+                        <Button href={'/board/' + props.boardRef.id + '/history'}>History</Button>
+                    </ButtonGroup>
                     {props.board.owner === user.email && (
-                        <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
+                        <ButtonGroup size='small'>
+                            <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
+                        </ButtonGroup>
                     )}
                 </ButtonGroup>
             )}

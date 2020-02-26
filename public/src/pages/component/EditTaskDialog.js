@@ -19,6 +19,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import { db } from '../../Firebase';
+import firebase from '../../Firebase';
 
 function EditTaskDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -33,6 +34,8 @@ function EditTaskDialog(props) {
     const [checklistError, setChecklistError] = React.useState(false);
     const [checklistHelperText, setChecklistHelperText] = React.useState('');
     const [checklistItems, setChecklistItems] = React.useState([]);
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const handleClickOpen = () => {
         clearState();
@@ -49,6 +52,9 @@ function EditTaskDialog(props) {
         let label = document.getElementById('taskTitle').value.trim();
         let desc = document.getElementById('taskDescription').value.trim();
         let date = document.getElementById('taskDueDate').valueAsDate;
+
+        // date inputs give UTC dates, so we need to convert that to the local timezone
+        date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 
         let columnElements = document.querySelectorAll('[name="taskColumnGroup"]');
         let columns = {};
@@ -114,7 +120,18 @@ function EditTaskDialog(props) {
                         taskRefs: [...taskRefs, taskRef.id]
                     });
                 });
-            });
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        taskName: label,
+                        action: 7,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging add task: " + err);
+                });
+            });;
         }
     }
 
@@ -164,9 +181,9 @@ function EditTaskDialog(props) {
     };
 
     return (
-        <div>
+        <>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>New task</Button>
+                <Button {...props} onClick={handleClickOpen}>New task</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogContent>
@@ -363,7 +380,7 @@ function EditTaskDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }
 

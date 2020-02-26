@@ -27,9 +27,13 @@ class Board extends React.Component {
     // Load board based on boardID, then load column group
     loadBoard() {
         this.boardSub = db.collection("boards").doc(this.props.boardId).onSnapshot((boardRef) => {
-            this.setState({boardRef: boardRef});
-            this.loadColGroup();
-            this.loadAllColGroups();
+            if (!boardRef.exists) {
+                this.props.history.push('/boards');
+            } else {
+                this.setState({boardRef: boardRef});
+                this.loadColGroup();
+                this.loadAllColGroups();
+            }
         });
     }
 
@@ -138,7 +142,7 @@ class Board extends React.Component {
         Object.keys(this.taskSubs).forEach(columnId => {
             this.taskSubs[columnId]();
         });
-        this.allColsSubs.forEach(colSub => {
+        this.allColsSubs && Array.isArray(this.allColSubs) && this.allColSubs.forEach(colSub => {
             colSub && colSub();
         });
     }
@@ -157,6 +161,7 @@ class Board extends React.Component {
                     }) : []} /* Map the column references to actual columns */
                     allColGroups={this.state.allColGroups ? this.state.allColGroups : {}}
                     allCols={this.state.allCols ? this.state.allCols : {}}
+                    lockFunctionality={this.props.lockFunctionality}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
@@ -169,6 +174,8 @@ class Board extends React.Component {
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
                     allCols={this.state.allCols ? this.state.allCols : {}}
+                    lockFunctionality={this.props.lockFunctionality}
+                    sortMode={this.props.sortMode}
                 />
             </div>
         ); 

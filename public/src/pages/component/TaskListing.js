@@ -24,9 +24,12 @@ import Checkbox from '@material-ui/core/Checkbox';
 import dateFormat from 'dateformat';
 
 import { db } from '../../Firebase';
+import firebase from '../../Firebase';
 
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -39,6 +42,18 @@ function TaskListing(props) {
     const handleDelete = () => {
         db.runTransaction(async (t) => {
             props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
+        }).then(result => {
+            console.log(props.task.title)
+            db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                {
+                    user: user.email,
+                    taskName: props.task.title,
+                    action: 8,
+                    timestamp: firebase.database.ServerValue
+                }
+            ).catch(err => {
+                console.log("Error logging delete task: " + err);
+            });
         });
         setOpen(false);
     };
@@ -180,12 +195,14 @@ function TaskListing(props) {
                     <Button onClick={handleClose}>
                         View connected tasks
                     </Button>
-                    <Button onClick={handleDelete} color='secondary'>
-                        Delete
-                    </Button>
-                    <Button onClick={handleClose}>
-                        Edit
-                    </Button>
+                    {!props.lockFunctionality && <>
+                        <Button onClick={handleDelete} color='secondary'>
+                            Delete
+                        </Button>
+                        <Button onClick={handleClose}>
+                            Edit
+                        </Button>
+                    </>}
                     <Button onClick={handleClose} color='primary'>
                         Close
                     </Button>

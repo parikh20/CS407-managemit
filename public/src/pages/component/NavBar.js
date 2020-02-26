@@ -12,8 +12,11 @@ import MailIcon from '@material-ui/icons/Mail';
 import SortIcon from '@material-ui/icons/Sort';
 import TextField from '@material-ui/core/TextField';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 function NavBar(props) {
     const showNavigation = !(['/login', '/register'].includes(props.location));
@@ -21,6 +24,25 @@ function NavBar(props) {
     const history = useHistory();
 
     const [caseSensitiveChecked, setCaseSensitiveChecked] = React.useState(false);
+    const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
+
+    const handleMenuOpen = event => {
+        setMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setMenuAnchorEl(null);
+    };
+
+    const handleMenuClick = (sortMode) => {
+        setMenuAnchorEl(null);
+        history.push(props.location + '?sort=' + sortMode);;
+    };
+
+    const handleUnlock = () => {
+        setMenuAnchorEl(null);
+        history.push(props.location);
+    };
 
     const toggleCaseSensitiveChecked = () => {
         setCaseSensitiveChecked(prev => !prev);
@@ -75,12 +97,41 @@ function NavBar(props) {
                         <Tooltip title='Case sensitive' arrow>
                             <Switch size='small' color='secondary' checked={caseSensitiveChecked} onChange={toggleCaseSensitiveChecked} />
                         </Tooltip>
-                        <IconButton
-                            edge='end'
-                            aria-label='sort'
-                            color='inherit'>
-                            <SortIcon />
-                        </IconButton>
+                        <Tooltip title='Sort tasks' arrow>
+                            <IconButton
+                                edge='end'
+                                aria-label='sort'
+                                color='inherit'
+                                aria-controls='sort-menu'
+                                aria-haspopup='true'
+                                onClick={handleMenuOpen}
+                            >
+                                <SortIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            id='sort-menu'
+                            anchorEl={menuAnchorEl}
+                            keepMounted
+                            open={Boolean(menuAnchorEl)}
+                            onClose={handleMenuClose}
+                        >
+                            <MenuItem onClick={() => handleMenuClick('title')}>Sort by title</MenuItem>
+                            <MenuItem onClick={() => handleMenuClick('date')}>Sort by due date</MenuItem>
+                            <MenuItem onClick={() => handleMenuClick('users')}>Sort by users</MenuItem>
+                        </Menu>
+                        {props.sortMode !== null && (
+                            <Tooltip title='Return to default task display and unlock functionality' arrow>
+                                <IconButton
+                                    edge='end'
+                                    aria-label='unlock'
+                                    color='inherit'
+                                    onClick={handleUnlock}
+                                >
+                                    <LockOpenIcon />
+                                </IconButton>
+                            </Tooltip>
+                        )}
                     </>}
                     {showNavigation && <>
                         <IconButton
