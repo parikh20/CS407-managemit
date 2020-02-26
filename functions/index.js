@@ -1,8 +1,8 @@
 const functions = require("firebase-functions");
 const firebase_tools = require('firebase-tools');
-// const app = require("express")(); // routing for backend functions
-// const cors = require("cors"); // middleware for express
-// app.use(cors());
+const app = require("express")(); // routing for backend functions
+const cors = require("cors"); // middleware for express
+app.use(cors());
 
 exports.recursiveDelete = functions
   .runWith({
@@ -29,9 +29,9 @@ exports.recursiveDelete = functions
       });
   });
 
-// const {getColumnGroups, createColumnGroups, getColumn, createColumn} = require("./handler/columns");
-// app.get("/getColumnGroups", getColumnGroups);
-// app.post("/createColumnGroups", createColumnGroups);
-// app.get("/getColumn", getColumn);
-// app.post("/createColumn", createColumn);
-// exports.api = functions.https.onRequest(app);
+const {getColumnGroups, createColumnGroups, getColumn, createColumn} = require("./handler/columns");
+app.get("/getColumnGroups", getColumnGroups);
+app.post("/createColumnGroups", createColumnGroups);
+app.get("/getColumn", getColumn);
+app.post("/createColumn", createColumn);
+exports.api = functions.https.onRequest(app);
