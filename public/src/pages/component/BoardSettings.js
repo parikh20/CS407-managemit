@@ -65,6 +65,7 @@ function BoardSettings(props) {
     const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
     const [successMessage, setSuccessMessage] = React.useState('');
 
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -94,7 +95,17 @@ function BoardSettings(props) {
                     label: name,
                     description: description
                 }
-            ).catch(err => {
+            ).then(result => {
+                db.collection('boards').doc(props.board.id).collection('history').add(
+                    {
+                        user: user.email,
+                        action: 1,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging board update: " + err);
+                });
+            }).catch(err => {
                 setErrorSnackbar(true);
                 console.log(err);
                 return;
@@ -118,6 +129,7 @@ function BoardSettings(props) {
                     db.collection('boards').doc(props.board.id).update({
                         userRefs: firebase.firestore.FieldValue.arrayUnion(email)
                     }).then(result => {
+                        document.getElementById('inviteEmail').value = ''
                         setSuccessSnackbar(true);
                         setSuccessMessage('Successfully invited ' + email + '!');
                     }).catch(err => {
@@ -127,6 +139,17 @@ function BoardSettings(props) {
                     setInviteEmailError(true);
                     setInviteEmailHelperText('User does not exist!');
                 }
+            }).then(result => {
+                db.collection('boards').doc(props.board.id).collection('history').add(
+                    {
+                        user: user.email,
+                        user2: email,
+                        action: 2,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging inviting user: " + err);
+                });
             }).catch(err => {
                 console.log(err);
             });
@@ -139,6 +162,16 @@ function BoardSettings(props) {
         }).then(result => {
             setSuccessSnackbar(true);
             setSuccessMessage('Successfully removed ' + email + '!');
+            db.collection('boards').doc(props.board.id).collection('history').add(
+                {
+                    user: user.email,
+                    user2: email,
+                    action: 3,
+                    timestamp: firebase.database.ServerValue
+                }
+            ).catch(err => {
+                console.log("Error logging removing user: " + err);
+            });
         }).catch(err => {
             console.log(err);
         });
@@ -195,9 +228,11 @@ function BoardSettings(props) {
                         <TableContainer style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}}>
                             <Table size='small'>
                                 <TableHead>
-                                    <TableCell>Role</TableCell>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell align='right'>Can edit</TableCell>
+                                    <TableRow>
+                                        <TableCell>Role</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell align='right'>Can edit</TableCell>
+                                    </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     <TableRow>
@@ -236,7 +271,7 @@ function BoardSettings(props) {
                         <h2>Here be dragons</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <DeleteBoardDialog />
+                        <DeleteBoardDialog board={props.board}/>
                     </Grid>
                 </Grid>
             </Paper>

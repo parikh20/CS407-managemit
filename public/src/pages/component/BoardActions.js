@@ -8,10 +8,11 @@ import BoardBreadcrumbs from './BoardBreadcrumbs';
 import EditTaskDialog from './EditTaskDialog';
 import NewColumnDialog from './NewColumnDialog';
 import SelectViewDialog from './SelectViewDialog'
-import {auth} from "../../Firebase";
+import NewViewDialog from './NewViewDialog';
+import BoardUsersDialog from './BoardUsersDialog';
 
 function BoardActions(props) {
-    const user = auth.currentUser;
+    const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
 
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
@@ -20,12 +21,13 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} />
+                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} />
                     <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
-                    <Button>New view</Button>
-                    <SelectViewDialog />
-                    <Button>View calendar</Button>
-                    <Button href={'/board/' + props.boardRef.id + '/history'}>View history</Button>
+                    <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                    <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
+                    <Button>Calendar</Button>
+                    <BoardUsersDialog boardRef={props.boardRef} board={props.board} />
+                    <Button href={'/board/' + props.boardRef.id + '/history'}>History</Button>
                     {user && props.board.owner === user.email && (
                         <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
                     )}

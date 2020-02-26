@@ -11,15 +11,16 @@ import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
 
 import { db } from '../../Firebase';
-
+import firebase from '../../Firebase';
 
 function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
-    const [verifyError, setVerifyError] = React.useState(false);
-    const [verifyHelperText, setVerifyHelperText] = React.useState('');
+    const [deleteDisable, setDeleteDisable] = React.useState(true);
     
+    const user = JSON.parse(localStorage.getItem('user'));
+
     const columnNames = [];
     for (let column of props.columns) {
         columnNames.push(column.label);
@@ -53,41 +54,76 @@ function EditColumnDialog(props) {
 
             db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id).collection('columns').doc(props.column.id).update({
                 label: columnName
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        colName: columnName,
+                        action: 5,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging edit column: " + err);
+                });
             });
         }
     };
 
     const handleSubmitDelete = () => {
         const verifyName = document.getElementById('columnDeleteConfirmation').value;
-
-        clearState();
-
-        if (verifyName !== props.column.label) {
-            setVerifyError(true);
-            setVerifyHelperText('Column name does not match');
-        } else {
+        if (verifyName === props.column.label) {
             setOpen(false);
 
             db.runTransaction(async (t) => {
                 const colGroup = await db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id);
-                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef !== props.column.id);;
+                let columnOrder = (await colGroup.get()).data().columnOrder.filter(colRef => colRef !== props.column.id);
+
+                props.column.taskRefs.forEach(async (taskId) => {
+                    const taskRef = db.collection('boards').doc(props.boardRef.id).collection('tasks').doc(taskId);
+                    let columnRefs = (await taskRef.get()).data().columnRefs;
+
+                    // If this task is only in this column, delete it. Otherwise, just remove this column from its list.
+                    if (columnRefs.length === 1) {
+                        taskRef.delete();
+                    } else {
+                        taskRef.update({
+                            columnRefs: columnRefs.filter(columnRef => columnRef !== props.column.id)
+                        });
+                    }
+                });
                 
                 await colGroup.collection('columns').doc(props.column.id).delete();
 
                 await colGroup.update({
                     'columnOrder': columnOrder
                 });
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        colName: props.column.label,
+                        action: 6,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging delete column: " + err);
+                });
             });
         }
-    }
+    };
     
     const clearState = () => {
         setNameError(false);
         setNameHelperText('');
-        setVerifyError(false);
-        setVerifyHelperText('');
     };
 
+    const inputListener = (event) => {
+        if (event.target.value === props.column.label) {
+            setDeleteDisable(false);
+        } else {
+            setDeleteDisable(true);
+        }
+    };
 
     return (
         <div style={{display: 'inline'}}>
@@ -115,7 +151,7 @@ function EditColumnDialog(props) {
                     />
                     <Divider style={{margin: 10}} />
                     <DialogContentText>
-                        To delete the column, type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone.
+                        Type the name of the column to confirm deletion.<br /><br />Warning: this cannot be undone. Any tasks associated with only this column will be lost.
                     </DialogContentText>
                     <TextField
                         margin='dense'
@@ -124,16 +160,15 @@ function EditColumnDialog(props) {
                         variant='outlined'
                         fullWidth
                         color='secondary'
+                        onChange={inputListener}
                         InputLabelProps={{shrink: true}}
-                        error={verifyError} 
-                        helperText={verifyHelperText}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmitDelete} color='secondary'>
+                    <Button onClick={handleSubmitDelete} disabled={deleteDisable} color='secondary'>
                         Delete column
                     </Button>
                     <Button onClick={handleSubmitChanges} color='primary'>

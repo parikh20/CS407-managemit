@@ -31,6 +31,24 @@ function SelectViewDialog(props) {
         setOpen(false);
     };
 
+    let colGroups = Array.isArray(props.allColGroups) ? props.allColGroups : [];
+    let allCols = Array.isArray(props.allCols) ? props.allCols : [];
+    let colGroupDisplay = colGroups.map((colGroup, index) => {
+        if (allCols.length <= index) {
+            return {
+                label: colGroup.label,
+                id: colGroup.id,
+                columnNames: []
+            };
+        }
+        let columnNames = allCols[index].map(column => column.label);
+        return {
+            label: colGroup.label,
+            id: colGroup.id,
+            columnNames: columnNames
+        };
+    });
+
     return (
         <div>
             <ButtonGroup size='small'>
@@ -42,21 +60,11 @@ function SelectViewDialog(props) {
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
                             <List className={classes.list}>
-                                <ListItem>
-                                    <ListItemText primary='Placeholder column group name' secondary='column name 1, column name 2, column name 3' />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary='Placeholder column group name' secondary='column name 1, column name 2, column name 3' />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary='Placeholder column group name' secondary='column name 1, column name 2, column name 3' />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary='Placeholder column group name' secondary='column name 1, column name 2, column name 3' />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary='Placeholder column group name' secondary='column name 1, column name 2, column name 3' />
-                                </ListItem>
+                                {colGroupDisplay.map((colGroup, index) => (
+                                    <ListItem key={colGroup.id}>
+                                        <ListItemText primary={colGroup.label} secondary={colGroup.columnNames.join(', ')} />
+                                    </ListItem>
+                                ))}
                             </List>
                         </Grid>
                      </Grid>

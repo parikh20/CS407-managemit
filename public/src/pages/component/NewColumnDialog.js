@@ -9,11 +9,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 
 import { db } from '../../Firebase';
+import firebase from '../../Firebase';
 
 function NewColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const columnNames = [];
     for (let column of props.columns) {
@@ -59,6 +62,17 @@ function NewColumnDialog(props) {
                 await columnGroupRef.update({
                     'columnOrder': columnOrder
                 });
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        colName: columnName,
+                        action: 4,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging new column: " + err);
+                });
             });
         }
     };
@@ -80,7 +94,6 @@ function NewColumnDialog(props) {
                         <Grid item xs={12}>
                             <TextField
                                 autoFocus
-                                margin='dense'
                                 id='columnName'
                                 label='Column name'
                                 variant='outlined'
