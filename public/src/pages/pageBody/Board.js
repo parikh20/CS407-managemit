@@ -161,6 +161,7 @@ class Board extends React.Component {
                     }) : []} /* Map the column references to actual columns */
                     allColGroups={this.state.allColGroups ? this.state.allColGroups : {}}
                     allCols={this.state.allCols ? this.state.allCols : {}}
+                    lockFunctionality={this.props.lockFunctionality}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
@@ -173,6 +174,8 @@ class Board extends React.Component {
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
                     allCols={this.state.allCols ? this.state.allCols : {}}
+                    lockFunctionality={this.props.lockFunctionality}
+                    sortMode={this.props.sortMode}
                 />
             </div>
         ); 

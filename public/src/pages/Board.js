@@ -24,11 +24,19 @@ export default (props) => {
         history.push('/boards');
     });
 
+    // Check if we have the query param for sorting
+    let sortMode = null;
+    if (viewableHistory.location.search && viewableHistory.location.search.startsWith('?sort=')) {
+        sortMode = viewableHistory.location.search.substring(6);
+        if (!['title', 'date', 'users'].includes(sortMode)) {
+            sortMode = null;
+        }
+    }
 
     return (
         <div>
-            <NavBar location={viewableHistory.location.pathname}  />
-            <Board history={history} boardId={props.match.params.boardId} />
+            <NavBar location={viewableHistory.location.pathname} sortMode={sortMode} />
+            <Board history={history} boardId={props.match.params.boardId} sortMode={sortMode} lockFunctionality={sortMode !== null} />
         </div>
     );
 };

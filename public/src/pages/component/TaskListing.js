@@ -195,12 +195,14 @@ function TaskListing(props) {
                     <Button onClick={handleClose}>
                         View connected tasks
                     </Button>
-                    <Button onClick={handleDelete} color='secondary'>
-                        Delete
-                    </Button>
-                    <Button onClick={handleClose}>
-                        Edit
-                    </Button>
+                    {!props.lockFunctionality && <>
+                        <Button onClick={handleDelete} color='secondary'>
+                            Delete
+                        </Button>
+                        <Button onClick={handleClose}>
+                            Edit
+                        </Button>
+                    </>}
                     <Button onClick={handleClose} color='primary'>
                         Close
                     </Button>

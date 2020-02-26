@@ -29,6 +29,8 @@ function ColumnGroup(props) {
                         columnGroupRef={props.columnGroupRef}
                         taskRefs={props.taskRefs.hasOwnProperty(column.id) ? props.taskRefs[column.id] : []}
                         allColumnNames={allColumnNames}
+                        lockFunctionality={props.lockFunctionality}
+                        sortMode={props.sortMode}
                     />
                 ))}
             </GridList>
