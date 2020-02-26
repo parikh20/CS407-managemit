@@ -15,6 +15,7 @@ function Column(props) {
     } else if (props.sortMode === 'date') {
         taskRefs.sort((a, b) => (a.data().date.seconds > b.data().date.seconds))
     } else if (props.sortMode === 'users') {
+        taskRefs.sort((a, b) => (a.data().users.sort().toString().localeCompare(b.data().users.sort().toString())))
     } else {
         taskRefs.sort((a, b) => columnTaskRefs.indexOf(a.id) - columnTaskRefs.indexOf(b.id));
     }
