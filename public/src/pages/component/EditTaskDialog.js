@@ -19,6 +19,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import { db } from '../../Firebase';
+import firebase from '../../Firebase';
 
 function EditTaskDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -33,6 +34,8 @@ function EditTaskDialog(props) {
     const [checklistError, setChecklistError] = React.useState(false);
     const [checklistHelperText, setChecklistHelperText] = React.useState('');
     const [checklistItems, setChecklistItems] = React.useState([]);
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const handleClickOpen = () => {
         clearState();
@@ -114,7 +117,18 @@ function EditTaskDialog(props) {
                         taskRefs: [...taskRefs, taskRef.id]
                     });
                 });
-            });
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        taskName: label,
+                        action: 7,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging add task: " + err);
+                });
+            });;
         }
     }
 
