@@ -16,23 +16,36 @@ class FirebaseCache {
   
   subscriptions = [];
   boards = new Map();
+  colGroups = new Map();
   
   constructor(db) {
-    console.log("New class");
     this.db = db;
   }
 
   loadBoard(boardId) {
-    console.log(Array.from(this.boards.keys()), boardId);
     if(this.boards.has(boardId)) {
-      console.log("Old");
       return this.boards.get(boardId);
     } else {
-      console.log("New");
       let sub = new ReplaySubject(1);
       this.boards.set(boardId, sub);
       this.subscriptions.push(this.db.collection("boards").doc(boardId).onSnapshot((boardRef) => {
         sub.next(boardRef);
+      }));
+      return sub;
+    }
+  }
+
+  loadColumnGroup(boardRef, columnGroupId) {
+    let path = `${boardRef.id}-${columnGroupId}`;
+    if(this.colGroups.has(path)) {
+      console.log("Old");
+      return this.colGroups.get(path);
+    } else {
+      console.log("New");
+      let sub = new ReplaySubject(1);
+      this.colGroups.set(path, sub);
+      this.subscriptions.push(boardRef.ref.collection("columnGroups").doc(columnGroupId).onSnapshot((colGroupRef) => {
+        sub.next(colGroupRef);
       }));
       return sub;
     }

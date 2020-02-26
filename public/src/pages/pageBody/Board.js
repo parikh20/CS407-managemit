@@ -14,9 +14,7 @@ class Board extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            boardRef: {}
-        };
+        this.state = {};
     }
 
     componentDidMount() {
@@ -35,7 +33,7 @@ class Board extends React.Component {
     loadColGroup(boardRef, colGroup=null) {
         // If there is already a subscription, unsubscribe
         if(this.colGroupSub) {
-            this.colGroupSub();
+            this.colGroupSub.unsubscribe();
         }
         const collection = boardRef.ref.collection("columnGroups");
 
@@ -44,25 +42,25 @@ class Board extends React.Component {
 
         // If a default is set (not ""), then use it
         if(colGroup.length) {
-            this.colGroupSub = collection.doc(colGroup).onSnapshot((colGroupRef) => {
+            this.colGroupSub = cache.loadColumnGroup(boardRef, colGroup).subscribe((colGroupRef) => {
                 this.setState({colGroupRef: colGroupRef});
-                this.loadColumns();
+                this.loadColumns(colGroupRef);
             });
         // Otherwise just grab the first colGroup
         } else {
             this.colGroupSub = collection.limit(1).onSnapshot((colGroupRef) => {
                 this.setState({colGroupRef: colGroupRef.docs[0]});
-                this.loadColumns();
+                this.loadColumns(colGroupRef.docs[0]);
             });
         }
     }
 
-    loadColumns() {
+    loadColumns(colGroupRef=null) {
         if(this.colSub) {
             this.colSub();
         }
 
-        this.colSub = this.state.colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
+        this.colSub = (colGroupRef || this.state.colGroupRef).ref.collection("columns").onSnapshot((columnRefs) => {
             this.setState({columnRefs: columnRefs.docs})
         })
     }
@@ -71,7 +69,7 @@ class Board extends React.Component {
     componentWillUnmount() {
         this.boardSub && this.boardSub.unsubscribe();
         this.colSub && this.colSub();
-        this.colGroupSub && this.colGroupSub();
+        this.colGroupSub && this.colGroupSub.unsubscribe();
     }
 
     render() {
@@ -79,7 +77,7 @@ class Board extends React.Component {
             <div>
                 <BoardActions
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
-                    board={this.state.boardRef.data ? this.state.boardRef.data() : {}}
+                    board={this.state.boardRef ? this.state.boardRef.data() : {}}
                     columnGroupRef={this.state.colGroupRef ? this.state.colGroupRef : {}}
                     columns={this.state.columnRefs ? this.state.columnRefs.map((c) => {
                         let data = c.data();
