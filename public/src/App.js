@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
+    BrowserRouter,
     Switch,
     Route,
     Redirect
@@ -53,7 +53,7 @@ class RedirectRoute extends React.Component {
 
 function App() {
     return (
-        <Router>
+        <BrowserRouter>
             <Switch>
                 <RedirectRoute path='/login' component={Login} />
                 <RedirectRoute path='/register' component={Register} />
@@ -65,7 +65,7 @@ function App() {
                     <Redirect to='/login' />
                 </Route>
             </Switch>
-        </Router>
+        </BrowserRouter>
     );
 }
 

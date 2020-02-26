@@ -26,7 +26,7 @@ function BoardActions(props) {
                     <SelectViewDialog />
                     <Button>View calendar</Button>
                     <Button href={'/board/' + props.boardRef.id + '/history'}>View history</Button>
-                    {props.board.owner === user.email && (
+                    {user && props.board.owner === user.email && (
                         <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
                     )}
                 </ButtonGroup>

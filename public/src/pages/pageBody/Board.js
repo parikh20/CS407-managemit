@@ -3,7 +3,7 @@ import React from 'react';
 import BoardActions from '../component/BoardActions';
 import ColumnGroup from '../component/ColumnGroup';
 
-import { db } from '../../Firebase';
+import { db, cache } from '../../Firebase';
 
 
 class Board extends React.Component {
@@ -14,29 +14,33 @@ class Board extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            boardRef: {}
+        };
+    }
+
+    componentDidMount() {
         this.loadBoard();
     }
 
     // Load board based on boardID, then load column group
     loadBoard() {
-        this.boardSub = db.collection("boards").doc(this.props.boardId).onSnapshot((boardRef) => {
+        this.boardSub = cache.loadBoard(this.props.boardId).subscribe((boardRef) => {
             this.setState({boardRef: boardRef});
-            this.loadColGroup();
+            this.loadColGroup(boardRef);
         });
     }
 
     // Load column group, then load columns
-    loadColGroup(colGroup=null) {
-
+    loadColGroup(boardRef, colGroup=null) {
         // If there is already a subscription, unsubscribe
         if(this.colGroupSub) {
             this.colGroupSub();
         }
-        const collection = this.state.boardRef.ref.collection("columnGroups");
+        const collection = boardRef.ref.collection("columnGroups");
 
         // If a parameter was supplied to the function use it, otherwise use default
-        colGroup = colGroup || this.state.boardRef.data().defaultColumnGroup;
+        colGroup = colGroup || boardRef.data().defaultColumnGroup;
 
         // If a default is set (not ""), then use it
         if(colGroup.length) {
@@ -65,7 +69,7 @@ class Board extends React.Component {
 
     // When the component is destroyed, unsubscribe from all subscriptions
     componentWillUnmount() {
-        this.boardSub && this.boardSub();
+        this.boardSub && this.boardSub.unsubscribe();
         this.colSub && this.colSub();
         this.colGroupSub && this.colGroupSub();
     }
@@ -75,7 +79,7 @@ class Board extends React.Component {
             <div>
                 <BoardActions
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
-                    board={this.state.boardRef ? this.state.boardRef.data() : {}}
+                    board={this.state.boardRef.data ? this.state.boardRef.data() : {}}
                     columnGroupRef={this.state.colGroupRef ? this.state.colGroupRef : {}}
                     columns={this.state.columnRefs ? this.state.columnRefs.map((c) => {
                         let data = c.data();

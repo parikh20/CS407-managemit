@@ -1,12 +1,13 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
+// import Link from '@material-ui/core/Link';
 
 function BoardBreadcrumbs(props) {
     return (
         <Breadcrumbs aria-label='breadcrumbs'>
-            <Link color='inherit' href='/boards'>
+            <Link to="/boards" color='inherit'>
                 Boards
             </Link>
             <Typography color='textPrimary'>
