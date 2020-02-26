@@ -17,11 +17,13 @@ class FirebaseCache {
   subscriptions = [];
   boards = new Map();
   colGroups = new Map();
+  columns = new Map();
   
   constructor(db) {
     this.db = db;
   }
 
+  // Given the id of the board, returns an observable for the board
   loadBoard(boardId) {
     if(this.boards.has(boardId)) {
       return this.boards.get(boardId);
@@ -35,17 +37,30 @@ class FirebaseCache {
     }
   }
 
+  // Given a boardRef and a columnGroupId, returns an observable for the Column Group
   loadColumnGroup(boardRef, columnGroupId) {
     let path = `${boardRef.id}-${columnGroupId}`;
     if(this.colGroups.has(path)) {
-      console.log("Old");
       return this.colGroups.get(path);
     } else {
-      console.log("New");
       let sub = new ReplaySubject(1);
       this.colGroups.set(path, sub);
       this.subscriptions.push(boardRef.ref.collection("columnGroups").doc(columnGroupId).onSnapshot((colGroupRef) => {
         sub.next(colGroupRef);
+      }));
+      return sub;
+    }
+  }
+
+  // Given a reference to a column group, returns an observable for columns in the column group
+  loadColumns(colGroupRef) {
+    if(this.columns.has(colGroupRef.id)) {
+      return this.columns.get(colGroupRef.id);
+    } else {
+      let sub = new ReplaySubject(1);
+      this.columns.set(colGroupRef.id, sub);
+      this.subscriptions.push(colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
+        sub.next(columnRefs);
       }));
       return sub;
     }

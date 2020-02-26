@@ -3,7 +3,7 @@ import React from 'react';
 import BoardActions from '../component/BoardActions';
 import ColumnGroup from '../component/ColumnGroup';
 
-import { db, cache } from '../../Firebase';
+import { cache } from '../../Firebase';
 
 
 class Board extends React.Component {
@@ -60,15 +60,15 @@ class Board extends React.Component {
             this.colSub();
         }
 
-        this.colSub = (colGroupRef || this.state.colGroupRef).ref.collection("columns").onSnapshot((columnRefs) => {
+        this.colSub = cache.loadColumns(colGroupRef || this.state.colGroupRef).subscribe((columnRefs) => {
             this.setState({columnRefs: columnRefs.docs})
-        })
+        });
     }
 
     // When the component is destroyed, unsubscribe from all subscriptions
     componentWillUnmount() {
         this.boardSub && this.boardSub.unsubscribe();
-        this.colSub && this.colSub();
+        this.colSub && this.colSub.unsubscribe();
         this.colGroupSub && this.colGroupSub.unsubscribe();
     }
 
