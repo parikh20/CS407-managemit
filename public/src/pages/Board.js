@@ -28,7 +28,7 @@ export default (props) => {
     return (
         <div>
             <NavBar location={viewableHistory.location.pathname}  />
-            <Board boardId={props.match.params.boardId} />
+            <Board history={history} boardId={props.match.params.boardId} />
         </div>
     );
 };

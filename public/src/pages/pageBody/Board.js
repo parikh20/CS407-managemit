@@ -27,9 +27,13 @@ class Board extends React.Component {
     // Load board based on boardID, then load column group
     loadBoard() {
         this.boardSub = db.collection("boards").doc(this.props.boardId).onSnapshot((boardRef) => {
-            this.setState({boardRef: boardRef});
-            this.loadColGroup();
-            this.loadAllColGroups();
+            if (!boardRef.exists) {
+                this.props.history.push('/boards');
+            } else {
+                this.setState({boardRef: boardRef});
+                this.loadColGroup();
+                this.loadAllColGroups();
+            }
         });
     }
 
@@ -138,7 +142,7 @@ class Board extends React.Component {
         Object.keys(this.taskSubs).forEach(columnId => {
             this.taskSubs[columnId]();
         });
-        this.allColsSubs.forEach(colSub => {
+        this.allColsSubs && Array.isArray(this.allColSubs) && this.allColSubs.forEach(colSub => {
             colSub && colSub();
         });
     }
