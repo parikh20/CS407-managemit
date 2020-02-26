@@ -14,9 +14,11 @@ import TextField from '@material-ui/core/TextField';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Tooltip from '@material-ui/core/Tooltip';
-import Switch from '@material-ui/core/Switch';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextFormatIcon from '@material-ui/icons/TextFormat';
 
 function NavBar(props) {
     const showNavigation = !(['/login', '/register'].includes(props.location));
@@ -44,9 +46,13 @@ function NavBar(props) {
         history.push(props.location);
     };
 
-    const toggleCaseSensitiveChecked = () => {
-        setCaseSensitiveChecked(prev => !prev);
+    const toggleCaseSensitiveChecked = (event, newValue) => {
+        setCaseSensitiveChecked(newValue);
     };
+
+    React.useEffect(() => {
+        searchTasks();
+    }, [caseSensitiveChecked]);
 
     const logOut = () => {
         localStorage.removeItem('user');
@@ -93,9 +99,13 @@ function NavBar(props) {
                         }
                     </Typography>
                     {showBoardFeatures && <>
-                        <TextField placeholder='Search for task' onChange={searchTasks} id='taskSearchInput' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
-                        <Tooltip title='Case sensitive' arrow>
-                            <Switch size='small' color='secondary' checked={caseSensitiveChecked} onChange={toggleCaseSensitiveChecked} />
+                        <TextField placeholder='Search for task' onChange={() => searchTasks()} id='taskSearchInput' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                        <Tooltip title='Case sensitivity' arrow>
+                            <ToggleButtonGroup size='small' exclusive value={caseSensitiveChecked} style={{backgroundColor: 'inherit'}} onChange={toggleCaseSensitiveChecked}>
+                                <ToggleButton value={true} style={{border: 0, color: 'white'}}>
+                                    <TextFormatIcon />
+                                </ToggleButton>
+                            </ToggleButtonGroup>
                         </Tooltip>
                         <Tooltip title='Sort tasks' arrow>
                             <IconButton

@@ -95,7 +95,7 @@ function TaskListing(props) {
                                         Columns
                                     </Typography>
                                     {props.task.columnRefs.map(columnId => 
-                                        <Chip key={columnId} label={props.allColumnNames[columnId]} color='primary' size='small' />
+                                        <Chip key={columnId} label={props.allColumnNames[columnId]} color='primary' size='small' style={{margin: 3 + 'px'}} />
                                     )}
                                 </Grid>
                             </Grid>
@@ -126,7 +126,7 @@ function TaskListing(props) {
                                         </Typography>
                                     )}
                                     {props.task.users.length > 0 && props.task.users.map(user =>
-                                        <Chip key={user} label={user} color='primary' size='small' />
+                                        <Chip key={user} label={user} color='primary' size='small' style={{margin: 3 + 'px'}} />
                                     )}
                                 </Grid>
                             </Grid>
