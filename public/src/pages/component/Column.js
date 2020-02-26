@@ -13,9 +13,8 @@ function Column(props) {
     if (props.sortMode === 'title') {
         taskRefs.sort((a, b) => a.data().title.localeCompare(b.data().title));
     } else if (props.sortMode === 'date') {
-        // TODO!!
+        taskRefs.sort((a, b) => (a.data().date.seconds > b.data().date.seconds))
     } else if (props.sortMode === 'users') {
-        // TODO!!
     } else {
         taskRefs.sort((a, b) => columnTaskRefs.indexOf(a.id) - columnTaskRefs.indexOf(b.id));
     }
