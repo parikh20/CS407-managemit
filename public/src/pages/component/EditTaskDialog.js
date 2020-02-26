@@ -213,8 +213,8 @@ function EditTaskDialog(props) {
                                 label='Description'
                                 rows='5'
                                 variant='outlined'
-                                multiline
-                                fullWidth
+                                multiline='true'
+                                fullWidth='true'
                                 InputLabelProps={{shrink: true}}
                                 error={descError}
                                 helperText={descHelperText}
