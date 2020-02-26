@@ -96,13 +96,11 @@ function BoardSettings(props) {
                     description: description
                 }
             ).then(result => {
-                db.collection('boards').doc(props.board.id).update(
+                db.collection('boards').doc(props.board.id).collection('history').add(
                     {
-                        history: firebase.firestore.FieldValue.arrayUnion({
-                            user: user.email,
-                            action: 1,
-                            timestamp: firebase.database.ServerValue
-                        })
+                        user: user.email,
+                        action: 1,
+                        timestamp: firebase.database.ServerValue
                     }
                 ).catch(err => {
                     console.log("Error logging board update: " + err);
@@ -142,14 +140,12 @@ function BoardSettings(props) {
                     setInviteEmailHelperText('User does not exist!');
                 }
             }).then(result => {
-                db.collection('boards').doc(props.board.id).update(
+                db.collection('boards').doc(props.board.id).collection('history').add(
                     {
-                        history: firebase.firestore.FieldValue.arrayUnion({
-                            user: user.email,
-                            user2: email,
-                            action: 2,
-                            timestamp: firebase.database.ServerValue
-                        })
+                        user: user.email,
+                        user2: email,
+                        action: 2,
+                        timestamp: firebase.database.ServerValue
                     }
                 ).catch(err => {
                     console.log("Error logging inviting user: " + err);
@@ -166,14 +162,12 @@ function BoardSettings(props) {
         }).then(result => {
             setSuccessSnackbar(true);
             setSuccessMessage('Successfully removed ' + email + '!');
-            db.collection('boards').doc(props.board.id).update(
+            db.collection('boards').doc(props.board.id).collection('history').add(
                 {
-                    history: firebase.firestore.FieldValue.arrayUnion({
-                        user: user.email,
-                        user2: email,
-                        action: 3,
-                        timestamp: firebase.database.ServerValue
-                    })
+                    user: user.email,
+                    user2: email,
+                    action: 3,
+                    timestamp: firebase.database.ServerValue
                 }
             ).catch(err => {
                 console.log("Error logging removing user: " + err);

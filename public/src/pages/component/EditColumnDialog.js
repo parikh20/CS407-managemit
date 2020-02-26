@@ -55,14 +55,12 @@ function EditColumnDialog(props) {
             db.collection('boards').doc(props.boardRef.id).collection('columnGroups').doc(props.columnGroupRef.id).collection('columns').doc(props.column.id).update({
                 label: columnName
             }).then(result => {
-                db.collection('boards').doc(props.boardRef.id).update(
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
-                        history: firebase.firestore.FieldValue.arrayUnion({
-                            user: user.email,
-                            colName: columnName,
-                            action: 5,
-                            timestamp: firebase.database.ServerValue
-                        })
+                        user: user.email,
+                        colName: columnName,
+                        action: 5,
+                        timestamp: firebase.database.ServerValue
                     }
                 ).catch(err => {
                     console.log("Error logging edit column: " + err);
@@ -100,14 +98,12 @@ function EditColumnDialog(props) {
                     'columnOrder': columnOrder
                 });
             }).then(result => {
-                db.collection('boards').doc(props.boardRef.id).update(
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
-                        history: firebase.firestore.FieldValue.arrayUnion({
-                            user: user.email,
-                            colName: props.column.label,
-                            action: 6,
-                            timestamp: firebase.database.ServerValue
-                        })
+                        user: user.email,
+                        colName: props.column.label,
+                        action: 6,
+                        timestamp: firebase.database.ServerValue
                     }
                 ).catch(err => {
                     console.log("Error logging delete column: " + err);

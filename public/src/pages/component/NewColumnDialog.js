@@ -63,14 +63,12 @@ function NewColumnDialog(props) {
                     'columnOrder': columnOrder
                 });
             }).then(result => {
-                db.collection('boards').doc(props.boardRef.id).update(
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
-                        history: firebase.firestore.FieldValue.arrayUnion({
-                            user: user.email,
-                            colName: columnName,
-                            action: 4,
-                            timestamp: firebase.database.ServerValue
-                        })
+                        user: user.email,
+                        colName: columnName,
+                        action: 4,
+                        timestamp: firebase.database.ServerValue
                     }
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
