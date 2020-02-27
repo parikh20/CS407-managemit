@@ -130,9 +130,10 @@ function NavBar(props) {
                             open={Boolean(menuAnchorEl)}
                             onClose={handleMenuClose}
                         >
-                            <MenuItem onClick={() => handleMenuClick('title')}>Sort by title</MenuItem>
+                            <MenuItem onClick={() => handleMenuClick('titleAsc')}>Sort by title (ascending)</MenuItem>
+                            <MenuItem onClick={() => handleMenuClick('titleDesc')}>Sort by title (descending)</MenuItem>
                             <MenuItem onClick={() => handleMenuClick('date')}>Sort by due date</MenuItem>
-                            <MenuItem onClick={() => handleMenuClick('users')}>Sort by users</MenuItem>
+                            <MenuItem onClick={() => handleMenuClick('users')}>Sort by assigned to me</MenuItem>
                         </Menu>
                         {props.sortMode !== null && (
                             <Tooltip title='Return to default task display and unlock functionality' arrow>

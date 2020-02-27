@@ -28,7 +28,7 @@ export default (props) => {
     let sortMode = null;
     if (viewableHistory.location.search && viewableHistory.location.search.startsWith('?sort=')) {
         sortMode = viewableHistory.location.search.substring(6);
-        if (!['title', 'date', 'users'].includes(sortMode)) {
+        if (!['titleAsc', 'titleDesc', 'date', 'users'].includes(sortMode)) {
             sortMode = null;
         }
     }
