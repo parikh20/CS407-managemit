@@ -34,7 +34,7 @@ function BoardActions(props) {
                     <ButtonGroup size='small'>
                         <Button href={'/board/' + props.boardRef.id + '/history'}>History</Button>
                     </ButtonGroup>
-                    {props.board.owner === user.email && (
+                    {user && props.board.owner === user.email && (
                         <ButtonGroup size='small'>
                             <Button href={'/board/' + props.boardRef.id + '/settings'}>Settings</Button>
                         </ButtonGroup>

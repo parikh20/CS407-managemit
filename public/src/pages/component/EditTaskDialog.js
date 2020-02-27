@@ -106,34 +106,32 @@ function EditTaskDialog(props) {
         if (!hasError) {
             setOpen(false);
 
-            db.runTransaction(async (t) => {
-                let taskRef = await props.boardRef.ref.collection("tasks").add({
-                    title: label,
-                    desc: desc,
-                    date: date,
-                    users: users,
-                    columnRefs: columnIds,
-                    checklist: checklistItems
+
+            props.boardRef.ref.collection("tasks").add({
+                title: label,
+                desc: desc,
+                date: date,
+                users: users,
+                columnRefs: columnIds,
+                checklist: checklistItems
+            }).then((taskRef) => {
+                let columnUpdates = [];
+                Object.keys(columns).forEach((colGroupId) => {
+                    columnUpdates.push(
+                        props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
+                            taskRefs: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
+                        })
+                    );
                 });
-                Object.keys(columns).forEach(async (colGroupId) => {
-                    let colRef = await props.boardRef.ref.collection('columnGroups').doc(colGroupId).collection('columns').doc(columns[colGroupId]);
-                    let taskRefs = (await colRef.get()).data().taskRefs;
-                    await colRef.update({
-                        taskRefs: [...taskRefs, taskRef.id]
-                    });
-                });
+                return Promise.all(columnUpdates);
             }).then(result => {
-                db.collection('boards').doc(props.boardRef.id).collection('history').add(
-                    {
+                return db.collection('boards').doc(props.boardRef.id).collection('history').add({
                         user: user.email,
                         taskName: label,
                         action: 7,
                         timestamp: firebase.database.ServerValue
-                    }
-                ).catch(err => {
-                    console.log("Error logging add task: " + err);
-                });
-            });;
+                    });
+            }).catch(err => console.error("Error in adding task:", err));
         }
     }
 
@@ -291,7 +289,7 @@ function EditTaskDialog(props) {
                                 Columns and collaborators
                             </Typography>
                         </Grid>
-                        {props.allColGroups && Array.isArray(props.allColGroups) && props.allColGroups.map((colGroup, index) => (
+                        {props.allColGroups && props.allColGroups.map((colGroup) => (
                             <div key={colGroup.id} style={{width: '100%'}}>
                                 {columnHelperText && (
                                     <Grid item xs={12}>
@@ -302,7 +300,7 @@ function EditTaskDialog(props) {
                                 )}
                                 <Grid item xs={12}>
                                     <FormControl key={colGroup.id} style={{width: '100%'}}>
-                                        <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.label}</InputLabel>
+                                        <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.data().label}</InputLabel>
                                         <Select
                                             id={colGroup.id}
                                             fullWidth
@@ -315,9 +313,9 @@ function EditTaskDialog(props) {
                                             <MenuItem value=''>
                                                 (None)
                                             </MenuItem>
-                                           {props.allCols && Array.isArray(props.allCols) && props.allCols[index] && props.allCols[index].map((column) => (
+                                           {props.allCols && props.allCols[colGroup.id] && props.allCols[colGroup.id].map((column) => (
                                                <MenuItem key={column.id} value={column.id}>
-                                                   {column.label}
+                                                   {column.data().label}
                                                </MenuItem>
                                            ))} 
                                         </Select>
