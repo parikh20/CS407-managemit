@@ -16,6 +16,7 @@ class FirebaseCache {
   
   subscriptions = [];
   boards = new Map();
+  tasks = new Map();
   colGroups = new Map();
   columns = new Map();
   
@@ -32,6 +33,20 @@ class FirebaseCache {
       this.boards.set(boardId, sub);
       this.subscriptions.push(this.db.collection("boards").doc(boardId).onSnapshot((boardRef) => {
         sub.next(boardRef);
+      }));
+      return sub;
+    }
+  }
+
+  loadTasks(boardRef) {
+    if(this.tasks.has(boardRef.id)) {
+      return this.tasks.get(boardRef.id);
+    } else {
+      let sub = new ReplaySubject(1);
+      this.tasks.set(boardRef.id, sub);
+      this.subscriptions.push(boardRef.ref.collection("tasks").onSnapshot((taskRefs) => {
+        console.log(taskRefs);
+        sub.next(taskRefs);
       }));
       return sub;
     }

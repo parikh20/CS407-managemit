@@ -11,19 +11,17 @@ class Board extends React.Component {
     boardSub;
     colGroupSub;
     colSub;
-    allColGroupsSub;
-    allColsSubs = [];
-    taskSubs = {};
+    taskSub;
 
     constructor(props) {
         super(props);
-    }
-
-    componentDidMount() {
         this.state = {
             taskRefs: {},
             allCols: []
         };
+    }
+
+    componentDidMount() {
         this.loadBoard();
     }
 
@@ -32,7 +30,8 @@ class Board extends React.Component {
         this.boardSub = cache.loadBoard(this.props.boardId).subscribe((boardRef) => {
             this.setState({boardRef: boardRef});
             this.loadColGroup(boardRef);
-            this.loadAllColGroups();
+            this.loadTasks(boardRef);
+            // this.loadAllColGroups();
         });
     }
 
@@ -69,80 +68,85 @@ class Board extends React.Component {
 
         this.colSub = cache.loadColumns(colGroupRef || this.state.colGroupRef).subscribe((columnRefs) => {
             this.setState({columnRefs: columnRefs.docs})
-            columnRefs.docs.forEach(columnRef => {
-                this.loadTasks(columnRef);
-            })
+        });
+    }
+
+    loadTasks(boardRef) {
+        if (this.taskSub) {
+            this.taskSub.unsubscribe();
+        }
+
+        this.taskSub = cache.loadTasks(boardRef).subscribe((taskRefs) => {
+            this.setState({taskRefs: taskRefs.docs})
         })
+        // if (this.taskSubs.hasOwnProperty(columnRef.id)) {
+        //     this.taskSubs[columnRef.id]();
+        // }
+
+        // this.taskSubs[columnRef.id] = this.state.boardRef.ref.collection('tasks').where('columnRefs', 'array-contains', columnRef.id).onSnapshot(newTaskRefs => {
+        //     this.setState(prevState => {
+        //         let taskRefs = {...prevState.taskRefs};
+        //         taskRefs[columnRef.id] = newTaskRefs.docs;
+        //         return {taskRefs};
+        //     });
+        // });
     }
 
-    loadTasks(columnRef) {
-        if (this.taskSubs.hasOwnProperty(columnRef.id)) {
-            this.taskSubs[columnRef.id]();
-        }
+    // loadAllColGroups() {
+    //     if (this.allColGroupsSub) {
+    //         this.allColGroupsSub();
+    //     }
 
-        this.taskSubs[columnRef.id] = this.state.boardRef.ref.collection('tasks').where('columnRefs', 'array-contains', columnRef.id).onSnapshot(newTaskRefs => {
-            this.setState(prevState => {
-                let taskRefs = {...prevState.taskRefs};
-                taskRefs[columnRef.id] = newTaskRefs.docs;
-                return {taskRefs};
-            });
-        });
-    }
+    //     const collection = this.state.boardRef.ref.collection('columnGroups');
+    //     this.allColGroupsSub = collection.orderBy('label', 'asc').onSnapshot(colGroupRefs => {
+    //         let allColGroups = colGroupRefs.docs.map(colGroupRef => {
+    //             let data = colGroupRef.data();
+    //             data.id = colGroupRef.id;
+    //             data.ref = colGroupRef.ref;
+    //             return data;
+    //         });
 
-    loadAllColGroups() {
-        if (this.allColGroupsSub) {
-            this.allColGroupsSub();
-        }
+    //         this.setState({allColGroups: allColGroups});
 
-        const collection = this.state.boardRef.ref.collection('columnGroups');
-        this.allColGroupsSub = collection.orderBy('label', 'asc').onSnapshot(colGroupRefs => {
-            let allColGroups = colGroupRefs.docs.map(colGroupRef => {
-                let data = colGroupRef.data();
-                data.id = colGroupRef.id;
-                data.ref = colGroupRef.ref;
-                return data;
-            });
+    //         this.loadAllCols();
+    //     });
+    // }
 
-            this.setState({allColGroups: allColGroups});
+    // loadAllCols() {
+    //     for (let i = 0; i < this.state.allColGroups.length; i++) {
+    //         if (i < this.allColsSubs.length && this.allColsSubs[i]) {
+    //             this.allColsSubs[i]();
+    //         }
+    //         this.allColsSubs = this.state.allColGroups[i].ref.collection('columns').onSnapshot(colRefs => {
+    //             let newAllCols = colRefs.docs.map(colRef => {
+    //                 let data = colRef.data();
+    //                 data.id = colRef.id;
+    //                 return data;
+    //             });
 
-            this.loadAllCols();
-        });
-    }
+    //             const columnRefs = this.state.allColGroups[i].columnOrder || [];
+    //             newAllCols.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
 
-    loadAllCols() {
-        for (let i = 0; i < this.state.allColGroups.length; i++) {
-            if (i < this.allColsSubs.length && this.allColsSubs[i]) {
-                this.allColsSubs[i]();
-            }
-            this.allColsSubs = this.state.allColGroups[i].ref.collection('columns').onSnapshot(colRefs => {
-                let newAllCols = colRefs.docs.map(colRef => {
-                    let data = colRef.data();
-                    data.id = colRef.id;
-                    return data;
-                });
-
-                const columnRefs = this.state.allColGroups[i].columnOrder || [];
-                newAllCols.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
-
-                let prevAllCols = [...this.state.allCols];
-                prevAllCols[i] = newAllCols;
-                this.setState({allCols: prevAllCols});
-            });
-        }
-    }
+    //             let prevAllCols = [...this.state.allCols];
+    //             prevAllCols[i] = newAllCols;
+    //             this.setState({allCols: prevAllCols});
+    //         });
+    //     }
+    // }
 
     // When the component is destroyed, unsubscribe from all subscriptions
     componentWillUnmount() {
         this.boardSub && this.boardSub.unsubscribe();
         this.colSub && this.colSub.unsubscribe();
         this.colGroupSub && this.colGroupSub.unsubscribe();
-        this.allColGroupsSub && this.allColGroupsSub();
-        Object.keys(this.taskSubs).forEach(columnId => {
-            this.taskSubs[columnId]();
-        });
-        this.allColsSubs.forEach(colSub => {
-            colSub && colSub();
-        });
+        this.taskSub && this.taskSub.unsubscribe();
+        // this.allColGroupsSub && this.allColGroupsSub();
+        // Object.keys(this.taskSubs).forEach(columnId => {
+        //     this.taskSubs[columnId]();
+        // });
+        // this.allColsSubs.forEach(colSub => {
+        //     colSub && colSub();
+        // });
     }
 
     render() {

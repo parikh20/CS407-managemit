@@ -27,7 +27,7 @@ function ColumnGroup(props) {
                         columns={columns}
                         boardRef={props.boardRef}
                         columnGroupRef={props.columnGroupRef}
-                        taskRefs={props.taskRefs.hasOwnProperty(column.id) ? props.taskRefs[column.id] : []}
+                        taskRefs={props.taskRefs.filter((task) => task.data().columnRefs.includes(column.id))}
                         allColumnNames={allColumnNames}
                     />
                 ))}
