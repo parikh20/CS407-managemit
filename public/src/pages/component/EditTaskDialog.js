@@ -101,34 +101,32 @@ function EditTaskDialog(props) {
         if (!hasError) {
             setOpen(false);
 
-            db.runTransaction(async (t) => {
-                let taskRef = await props.boardRef.ref.collection("tasks").add({
-                    title: label,
-                    desc: desc,
-                    date: date,
-                    users: users,
-                    columnRefs: columnIds,
-                    checklist: checklistItems
+
+            props.boardRef.ref.collection("tasks").add({
+                title: label,
+                desc: desc,
+                date: date,
+                users: users,
+                columnRefs: columnIds,
+                checklist: checklistItems
+            }).then((taskRef) => {
+                let columnUpdates = [];
+                Object.keys(columns).forEach((colGroupId) => {
+                    columnUpdates.push(
+                        props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
+                            taskRefs: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
+                        })
+                    );
                 });
-                Object.keys(columns).forEach(async (colGroupId) => {
-                    let colRef = await props.boardRef.ref.collection('columnGroups').doc(colGroupId).collection('columns').doc(columns[colGroupId]);
-                    let taskRefs = (await colRef.get()).data().taskRefs;
-                    await colRef.update({
-                        taskRefs: [...taskRefs, taskRef.id]
-                    });
-                });
+                return Promise.all(columnUpdates);
             }).then(result => {
-                db.collection('boards').doc(props.boardRef.id).collection('history').add(
-                    {
+                return db.collection('boards').doc(props.boardRef.id).collection('history').add({
                         user: user.email,
                         taskName: label,
                         action: 7,
                         timestamp: firebase.database.ServerValue
-                    }
-                ).catch(err => {
-                    console.log("Error logging add task: " + err);
-                });
-            });;
+                    });
+            }).catch(err => console.error("Error in adding task:", err));
         }
     }
 
