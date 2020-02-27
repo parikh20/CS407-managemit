@@ -109,7 +109,7 @@ class Board extends React.Component {
     componentWillUnmount() {
         this.boardSub && this.boardSub.unsubscribe();
         this.colSub && this.colSub.unsubscribe();
-        this.colGroupSub && this.colGroupSub.unsubscribe();
+        this.colGroupSub && this.colGroupSub.unsubscribe && this.colGroupSub.unsubscribe();
         this.taskSub && this.taskSub.unsubscribe();
         this.colGroupsSub && this.colGroupsSub();
         this.columnsSub.forEach(sub => sub());
