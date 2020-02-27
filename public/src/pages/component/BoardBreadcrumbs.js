@@ -11,7 +11,7 @@ function BoardBreadcrumbs(props) {
                 Boards
             </Link>
             <Typography color='textPrimary'>
-                {props.board.label}
+                {props.board ? props.board.label : ''}
             </Typography>
         </Breadcrumbs>
     );

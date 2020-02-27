@@ -63,8 +63,8 @@ function BoardUsersDialog(props) {
                                     </TableCell>
                                 </TableRow>
                                 {props.board && props.board.userRefs && <>
-                                    {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => <>
-                                        <TableRow>
+                                    {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
+                                        <TableRow key={userEmail}>
                                             <TableCell>Member</TableCell>
                                             <TableCell>
                                                 <Chip label={userEmail} color='primary' key={userEmail} variant='outlined' />
@@ -73,7 +73,7 @@ function BoardUsersDialog(props) {
                                                 <Switch checked={false} disabled={true} color='primary' />
                                             </TableCell>
                                         </TableRow>
-                                    </>)}
+                                    ))}
                                 </>}
                             </TableBody>
                         </Table>

@@ -30,10 +30,14 @@ class Board extends React.Component {
     // Load board based on boardID, then load column group
     loadBoard() {
         this.boardSub = cache.loadBoard(this.props.boardId).subscribe((boardRef) => {
-            this.setState({boardRef: boardRef});
-            this.loadColGroup(boardRef);
-            this.loadTasks(boardRef);
-            this.loadAllColGroups(boardRef);
+            if (!boardRef.exists) {
+                this.props.history.push('/boards');
+            } else {
+                this.setState({boardRef: boardRef});
+                this.loadColGroup(boardRef);
+                this.loadTasks(boardRef);
+                this.loadAllColGroups(boardRef);
+            }
         });
     }
 
@@ -125,6 +129,7 @@ class Board extends React.Component {
                     }) : []} /* Map the column references to actual columns */
                     allColGroups={this.state.colGroups ? this.state.colGroups : []}
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
+                    lockFunctionality={this.props.lockFunctionality}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
@@ -137,6 +142,8 @@ class Board extends React.Component {
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
+                    lockFunctionality={this.props.lockFunctionality}
+                    sortMode={this.props.sortMode}
                 />
             </div>
         ); 

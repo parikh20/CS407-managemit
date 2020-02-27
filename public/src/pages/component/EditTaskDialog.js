@@ -53,6 +53,11 @@ function EditTaskDialog(props) {
         let desc = document.getElementById('taskDescription').value.trim();
         let date = document.getElementById('taskDueDate').valueAsDate;
 
+        // date inputs give UTC dates, so we need to convert that to the local timezone
+        if (date != null) {
+            date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+        }
+
         let columnElements = document.querySelectorAll('[name="taskColumnGroup"]');
         let columns = {};
         let columnIds = [];
@@ -176,9 +181,9 @@ function EditTaskDialog(props) {
     };
 
     return (
-        <div>
+        <>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>New task</Button>
+                <Button {...props} onClick={handleClickOpen}>New task</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogContent>
@@ -375,7 +380,7 @@ function EditTaskDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }
 

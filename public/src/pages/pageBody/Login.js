@@ -27,6 +27,7 @@ function Login(props) {
     const [loginPasswordError, setLoginPasswordError] = React.useState(false);
     const [loginPasswordErrorHelperText, setLoginPasswordErrorHelperText] = React.useState('');
     const [loginErrorSnackbar, setloginErrorSnackbar] = React.useState(false);
+    const [errorText, setErrorText] = React.useState('');
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const signInWithEmailAndPassword = (email, password) => {
@@ -51,8 +52,18 @@ function Login(props) {
                 localStorage.setItem('user', JSON.stringify(result.user));
                 history.push('/boards');
             }).catch(error => {
-                console.log(error);
-                setloginErrorSnackbar(true);
+                auth.fetchSignInMethodsForEmail(email).then(result => {
+                    if (result[0] === 'google.com') {
+                        setloginErrorSnackbar(true);
+                        setErrorText("This email is associated with a Google account. Please login via Google");
+                    } else {
+                        setloginErrorSnackbar(true);
+                        setErrorText("The email and/or password is incorrect. Please try again");
+                    }
+                }).catch(err => {
+                    setloginErrorSnackbar(true);
+                        setErrorText(err.message);
+                });
             });
         }
     }
@@ -62,8 +73,8 @@ function Login(props) {
             localStorage.setItem('user', JSON.stringify(result.user));
             history.push('/boards');
         }).catch(error => {
-            console.log(error);
-        });
+            setloginErrorSnackbar(true);
+            setErrorText(error.message);        });
     };
 
     const clearState = () => {
@@ -72,6 +83,7 @@ function Login(props) {
         setLoginPasswordError(false);
         setLoginPasswordErrorHelperText('');
         setloginErrorSnackbar(false);
+        setErrorText('');
     }
 
     const handleClose = (event, reason) => {
@@ -119,7 +131,7 @@ function Login(props) {
             </Grid>
             <Snackbar open={loginErrorSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='error'>
-                    The email and/or password is incorrect. Please try again
+                    {errorText}
                 </Alert>
             </Snackbar>
         </div>

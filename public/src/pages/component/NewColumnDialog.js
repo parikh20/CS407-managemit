@@ -83,9 +83,9 @@ function NewColumnDialog(props) {
     };
 
     return (
-        <div>
+        <>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>New column</Button>
+                <Button {...props} onClick={handleClickOpen}>New column</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>New column</DialogTitle>
@@ -98,6 +98,7 @@ function NewColumnDialog(props) {
                                 label='Column name'
                                 variant='outlined'
                                 fullWidth
+                                margin='dense'
                                 InputLabelProps={{shrink: true}}
                                 error={nameError}
                                 helperText={nameHelperText}
@@ -114,7 +115,7 @@ function NewColumnDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }
 
