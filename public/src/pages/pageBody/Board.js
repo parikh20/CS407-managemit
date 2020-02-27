@@ -10,14 +10,16 @@ class Board extends React.Component {
 
     boardSub;
     colGroupSub;
+    colGroupsSub;
     colSub;
+    columnsSub = [];
     taskSub;
 
     constructor(props) {
         super(props);
         this.state = {
             taskRefs: {},
-            allCols: []
+            allColumns: {}
         };
     }
 
@@ -31,7 +33,7 @@ class Board extends React.Component {
             this.setState({boardRef: boardRef});
             this.loadColGroup(boardRef);
             this.loadTasks(boardRef);
-            // this.loadAllColGroups();
+            this.loadAllColGroups(boardRef);
         });
     }
 
@@ -61,6 +63,24 @@ class Board extends React.Component {
         }
     }
 
+    loadAllColGroups(boardRef) {
+        this.colGroupsSub = boardRef.ref.collection("columnGroups").onSnapshot((colGroupRefs) => {
+            this.setState({colGroups: colGroupRefs.docs});
+            this.loadAllColumns(colGroupRefs);
+        });
+    }
+
+    loadAllColumns(colGroupRefs) {
+        colGroupRefs.forEach((colGroupRef) => {
+            this.columnsSub.push(colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
+                let copy = Object.assign({}, this.state.allColumns);
+                copy[colGroupRef.id] = columnRefs.docs;
+                this.setState({allColumns: copy});
+                console.log(this.state.allColumns);
+            }));
+        });
+    }
+
     loadColumns(colGroupRef=null) {
         if (this.colSub) {
             this.colSub.unsubscribe();
@@ -78,61 +98,8 @@ class Board extends React.Component {
 
         this.taskSub = cache.loadTasks(boardRef).subscribe((taskRefs) => {
             this.setState({taskRefs: taskRefs.docs})
-        })
-        // if (this.taskSubs.hasOwnProperty(columnRef.id)) {
-        //     this.taskSubs[columnRef.id]();
-        // }
-
-        // this.taskSubs[columnRef.id] = this.state.boardRef.ref.collection('tasks').where('columnRefs', 'array-contains', columnRef.id).onSnapshot(newTaskRefs => {
-        //     this.setState(prevState => {
-        //         let taskRefs = {...prevState.taskRefs};
-        //         taskRefs[columnRef.id] = newTaskRefs.docs;
-        //         return {taskRefs};
-        //     });
-        // });
+        });
     }
-
-    // loadAllColGroups() {
-    //     if (this.allColGroupsSub) {
-    //         this.allColGroupsSub();
-    //     }
-
-    //     const collection = this.state.boardRef.ref.collection('columnGroups');
-    //     this.allColGroupsSub = collection.orderBy('label', 'asc').onSnapshot(colGroupRefs => {
-    //         let allColGroups = colGroupRefs.docs.map(colGroupRef => {
-    //             let data = colGroupRef.data();
-    //             data.id = colGroupRef.id;
-    //             data.ref = colGroupRef.ref;
-    //             return data;
-    //         });
-
-    //         this.setState({allColGroups: allColGroups});
-
-    //         this.loadAllCols();
-    //     });
-    // }
-
-    // loadAllCols() {
-    //     for (let i = 0; i < this.state.allColGroups.length; i++) {
-    //         if (i < this.allColsSubs.length && this.allColsSubs[i]) {
-    //             this.allColsSubs[i]();
-    //         }
-    //         this.allColsSubs = this.state.allColGroups[i].ref.collection('columns').onSnapshot(colRefs => {
-    //             let newAllCols = colRefs.docs.map(colRef => {
-    //                 let data = colRef.data();
-    //                 data.id = colRef.id;
-    //                 return data;
-    //             });
-
-    //             const columnRefs = this.state.allColGroups[i].columnOrder || [];
-    //             newAllCols.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
-
-    //             let prevAllCols = [...this.state.allCols];
-    //             prevAllCols[i] = newAllCols;
-    //             this.setState({allCols: prevAllCols});
-    //         });
-    //     }
-    // }
 
     // When the component is destroyed, unsubscribe from all subscriptions
     componentWillUnmount() {
@@ -140,13 +107,8 @@ class Board extends React.Component {
         this.colSub && this.colSub.unsubscribe();
         this.colGroupSub && this.colGroupSub.unsubscribe();
         this.taskSub && this.taskSub.unsubscribe();
-        // this.allColGroupsSub && this.allColGroupsSub();
-        // Object.keys(this.taskSubs).forEach(columnId => {
-        //     this.taskSubs[columnId]();
-        // });
-        // this.allColsSubs.forEach(colSub => {
-        //     colSub && colSub();
-        // });
+        this.colGroupsSub && this.colGroupsSub();
+        this.columnsSub.forEach(sub => sub());
     }
 
     render() {
@@ -161,8 +123,8 @@ class Board extends React.Component {
                         data.id = c.id;
                         return data;
                     }) : []} /* Map the column references to actual columns */
-                    allColGroups={this.state.allColGroups ? this.state.allColGroups : {}}
-                    allCols={this.state.allCols ? this.state.allCols : {}}
+                    allColGroups={this.state.colGroups ? this.state.colGroups : []}
+                    allCols={this.state.allColumns ? this.state.allColumns : {}}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
@@ -174,7 +136,7 @@ class Board extends React.Component {
                     }) : []} /* Map the column references to actual columns */
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
-                    allCols={this.state.allCols ? this.state.allCols : {}}
+                    allCols={this.state.allColumns ? this.state.allColumns : {}}
                 />
             </div>
         ); 

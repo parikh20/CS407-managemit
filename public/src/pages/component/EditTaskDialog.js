@@ -286,7 +286,7 @@ function EditTaskDialog(props) {
                                 Columns and collaborators
                             </Typography>
                         </Grid>
-                        {props.allColGroups && Array.isArray(props.allColGroups) && props.allColGroups.map((colGroup, index) => (
+                        {props.allColGroups && props.allColGroups.map((colGroup) => (
                             <div key={colGroup.id} style={{width: '100%'}}>
                                 {columnHelperText && (
                                     <Grid item xs={12}>
@@ -297,7 +297,7 @@ function EditTaskDialog(props) {
                                 )}
                                 <Grid item xs={12}>
                                     <FormControl key={colGroup.id} style={{width: '100%'}}>
-                                        <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.label}</InputLabel>
+                                        <InputLabel id={'group-input-label-' + colGroup.id}>Column for {colGroup.data().label}</InputLabel>
                                         <Select
                                             id={colGroup.id}
                                             fullWidth
@@ -310,9 +310,9 @@ function EditTaskDialog(props) {
                                             <MenuItem value=''>
                                                 (None)
                                             </MenuItem>
-                                           {props.allCols && Array.isArray(props.allCols) && props.allCols[index] && props.allCols[index].map((column) => (
+                                           {props.allCols && props.allCols[colGroup.id] && props.allCols[colGroup.id].map((column) => (
                                                <MenuItem key={column.id} value={column.id}>
-                                                   {column.label}
+                                                   {column.data().label}
                                                </MenuItem>
                                            ))} 
                                         </Select>

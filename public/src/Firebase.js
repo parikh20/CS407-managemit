@@ -45,7 +45,6 @@ class FirebaseCache {
       let sub = new ReplaySubject(1);
       this.tasks.set(boardRef.id, sub);
       this.subscriptions.push(boardRef.ref.collection("tasks").onSnapshot((taskRefs) => {
-        console.log(taskRefs);
         sub.next(taskRefs);
       }));
       return sub;
