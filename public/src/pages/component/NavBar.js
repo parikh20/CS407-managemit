@@ -60,7 +60,11 @@ function NavBar(props) {
     }
 
     const searchTasks = () => {
-        let searchInput = document.getElementById('taskSearchInput').value.trim();
+        let searchInputElement = document.getElementById('taskSearchInput');
+        if (!searchInputElement) {
+            return;
+        }
+        let searchInput = searchInputElement.value.trim();
         if (!caseSensitiveChecked) {
             searchInput = searchInput.toLowerCase();
         }
@@ -99,7 +103,7 @@ function NavBar(props) {
                         }
                     </Typography>
                     {showBoardFeatures && <>
-                        <TextField placeholder='Search for task' onChange={() => searchTasks()} id='taskSearchInput' style={{borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                        <TextField placeholder='Search for task' onChange={() => searchTasks()} id='taskSearchInput' style={{width: '25%', borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
                         <Tooltip title='Case sensitivity' arrow>
                             <ToggleButtonGroup size='small' exclusive value={caseSensitiveChecked} style={{backgroundColor: 'inherit'}} onChange={toggleCaseSensitiveChecked}>
                                 <ToggleButton value={true} style={{border: 0, color: 'white'}}>
@@ -144,26 +148,32 @@ function NavBar(props) {
                         )}
                     </>}
                     {showNavigation && <>
-                        <IconButton
-                            edge='end'
-                            aria-label='notifications'
-                            color='inherit'
-                            style={{marginLeft: 30}}>
-                            <MailIcon />
-                        </IconButton>
-                        <IconButton
-                            edge='end'
-                            aria-label='user account'
-                            color='inherit'>
-                            <AccountCircle />
-                        </IconButton>
-                        <IconButton
-                            edge='end'
-                            aria-label='log out'
-                            color='inherit'
-                            onClick={logOut}>
-                            <ExitToAppIcon />
-                        </IconButton>
+                        <Tooltip title='Notifications' arrow>
+                            <IconButton
+                                edge='end'
+                                aria-label='notifications'
+                                color='inherit'
+                                style={{marginLeft: 30}}>
+                                <MailIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title='User account' arrow>
+                            <IconButton
+                                edge='end'
+                                aria-label='user account'
+                                color='inherit'>
+                                <AccountCircle />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title='Log out' arrow>
+                            <IconButton
+                                edge='end'
+                                aria-label='log out'
+                                color='inherit'
+                                onClick={logOut}>
+                                <ExitToAppIcon />
+                            </IconButton>
+                        </Tooltip>
                     </>}
                 </Toolbar>
             </AppBar>
