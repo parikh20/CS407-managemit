@@ -10,13 +10,13 @@ function ColumnGroup(props) {
     columns.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
 
     let allColumnNames = {};
-    for (let i = 0; i < props.allCols.length; i++) {
-        for (let j = 0; j < props.allCols[i].length; j++) {
-            let item = props.allCols[i][j];
-            allColumnNames[item.id] = item.label;
+    for (let colGroupId of Object.keys(props.allCols)) {
+        for (let i = 0; i < props.allCols[colGroupId].length; i++) {
+            let item = props.allCols[colGroupId][i];
+            allColumnNames[item.id] = item.data().label;
         }
     }
-
+    
     return (
         <div style={{maxWidth: 'calc(100% - 10px - 10px)', height: 100 + '%', padding: '10px 10px 0px 10px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', overflow: 'hidden', float: 'left'}}>
             <GridList style={{flexWrap: 'nowrap'}}>
