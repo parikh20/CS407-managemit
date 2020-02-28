@@ -5,3 +5,10 @@ Week 2:
 Finished signing up function.
 Created backend API to add column.
 Finished deleting board.
+
+Week 3:
+Fixing UI.
+Create checklist.
+
+Week 4:
+Testing
