@@ -2,7 +2,9 @@
 
 ### Meeting log
 
-2/17 - Sprint 1 week 2. Another planning meeting. Pretty much the same as the others. We re-planned some tasks this week, as we had worked ahead of plans slightly in some and not completed others. Otherwise the past week went very well and we are on track for the sprint.
+2/26 - Spring 1 week 4. In this meeting we reviewed what we had done, and what still needed to be completed in the last week of the sprint. We also went over all user stories to make sure acceptance criteria was met for each. FInally, we reviewed the requirements for the sprint 1 demo and determined what each group member would talk about.
+
+2/17 - Sprint 1 week 3. Another planning meeting. Pretty much the same as the others. We re-planned some tasks this week, as we had worked ahead of plans slightly in some and not completed others. Otherwise the past week went very well and we are on track for the sprint.
 
 2/10 - Sprint 1 week 2. In this meeting we reviewed work done in the previous week, and then discussed what each team member planned on working on for the next sprint. We also discussed issues we had run into on the previous sprint, design issues, and longer term planning.
 
