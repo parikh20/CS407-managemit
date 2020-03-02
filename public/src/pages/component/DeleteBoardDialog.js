@@ -49,8 +49,8 @@ function DeleteBoardDialog(props) {
     };
 
     return (
-        <div>
-            <Button onClick={handleClickOpen} variant='contained' color='secondary'>Delete board</Button>
+        <>
+            <Button onClick={handleClickOpen} variant='contained' color='secondary' style={{margin: 5 + 'px'}}>Delete board</Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>Delete board</DialogTitle>
                 <DialogContent>
@@ -83,7 +83,7 @@ function DeleteBoardDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }
 

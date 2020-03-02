@@ -1,8 +1,6 @@
 import '../../App.css';
 import React from 'react';
 
-import DeleteBoardDialog from './DeleteBoardDialog.js';
-
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
@@ -18,6 +16,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Switch from '@material-ui/core/Switch';
+
+import DeleteBoardDialog from './DeleteBoardDialog';
+import TransferBoardDialog from './TransferBoardDialog';
 
 import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
@@ -271,7 +272,8 @@ function BoardSettings(props) {
                         <h2>Here be dragons</h2>
                     </Grid>
                     <Grid item xs={12}>
-                        <DeleteBoardDialog board={props.board}/>
+                        <DeleteBoardDialog board={props.board} />
+                        <TransferBoardDialog board={props.board} />
                     </Grid>
                 </Grid>
             </Paper>
