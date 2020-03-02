@@ -1,5 +1,10 @@
 ### Work Log
 
+#### Week 5:
+This week I will work on my first two user stories for sprint 2 - task comments and transferring
+board ownership. I will also keep looking at testing frameworks and if possible start automated
+testing.
+
 ##### Week 4:
 This week I will work on adding the checklist to the add and view task dialogs, and implementing
 the calls to make that functional. I will also work on UI polish where required.
