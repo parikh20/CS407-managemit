@@ -37,6 +37,17 @@ function EditTaskDialog(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
 
+    let allTasks = [];
+    if (props.taskRefs && Array.isArray(props.taskRefs)) {
+        allTasks = props.taskRefs.map(taskRef => {
+            return {
+                id: taskRef.id,
+                title: taskRef.data().title
+            };
+        });
+        allTasks.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
     const handleClickOpen = () => {
         clearState();
         clearChecklistErrors();
@@ -350,24 +361,46 @@ function EditTaskDialog(props) {
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                margin='dense'
-                                id='taskDependencies'
-                                label='Dependencies'
-                                variant='outlined'
-                                fullWidth
-                                InputLabelProps={{shrink: true}}
-                            />
+                            <FormControl style={{width: '100%'}}>
+                                <InputLabel id='dependencies-input-label'>Dependencies</InputLabel>
+                                <Select
+                                    id="taskDependencies"
+                                    label="Dependencies"
+                                    multiple
+                                    margin='dense'
+                                    fullWidth
+                                    defaultValue={[]}
+                                    style={{marginTop: 12}}
+                                    labelId='dependencies-input-label'
+                                >
+                                   {allTasks.map(task => (
+                                       <MenuItem key={task.id} value={task.id}>
+                                           {task.title}
+                                       </MenuItem>
+                                   ))} 
+                                </Select>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                margin='dense'
-                                id='taskDependents'
-                                label='Dependents'
-                                variant='outlined'
-                                fullWidth
-                                InputLabelProps={{shrink: true}}
-                            />
+                            <FormControl style={{width: '100%'}}>
+                                <InputLabel id='dependents-input-label'>Dependents</InputLabel>
+                                <Select
+                                    id="taskDependents"
+                                    label="Dependents"
+                                    multiple
+                                    margin='dense'
+                                    fullWidth
+                                    defaultValue={[]}
+                                    style={{marginTop: 12}}
+                                    labelId='dependents-input-label'
+                                >
+                                   {allTasks.map(task => (
+                                       <MenuItem key={task.id} value={task.id}>
+                                           {task.title}
+                                       </MenuItem>
+                                   ))} 
+                                </Select>
+                            </FormControl>
                         </Grid>
                      </Grid>
                 </DialogContent>

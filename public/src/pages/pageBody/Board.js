@@ -155,6 +155,7 @@ class Board extends React.Component {
                     allColGroups={this.state.colGroups ? this.state.colGroups : []}
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
                     lockFunctionality={this.props.lockFunctionality}
+                    taskRefs={this.state.taskRefs}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
