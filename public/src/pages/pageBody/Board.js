@@ -78,9 +78,13 @@ class Board extends React.Component {
         colGroupRefs.forEach((colGroupRef) => {
             this.columnsSub.push(colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
                 let copy = Object.assign({}, this.state.allColumns);
-                copy[colGroupRef.id] = columnRefs.docs;
+
+                const columnOrder = colGroupRef.data().columnOrder;
+                let docs = columnRefs.docs.map(doc => doc);
+                docs.sort((a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id));
+
+                copy[colGroupRef.id] = docs;
                 this.setState({allColumns: copy});
-                console.log(this.state.allColumns);
             }));
         });
     }
