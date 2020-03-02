@@ -6,6 +6,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from '@material-ui/core/Grid';
 
 import { db } from '../../Firebase';
@@ -90,6 +91,9 @@ function NewColumnDialog(props) {
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>New column</DialogTitle>
                 <DialogContent>
+                    <DialogContentText>
+                        Enter a name for the new column.
+                    </DialogContentText>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
                             <TextField
