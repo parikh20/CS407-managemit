@@ -14,11 +14,13 @@ class Board extends React.Component {
     colSub;
     columnsSub = [];
     taskSub;
+    taskCommentSubs = [];
 
     constructor(props) {
         super(props);
         this.state = {
             taskRefs: {},
+            taskCommentRefs: {},
             allColumns: {}
         };
     }
@@ -99,6 +101,17 @@ class Board extends React.Component {
         });
     }
 
+    loadTaskComments(taskRefs) {
+        taskRefs.forEach(taskRef => {
+            this.taskCommentSubs.push(taskRef.ref.collection('comments').orderBy('timestamp', 'desc').onSnapshot(commentRefs => {
+                let copy = Object.assign({}, this.state.taskCommentRefs);
+
+                copy[taskRef.id] = commentRefs.docs;
+                this.setState({taskCommentRefs: copy});
+            }));
+        });
+    }
+
     loadTasks(boardRef) {
         if (this.taskSub) {
             this.taskSub.unsubscribe();
@@ -106,6 +119,7 @@ class Board extends React.Component {
 
         this.taskSub = cache.loadTasks(boardRef).subscribe((taskRefs) => {
             this.setState({taskRefs: taskRefs.docs})
+            this.loadTaskComments(taskRefs.docs);
         });
     }
 
@@ -116,6 +130,7 @@ class Board extends React.Component {
         this.taskSub && this.taskSub.unsubscribe();
         this.colGroupsSub && this.colGroupsSub();
         this.columnsSub.forEach(sub => sub());
+        this.taskCommentSubs.forEach(sub => sub());
         if(this.colGroupSub) {
             if(this.colGroupSub.unsubscribe) {
                 this.colGroupSub.unsubscribe();
@@ -151,6 +166,7 @@ class Board extends React.Component {
                     }) : []} /* Map the column references to actual columns */
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
+                    taskCommentRefs={this.state.taskCommentRefs}
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
                     lockFunctionality={this.props.lockFunctionality}
                     sortMode={this.props.sortMode}

@@ -62,6 +62,7 @@ function Column(props) {
                         key={taskRef.id}
                         taskRef={taskRef}
                         task={taskRef.data()}
+                        taskCommentRefs={props.taskCommentRefs}
                         allColumnNames={props.allColumnNames}
                         lockFunctionality={props.lockFunctionality}
                     />

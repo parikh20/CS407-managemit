@@ -28,6 +28,7 @@ function ColumnGroup(props) {
                         boardRef={props.boardRef}
                         columnGroupRef={props.columnGroupRef}
                         taskRefs={props.taskRefs.filter((task) => task.data().columnRefs.includes(column.id))}
+                        taskCommentRefs={props.taskCommentRefs}
                         allColumnNames={allColumnNames}
                         lockFunctionality={props.lockFunctionality}
                         sortMode={props.sortMode}

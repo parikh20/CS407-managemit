@@ -20,6 +20,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 
 import dateFormat from 'dateformat';
 
@@ -28,10 +29,13 @@ import firebase from '../../Firebase';
 
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
+    const [commentError, setCommentError] = React.useState(false);
+    const [commentHelperText, setCommentHelperText] = React.useState('');
 
     const user = JSON.parse(localStorage.getItem('user'));
 
     const handleClickOpen = () => {
+        clearState();
         setOpen(true);
     };
 
@@ -43,7 +47,6 @@ function TaskListing(props) {
         db.runTransaction(async (t) => {
             props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
         }).then(result => {
-            console.log(props.task.title)
             db.collection('boards').doc(props.boardRef.id).collection('history').add(
                 {
                     user: user.email,
@@ -66,6 +69,44 @@ function TaskListing(props) {
         });
     };
 
+    const handlePostComment = () => {
+        const commentText = document.getElementById('taskComment').value.trim();
+
+        clearState();
+
+        if (commentText === '') {
+            setCommentError(true);
+            setCommentHelperText('Comment is required');
+        } else if (commentText.length > 1000) {
+            setCommentError(true);
+            setCommentHelperText('Comment must be less than 100 characters');
+        } else {
+            props.boardRef.ref.collection('tasks').doc(props.taskRef.id).collection('comments').add({
+                user: user.email,
+                commentText: commentText,
+                timestamp: new Date()
+            }).then(result => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        taskName: props.task.title,
+                        commentText: commentText,
+                        action: 9,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging delete task: " + err);
+                });
+            });
+            document.getElementById('taskComment').value = '';
+        }
+    };
+
+    const clearState = () => {
+        setCommentError(false);
+        setCommentHelperText('');
+    };
+
     return (
         <Card variant='outlined' style={{marginBottom: 5}}>
             <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
@@ -84,7 +125,7 @@ function TaskListing(props) {
                             <Typography variant='h6' component='h2'>
                                 Description
                             </Typography>
-                            <Typography variant='body2' component='p'>
+                            <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
                                 {props.task.desc !== '' ? props.task.desc : '(No description provided)'}
                             </Typography>
                         </Grid>
@@ -126,7 +167,7 @@ function TaskListing(props) {
                                         </Typography>
                                     )}
                                     {props.task.users.length > 0 && props.task.users.map(user =>
-                                        <Chip key={user} label={user} color='primary' size='small' style={{margin: 3 + 'px'}} />
+                                        <Chip key={user} label={user} color='primary' size='small' style={{margin: 3 + 'px'}} variant={user !== props.boardRef.data().owner ? 'outlined' : 'default'} />
                                     )}
                                 </Grid>
                             </Grid>
@@ -185,10 +226,33 @@ function TaskListing(props) {
                             <Typography variant='h6' component='h2'>
                                 Comments
                             </Typography>
-                            <Typography variant='body2' component='p'>
-                                To be designed later
-                            </Typography>
                         </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                margin='dense'
+                                id='taskComment'
+                                label='New comment'
+                                rows='3'
+                                variant='outlined'
+                                multiline
+                                fullWidth
+                                InputLabelProps={{shrink: true}}
+                                error={commentError}
+                                helperText={commentHelperText}
+                            />
+                            <Button color='primary' variant='outlined' style={{float: 'right'}} onClick={handlePostComment}>Post comment</Button>
+                        </Grid>
+                        {props.taskCommentRefs[props.taskRef.id] && props.taskCommentRefs[props.taskRef.id].map(commentRef => (
+                            <Grid item xs={12}>
+                                <Typography variant='body2' component='p'>
+                                    <Chip key={commentRef.id} label={commentRef.data().user} color='primary' size='small' style={{marginRight: 5 + 'px'}} variant={commentRef.data().user !== props.boardRef.data().owner ? 'outlined' : 'default'} />
+                                    said at {dateFormat(commentRef.data().timestamp.toDate(), 'hh:MM')} on {dateFormat(commentRef.data().timestamp.toDate(), 'mm/dd/yyyy')}:
+                                </Typography>
+                                <Typography variant='body2' component='p' style={{marginLeft: 10 + 'px', marginTop: 5 + 'px', whiteSpace: 'pre-line'}}>
+                                    {commentRef.data().commentText}
+                                </Typography>
+                            </Grid>
+                        ))}
                      </Grid>
                 </DialogContent>
                 <DialogActions>
