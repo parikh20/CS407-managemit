@@ -356,7 +356,7 @@ function EditTaskDialog(props) {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography variant='h6' component='h2'>
+                            <Typography variant='h6' component='h2' style={{marginTop: 10 + 'px'}}>
                                 Task relations
                             </Typography>
                         </Grid>
@@ -370,7 +370,6 @@ function EditTaskDialog(props) {
                                     margin='dense'
                                     fullWidth
                                     defaultValue={[]}
-                                    style={{marginTop: 12}}
                                     labelId='dependencies-input-label'
                                 >
                                    {allTasks.map(task => (
