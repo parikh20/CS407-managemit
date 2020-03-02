@@ -28,7 +28,7 @@ function BoardActions(props) {
                     </>}
                     <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
                     <ButtonGroup size='small'>
-                        <Button>Calendar</Button>
+                        <Button href={'/board/' + props.boardRef.id + '/calendar'}>Calendar</Button>
                     </ButtonGroup>
                     <BoardUsersDialog boardRef={props.boardRef} board={props.board} />
                     <ButtonGroup size='small'>

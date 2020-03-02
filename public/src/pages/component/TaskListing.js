@@ -151,7 +151,15 @@ function TaskListing(props) {
                                         )}
                                         {props.task.date !== null && (<>
                                             {dateFormat(props.task.date.toDate(), 'mm/dd/yyyy')}
-                                            <Button variant='outlined' size='small' color='primary' style={{float: 'right'}}>View on calendar</Button>
+                                            <Button
+                                                variant='outlined'
+                                                size='small'
+                                                color='primary'
+                                                style={{float: 'right'}}
+                                                href={'/board/' + props.boardRef.id + '/calendar'}
+                                            >
+                                                View on calendar
+                                            </Button>
                                         </>)}
                                     </Typography>
                                 </Grid>

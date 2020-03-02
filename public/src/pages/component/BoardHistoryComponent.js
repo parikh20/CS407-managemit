@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function BoardSettings(props) {
+function BoardHistoryComponent(props) {
     const classes = useStyles();
 
     const columns = [
@@ -99,4 +99,4 @@ function BoardSettings(props) {
     );
 }
 
-export default BoardSettings;
+export default BoardHistoryComponent;

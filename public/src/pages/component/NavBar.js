@@ -22,7 +22,7 @@ import TextFormatIcon from '@material-ui/icons/TextFormat';
 
 function NavBar(props) {
     const showNavigation = !(['/login', '/register'].includes(props.location));
-    const showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards' && !props.location.endsWith('settings') && !props.location.endsWith('history');
+    const showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards' && !props.location.endsWith('settings') && !props.location.endsWith('history') && !props.location.endsWith('calendar');
     const history = useHistory();
 
     const [caseSensitiveChecked, setCaseSensitiveChecked] = React.useState(false);
