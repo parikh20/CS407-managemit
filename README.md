@@ -2,7 +2,9 @@
 
 ### Meeting log
 
-2/26 - Spring 1 week 4. In this meeting we reviewed what we had done, and what still needed to be completed in the last week of the sprint. We also went over all user stories to make sure acceptance criteria was met for each. FInally, we reviewed the requirements for the sprint 1 demo and determined what each group member would talk about.
+3/2 - Sprint 2 week 1. In this meeting we selected which remaining user stories we would work on this sprint, wrote our the tasks required, and determined acceptance criteria and expected workload. We also assigned work for the next sprint. By the end of the meeting the planning document was submitted.
+
+2/26 - Sprint 1 week 4. In this meeting we reviewed what we had done, and what still needed to be completed in the last week of the sprint. We also went over all user stories to make sure acceptance criteria was met for each. FInally, we reviewed the requirements for the sprint 1 demo and determined what each group member would talk about.
 
 2/17 - Sprint 1 week 3. Another planning meeting. Pretty much the same as the others. We re-planned some tasks this week, as we had worked ahead of plans slightly in some and not completed others. Otherwise the past week went very well and we are on track for the sprint.
 
