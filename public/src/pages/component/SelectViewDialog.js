@@ -32,18 +32,18 @@ function SelectViewDialog(props) {
     };
 
     let colGroups = Array.isArray(props.allColGroups) ? props.allColGroups : [];
-    let allCols = Array.isArray(props.allCols) ? props.allCols : [];
+    let allCols = props.allCols || {};
     let colGroupDisplay = colGroups.map((colGroup, index) => {
-        if (allCols.length <= index) {
+        if (!(colGroup.id in allCols)) {
             return {
-                label: colGroup.label,
+                label: colGroup.data().label,
                 id: colGroup.id,
                 columnNames: []
             };
         }
-        let columnNames = allCols[index].map(column => column.label);
+        let columnNames = allCols[colGroup.id].map(column => column.data().label);
         return {
-            label: colGroup.label,
+            label: colGroup.data().label,
             id: colGroup.id,
             columnNames: columnNames
         };
