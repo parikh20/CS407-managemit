@@ -156,7 +156,7 @@ function TaskListing(props) {
                                         Columns
                                     </Typography>
                                     {props.task.columnRefs.map(columnId => 
-                                        <Chip key={columnId} label={props.allColumnNames[columnId]} color='primary' size='small' style={{margin: 3 + 'px'}} />
+                                        <Chip key={columnId} label={props.allColumnNames[columnId]} size='small' style={{margin: 3 + 'px'}} />
                                     )}
                                 </Grid>
                             </Grid>
@@ -279,7 +279,7 @@ function TaskListing(props) {
                                 <Typography variant='body2' component='p' style={{marginLeft: 10 + 'px', marginTop: 5 + 'px', whiteSpace: 'pre-line'}}>
                                     {commentRef.data().commentText}
                                 </Typography>
-                                {(commentRef.data().user === user.email || props.boardRef.data().owner === user.email) && (
+                                {(commentRef.data().user === user.email || props.boardRef.data().permissions[user.email].isAdmin) && (
                                     <Button size='small' color='secondary' style={{marginLeft: 10 + 'px'}} onClick={() => handleDeleteComment(commentRef)}>
                                         Delete
                                     </Button>
