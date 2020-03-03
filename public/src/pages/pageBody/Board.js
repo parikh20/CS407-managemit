@@ -46,7 +46,7 @@ class Board extends React.Component {
     // Load column group, then load columns
     loadColGroup(boardRef, colGroup=null) {
         // If there is already a subscription, unsubscribe
-        if(this.colGroupSub) {
+        if(this.colGroupSub && typeof this.colGroupSub.unsubscribe === 'function') {
             this.colGroupSub.unsubscribe();
         }
         const collection = boardRef.ref.collection("columnGroups");

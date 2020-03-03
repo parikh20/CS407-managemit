@@ -12,7 +12,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Switch from '@material-ui/core/Switch';
 import Chip from '@material-ui/core/Chip';
 
 
@@ -45,32 +44,29 @@ function BoardUsersDialog(props) {
                         <Table size='small'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Role</TableCell>
                                     <TableCell>Email</TableCell>
-                                    <TableCell align='right'>Can edit</TableCell>
+                                    <TableCell align='right'>Role</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell>Owner</TableCell>
                                     <TableCell>
                                         {props.board && <>
                                             <Chip label={props.board.owner} color='primary' />
                                         </>}
                                     </TableCell>
                                     <TableCell align='right'>
-                                        <Switch checked={true} disabled={true} color='primary' />
+                                        Owner
                                     </TableCell>
                                 </TableRow>
                                 {props.board && props.board.userRefs && <>
                                     {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
                                         <TableRow key={userEmail}>
-                                            <TableCell>Member</TableCell>
                                             <TableCell>
                                                 <Chip label={userEmail} color='primary' key={userEmail} variant='outlined' />
                                             </TableCell>
                                             <TableCell align='right'>
-                                                <Switch checked={false} disabled={true} color='primary' />
+                                                {props.board.permissions[userEmail].isAdmin ? 'Administrator' : 'Collaborator'}
                                             </TableCell>
                                         </TableRow>
                                     ))}

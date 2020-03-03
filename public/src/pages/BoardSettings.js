@@ -14,7 +14,8 @@ class BoardSettingsPage extends React.Component {
         const user = JSON.parse(localStorage.getItem('user'));
 
         db.collection('boards').doc(props.match.params.boardId).get().then(boardRef => {
-            if (!boardRef.exists || boardRef.data().owner !== user.email) {
+            const data = boardRef.data();
+            if (!boardRef.exists || !data.permissions.hasOwnProperty(user.email) || data.permissions[user.email].isAdmin === false) {
                 this.props.history.push('/boards');
             }
         }).catch(err => {

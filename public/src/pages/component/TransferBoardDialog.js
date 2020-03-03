@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -9,7 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Chip from '@material-ui/core/Chip';
-
+import Typography from '@material-ui/core/Typography';
 import firebase from '../../Firebase';
 import { db } from '../../Firebase';
 
@@ -18,9 +17,13 @@ function TransferBoardDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [transferDisable, setTransferDisable] = React.useState(true);
     const [selectedUser, setSelectedUser] = React.useState('');
-    const history = useHistory();
 
     const user = JSON.parse(localStorage.getItem('user'));
+
+    let users = [];
+    if (props.board && props.board.userRefs) {
+        users = props.board.userRefs.filter(email => email !== props.board.owner && props.board.permissions[email].isAdmin);
+    }
 
     const handleClickOpen = () => {
         setTransferDisable(true);
@@ -57,9 +60,7 @@ function TransferBoardDialog(props) {
                     action: 10,
                     timestamp: firebase.database.ServerValue
                 }
-            ).then(result => {
-                history.push('/boards');
-            }).catch(err => {
+            ).catch(err => {
                 console.log("Error logging board update: " + err);
             });
         });
@@ -81,10 +82,11 @@ function TransferBoardDialog(props) {
                 <DialogTitle id='form-dialog-title'>Transfer ownership</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                    Select the new owner of the board, and type the board name to confirm the transfer.<br /><br />
+                    Select the new owner of the board, and type the board name to confirm the transfer. The new owner of the board must already be an administrator.
+                    <br /><br />
                     Warning: this cannot be undone, but the new owner of the board can transfer ownership back.
                     </DialogContentText>
-                    {props.board && props.board.userRefs && props.board.userRefs.filter(email => email !== props.board.owner).map(email => (
+                    {users.map(email => (
                         <Chip
                             key={email}
                             label={email}
@@ -94,6 +96,11 @@ function TransferBoardDialog(props) {
                             onClick={() => handleSelectUser(email)}
                             />
                     ))}
+                    {users.length === 0 && (
+                        <Typography variant='p' color='secondary'>
+                            This board has no administrators. You must add an administrator before the board ownership can be transferred.
+                        </Typography>
+                    )}
                     <TextField
                         onChange={inputListener}
                         autoFocus

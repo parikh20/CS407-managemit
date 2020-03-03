@@ -12,7 +12,9 @@ import {auth, db} from '../../Firebase';
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
-const createBoard = async (name, description) => {    
+const createBoard = async (name, description) => {
+    const permissionsObj = {};
+    permissionsObj[auth.currentUser.email] = { isAdmin: true };
     return new Promise((res,rej) => {
         db.collection("boards").add({
             owner: auth.currentUser.email,
@@ -20,7 +22,8 @@ const createBoard = async (name, description) => {
             description: description,
             defaultColumnGroup: "",
             taskRefs: [],
-            userRefs: [auth.currentUser.email]
+            userRefs: [auth.currentUser.email],
+            permissions: permissionsObj
         }).then((boardRef) => {
             return boardRef.collection("columnGroups").add({
                 label: "Default Group"

@@ -15,7 +15,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Switch from '@material-ui/core/Switch';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Typography from '@material-ui/core/Typography';
 
 import DeleteBoardDialog from './DeleteBoardDialog';
 import TransferBoardDialog from './TransferBoardDialog';
@@ -127,8 +130,11 @@ function BoardSettings(props) {
         } else {
             auth.fetchSignInMethodsForEmail(email).then(result => {
                 if (result.length >= 1) {
+                    let permissionsCopy = {...props.board.permissions};
+                    permissionsCopy[email] = { isAdmin: false };
                     db.collection('boards').doc(props.board.id).update({
-                        userRefs: firebase.firestore.FieldValue.arrayUnion(email)
+                        userRefs: [...props.board.userRefs, email],
+                        permissions: permissionsCopy
                     }).then(result => {
                         document.getElementById('inviteEmail').value = ''
                         setSuccessSnackbar(true);
@@ -159,7 +165,7 @@ function BoardSettings(props) {
 
     const deleteUser = (email) => {
         db.collection('boards').doc(props.board.id).update({
-            userRefs: firebase.firestore.FieldValue.arrayRemove(email)
+            userRefs: props.board.userRefs.filter(userEmail => userEmail !== email)
         }).then(result => {
             setSuccessSnackbar(true);
             setSuccessMessage('Successfully removed ' + email + '!');
@@ -172,6 +178,29 @@ function BoardSettings(props) {
                 }
             ).catch(err => {
                 console.log("Error logging removing user: " + err);
+            });
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+
+    const handlePermissionsChange = (event, email) => {
+        const newValue = event.target.value === 'administrator' ? true : false;
+        let permissionsCopy = {...props.board.permissions};
+        permissionsCopy[email].isAdmin = newValue;
+        db.collection('boards').doc(props.board.id).update({
+            permissions: permissionsCopy
+        }).then(result => {
+            db.collection('boards').doc(props.board.id).collection('history').add(
+                {
+                    user: user.email,
+                    user2: email,
+                    newPermission: newValue,
+                    action: 12,
+                    timestamp: firebase.database.ServerValue
+                }
+            ).catch(err => {
+                console.log("Error logging changing permisisons: " + err);
             });
         }).catch(err => {
             console.log(err);
@@ -230,32 +259,40 @@ function BoardSettings(props) {
                             <Table size='small'>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Role</TableCell>
                                         <TableCell>Email</TableCell>
-                                        <TableCell align='right'>Can edit</TableCell>
+                                        <TableCell align='right'>Role</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     <TableRow>
-                                        <TableCell>Owner</TableCell>
                                         <TableCell>
                                             {props.board && <>
                                                 <Chip label={props.board.owner} color='primary' className={classes.chip} />
                                             </>}
                                         </TableCell>
                                         <TableCell align='right'>
-                                            <Switch checked={true} disabled={true} color='primary' />
+                                            <FormControl disabled>
+                                                <Select value='owner'>
+                                                    <MenuItem value='collaborator'>Collaborator</MenuItem>
+                                                    <MenuItem value='administrator'>Administrator</MenuItem>
+                                                    <MenuItem value='owner'>Owner</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                         </TableCell>
                                     </TableRow>
                                     {props.board && props.board.userRefs && <>
                                         {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => <>
                                             <TableRow>
-                                                <TableCell>Member</TableCell>
                                                 <TableCell>
                                                     <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
                                                 </TableCell>
                                                 <TableCell align='right'>
-                                                    <Switch checked={true} color='primary' />
+                                                    <FormControl disabled={user.email === props.board.owner ? '' : 'disabled'}>
+                                                        <Select value={props.board.permissions[userEmail].isAdmin === true ? 'administrator' : 'collaborator'} onChange={(e) => handlePermissionsChange(e, userEmail)}>
+                                                            <MenuItem value='collaborator'>Collaborator</MenuItem>
+                                                            <MenuItem value='administrator'>Administrator</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
                                                 </TableCell>
                                             </TableRow>
                                         </>)}
@@ -263,20 +300,30 @@ function BoardSettings(props) {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        {props.board && props.board.owner === user.email && (
+                            <Typography variant='body2' component='p' style={{marginTop: 15 + 'px', width: 80 + '%', marginRight: 'auto', marginLeft: 'auto'}}>
+                                As the board owner, you have full permissions for the board. Administrators are able to to access settings, and can do everything except change the roles of other users,
+                                delete the board, and transfer board ownership. Collaborators have no access to the board settings.
+                                <br /><br />
+                                Roles take affect as soon as they are changed.
+                            </Typography>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper className={classes.paper}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <h2>Here be dragons</h2>
+            {props.board && props.board.owner === user.email && (
+                <Paper className={classes.paper}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <h2>Here be dragons</h2>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <DeleteBoardDialog board={props.board} />
+                            <TransferBoardDialog board={props.board} />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        <DeleteBoardDialog board={props.board} />
-                        <TransferBoardDialog board={props.board} />
-                    </Grid>
-                </Grid>
-            </Paper>
+                </Paper>
+            )}
             <Snackbar open={successSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
                     {successMessage}

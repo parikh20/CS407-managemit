@@ -20,6 +20,9 @@ class BoardCardCollection extends React.Component {
     }
 
     loadBoards(user) {
+        if (!user) {
+            return;
+        }
         if (this.boardsSub) {
             this.boardsSub();
         }
