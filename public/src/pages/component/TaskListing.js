@@ -102,6 +102,26 @@ function TaskListing(props) {
         }
     };
 
+    const handleDeleteComment = (commentRef) => {
+        const commentText = commentRef.data().commentText;
+        const user2 = commentRef.data().user;
+        db.runTransaction(async (t) => {
+            props.boardRef.ref.collection('tasks').doc(props.taskRef.id).collection('comments').doc(commentRef.id).delete();
+        }).then(result => {
+            db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                {
+                    user: user.email,
+                    commentText: commentText,
+                    user2: user2,
+                    action: 11,
+                    timestamp: firebase.database.ServerValue
+                }
+            ).catch(err => {
+                console.log("Error logging delete comment: " + err);
+            });
+        });
+    };
+
     const clearState = () => {
         setCommentError(false);
         setCommentHelperText('');
@@ -259,6 +279,11 @@ function TaskListing(props) {
                                 <Typography variant='body2' component='p' style={{marginLeft: 10 + 'px', marginTop: 5 + 'px', whiteSpace: 'pre-line'}}>
                                     {commentRef.data().commentText}
                                 </Typography>
+                                {(commentRef.data().user === user.email || props.boardRef.data().owner === user.email) && (
+                                    <Button size='small' color='secondary' style={{marginLeft: 10 + 'px'}} onClick={() => handleDeleteComment(commentRef)}>
+                                        Delete
+                                    </Button>
+                                )}
                             </Grid>
                         ))}
                      </Grid>
