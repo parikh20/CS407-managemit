@@ -62,7 +62,7 @@ function Login(props) {
                     }
                 }).catch(err => {
                     setloginErrorSnackbar(true);
-                        setErrorText(err.message);
+                    setErrorText(err.message);
                 });
             });
         }
