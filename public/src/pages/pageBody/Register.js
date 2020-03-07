@@ -10,6 +10,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField';
 
 import { auth } from '../../Firebase.js';
+import { useHistory } from 'react-router-dom';
 
 
 function Alert(props) {
@@ -18,7 +19,8 @@ function Alert(props) {
 
 function Register(props) {
     const classes = getStyles();
-
+    const history = useHistory();
+    
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const uppercase = new RegExp('(?=.*[A-Z])');
     const numeric = new RegExp('(?=.*[0-9])');
@@ -32,10 +34,18 @@ function Register(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [passwordStrength, setPasswordStrength] = React.useState(0);
+    const [nameError, setNameError] = React.useState(false);
+    const [nameHelperText, setNameHelperText] = React.useState('');
 
-    const signUpUser = (email, password, repassword) => {
+    const signUpUser = (name, email, password, repassword) => {
         clearState();
-        if (email === '') {
+        if (name === '') {
+            setNameError(true);
+            setNameHelperText('Name is required');
+        } else if (name.length > 50) {
+            setNameError(true);
+            setNameHelperText('Name cannot be greater than 50 characters long');
+        } else if (email === '') {
             setEmailError(true);
             setEmailHelperText('Email is required');
         } else if (!regexp.test(email)) {
@@ -43,21 +53,22 @@ function Register(props) {
             setEmailHelperText('Email must be properly formatted');
         } else if (password.length < 6) {
             setFirstPasswordError(true);
-            setFirstPasswordHelperText('Password must be greater 6 characters long')
+            setFirstPasswordHelperText('Password must be greater 6 characters long');
         } else if (password.length > 128) {
             setFirstPasswordError(true);
-            setFirstPasswordHelperText('Password cannot be greater than 128 characters long')
+            setFirstPasswordHelperText('Password cannot be greater than 128 characters long');
         } else if (password !== repassword) {
             setFirstPasswordError(true);
-            setFirstPasswordHelperText('Passwords must match')
+            setFirstPasswordHelperText('Passwords must match');
             setSecondPasswordError(true);
-            setSecondPasswordHelperText('Passwords must match')
+            setSecondPasswordHelperText('Passwords must match');
         } else {
             auth.createUserWithEmailAndPassword(email, password).then(result => {
                 const user = result.user;
                 user.updateProfile({
-                    displayName: document.getElementById('name').value
+                    displayName: name
                 }).then(res =>  {
+                    history.push('/login');
                     setSuccessSnackbar(true);
                 }).catch(error => {
                     console.log(error);
@@ -101,6 +112,8 @@ function Register(props) {
     }
 
     const clearState = () => {
+        setNameError(false);
+        setNameHelperText('');
         setFirstPasswordError(false);
         setFirstPasswordHelperText('');
         setSecondPasswordError(false);
@@ -139,8 +152,8 @@ function Register(props) {
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <TextField
-                                        error={emailError}
-                                        helperText={emailHelperText}
+                                        error={nameError}
+                                        helperText={nameHelperText}
                                         label='Name'
                                         type='text'
                                         variant='outlined'
@@ -195,6 +208,7 @@ function Register(props) {
                                         className={classes.loginButton}
                                         onClick={() =>
                                             signUpUser(
+                                                document.getElementById('name').value,
                                                 document.getElementById('email').value,
                                                 document.getElementById('password').value,
                                                 document.getElementById('repassword').value
