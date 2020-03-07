@@ -54,14 +54,21 @@ function Register(props) {
             setSecondPasswordHelperText('Passwords must match')
         } else {
             auth.createUserWithEmailAndPassword(email, password).then(result => {
-                setSuccessSnackbar(true);
+                const user = result.user;
+                user.updateProfile({
+                    displayName: document.getElementById('name').value
+                }).then(res =>  {
+                    setSuccessSnackbar(true);
+                }).catch(error => {
+                    console.log(error);
+                });
             }).catch(error => {
                 console.log(error);
                 if (error.code === 'auth/email-already-in-use') {
                     setEmailError(true);
                     setEmailHelperText('Email already in use - have you already registered an account?');
                 } else {
-                    setErrorSnackbar(true);
+                    setErrorSnackbar(true);                
                 }
             });
         }
@@ -130,6 +137,17 @@ function Register(props) {
                         <Paper className={classes.loginPaper}>
                             <h2>Register</h2>
                             <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        error={emailError}
+                                        helperText={emailHelperText}
+                                        label='Name'
+                                        type='text'
+                                        variant='outlined'
+                                        id='name'
+                                        className={classes.loginTextField}
+                                    />
+                                </Grid>
                                 <Grid item xs={12}>
                                     <TextField
                                         error={emailError}
