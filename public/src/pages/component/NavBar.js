@@ -158,11 +158,12 @@ function NavBar(props) {
                                 <MailIcon />
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title='User account' arrow>
+                        <Tooltip title='Account Settings' arrow>
                             <IconButton
                                 edge='end'
                                 aria-label='user account'
-                                color='inherit'>
+                                color='inherit'
+                                href='/settings' >
                                 <AccountCircle />
                             </IconButton>
                         </Tooltip>
