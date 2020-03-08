@@ -99,6 +99,7 @@ function UserSettings(props) {
                         <ArrowIcon></ArrowIcon>
                     </Grid>
                 </Grid>
+                <Divider />
                 <Grid container spacing={0} className={classes.settingsCard} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
@@ -114,6 +115,7 @@ function UserSettings(props) {
                         <ArrowIcon></ArrowIcon>
                     </Grid>
                 </Grid>
+                <Divider />
                 <Grid container spacing={0} className={classes.settingsCard} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
