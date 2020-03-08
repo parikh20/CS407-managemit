@@ -50,7 +50,6 @@ function UserSettings(props) {
             <Paper className={classes.paper} >
                 <Typography variant='h5' className={classes.header}>Change your account details</Typography>
                 < AddPhotoDialog/>
-                <Divider />
                 <Grid container spacing={0} className={classes.settingsCard} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
