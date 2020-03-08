@@ -1,16 +1,14 @@
 import '../../App.css';
 import React from 'react';
 
-import Button from '@material-ui/core/Button';
+import AddPhotoDialog from './AddPhotoDialog';
+
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
-import Snackbar from '@material-ui/core/Snackbar'
-import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-import { Avatar, Typography, Icon } from '@material-ui/core';
+import {Typography } from '@material-ui/core';
 import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 
 import firebase from '../../Firebase';
@@ -51,21 +49,7 @@ function UserSettings(props) {
         <div className={classes.userSettingsBody}>
             <Paper className={classes.paper} >
                 <Typography variant='h5' className={classes.header}>Change your account details</Typography>
-                <Grid container spacing={0} className={classes.settingsCard} >
-                    <Grid item xs={12} sm container>
-                        <Grid item container direction="column" spacing={2} >
-                            <Typography variant='subtitle1'>
-                                Add a photo
-                            </Typography>
-                            <Typography variant="body2">
-                                Add a photo to your profile
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Avatar src={user.photoURL} ></Avatar>
-                    </Grid>
-                </Grid>
+                < AddPhotoDialog/>
                 <Divider />
                 <Grid container spacing={0} className={classes.settingsCard} >
                     <Grid item xs={12} sm container>
