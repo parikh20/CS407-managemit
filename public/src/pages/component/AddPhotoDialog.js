@@ -10,11 +10,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import { Avatar, Typography, Divider } from '@material-ui/core';
-import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
-
-import { auth } from '../../Firebase.js'
-import { Snackbar } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
 
 import firebase from '../../Firebase';
 
@@ -27,10 +22,6 @@ const useStyles = makeStyles(theme => ({
         }
     },
 }));
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
 
 function AddPhotoDialog() {
     const classes = useStyles();
