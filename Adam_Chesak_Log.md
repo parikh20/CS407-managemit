@@ -1,5 +1,9 @@
 ### Work Log
 
+#### Week 6:
+This week I will work on creating, editing, and switching views. This will include UI and backend work,
+as well as testing to make sure this doesn't break anything else (as it touches a lot of things).
+
 #### Week 5:
 This week I will work on my first two user stories for sprint 2 - task comments and transferring
 board ownership. I will also keep looking at testing frameworks and if possible start automated
