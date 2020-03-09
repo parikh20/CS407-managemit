@@ -36,6 +36,9 @@ function BoardActions(props) {
                     </ButtonGroup>
                     <BoardUsersDialog boardRef={props.boardRef} board={props.board} />
                     <ButtonGroup size='small'>
+                        <Button href={'/board/' + props.boardRef.id + '/documents'}>Documents</Button>
+                    </ButtonGroup>
+                    <ButtonGroup size='small'>
                         <Button href={'/board/' + props.boardRef.id + '/history'}>History</Button>
                     </ButtonGroup>
                     {user && props.board.permissions && (props.board.owner === user.email || props.board.permissions[user.email].isAdmin === true) && (

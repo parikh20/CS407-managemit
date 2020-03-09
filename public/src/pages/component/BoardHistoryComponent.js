@@ -175,6 +175,18 @@ function HistoryAction(props) {
                     View <ColumnChip label={rowData.groupName} /> set to default view
                 </span>
             );
+        case 19:
+            return (
+                <span>
+                    Document "{rowData.fileName}" uploaded
+                </span>
+            );
+        case 20:
+            return (
+                <span>
+                    Document "{rowData.fileName}" deleted
+                </span>
+            );
     }
     return (
         <span>HISTORY ENTRY MISSING</span>

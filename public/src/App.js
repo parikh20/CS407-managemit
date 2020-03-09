@@ -17,6 +17,7 @@ import BoardSettings from './pages/BoardSettings';
 import BoardHistory from './pages/BoardHistory';
 import BoardCalendar from './pages/BoardCalendar';
 import UserSettings from './pages/UserSettings';
+import BoardDocuments from './pages/BoardDocuments';
 
 // Used to ensure users must log in
 class ProtectedRoute extends React.Component {
@@ -63,6 +64,7 @@ function App() {
                 <ProtectedRoute path='/board/:boardId/calendar' component={BoardCalendar} />
                 <ProtectedRoute path='/board/:boardId/settings' component={BoardSettings} />
                 <ProtectedRoute path='/board/:boardId/history' component={BoardHistory} />
+                <ProtectedRoute path='/board/:boardId/documents' component={BoardDocuments} />
                 <ProtectedRoute path='/board/:boardId/:groupId' component={Board} />
                 <ProtectedRoute path='/board/:boardId' component={Board} />
                 <ProtectedRoute path='/settings' component={UserSettings} />

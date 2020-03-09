@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
-import Snackbar from '@material-ui/core/Snackbar'
+import Snackbar from '@material-ui/core/Snackbar';
 import TextField from '@material-ui/core/TextField';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
