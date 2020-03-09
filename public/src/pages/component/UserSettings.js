@@ -14,7 +14,6 @@ import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
 import EditNameDialog from './EditNameDialog';
-import EditPhoneNumberDialog from './EditPhoneNumberDialog';
 import EditEmailDialog from './EditEmailDialog';
 
 function Alert(props) {
@@ -54,7 +53,6 @@ function UserSettings(props) {
                 <Typography variant='h5' className={classes.header}>Change your account details</Typography>
                 < AddPhotoDialog />
                 < EditNameDialog />
-                <EditPhoneNumberDialog />
                 { user.providerData[0].providerId === 'password' &&
                         <div>
                             <EditEmailDialog />
