@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -9,7 +9,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
-import { Avatar, Typography, Divider } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
+import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 
 import firebase from '../../Firebase';
 
@@ -23,22 +24,18 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function AddPhotoDialog() {
+function EditNameDialog() {
     const classes = useStyles();
 
     const user = JSON.parse(localStorage.getItem('user'));
 
-    const [URL, setURL] = React.useState(user.photoURL);
-    const [fileName, setFileName] = React.useState('No file selected');
     const [open, setOpen] = React.useState(false);
     const [disabledSubmit, setDisabledSubmit] = React.useState(true);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
-    const inputFile = useRef(null)
-
-    const openUploadWindow = () => {
-        inputFile.current.click()
-    };
+    const [nameError, setNameError] = React.useState(false);
+    const [nameHelperText, setNameHelperText] = React.useState('');
+    const [name, setName] = React.useState(user.displayName);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -46,60 +43,61 @@ function AddPhotoDialog() {
 
     const handleClose = () => {
         cleanState();
-        setFileName('No file selected');
         setDisabledSubmit(true);
         setOpen(false);
     };
 
-    const handleChange = (e) => {
-        console.log(URL)
-        e.stopPropagation();
-        e.preventDefault();
-        const file = e.target.files[0];
-        setFileName(file.name)
-        setDisabledSubmit(false);
-    }
-
     const cleanState = () => {
         setPasswordError(false);
         setPasswordHelperText('');
+        setNameError(false);
+        setNameHelperText('');
     }
 
-    const handleUpload = (e) => {
+    const changeName = (name) => {
         cleanState();
 
-        const file = document.getElementById('file').files[0]
-        const filePath = user.uid + '/profilePicture/' + file.name
-        const storageRef = firebase.storage().ref(filePath);
-
-        const oldStorageRef = firebase.storage().refFromURL(URL)
-        oldStorageRef.delete()
-
-        storageRef.put(file).then(() => {
-            storageRef.getDownloadURL().then(url => {
-                if (user.providerData[0].providerId === 'google.com') {
-                    firebase.auth().currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider()).then(res => {
-                        res.user.updateProfile({
-                            photoURL: url
-                        }).then(() => {
-                            user.photoURL = url;
-                            setURL(url);
-                            localStorage.setItem('user', JSON.stringify(user))
-                            handleClose();
-                        }).catch(error => {
-                            console.log(error);
-                        });
+        if (name.length > 50) {
+            setNameError(true);
+            setNameHelperText('Name cannot be greater than 50 characters long')
+        } else if (name.length == 0) {
+            setNameError(true);
+            setNameHelperText('Name cannot be empty');
+        } else {
+            if (user.providerData[0].providerId === 'google.com') {
+                firebase.auth().currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider()).then(res => {
+                    res.user.updateProfile({
+                        displayName: name
+                    }).then(() => {
+                        user.displayName = name;
+                        setName(name);
+                        localStorage.setItem('user', JSON.stringify(user))
+                        handleClose();
+                    }).catch(error => {
+                        console.log(error);
                     });
+                });
+            } else {
+                const password = document.getElementById('password').value
+                if (password.length == 0) {
+                    setPasswordError(true);
+                    setPasswordHelperText('Password cannot be empty');
+                } else if (password.length < 6) {
+                    setPasswordError(true);
+                    setPasswordHelperText('Password must be at least 6 characters long');
+                } else if (password.length > 128) {
+                    setPasswordError(true);
+                    setPasswordHelperText('Password must be less than 128 characters long');
                 } else {
                     firebase.auth().currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(
                         user.email,
-                        document.getElementById('password').value
+                        password
                     )).then(res => {
                         res.user.updateProfile({
-                            photoURL: url
+                            displayName: name
                         }).then(() => {
-                            user.photoURL = url;
-                            setURL(url);
+                            user.displayName = name;
+                            setName(name);
                             localStorage.setItem('user', JSON.stringify(user))
                             handleClose();
                         }).catch(error => {
@@ -109,32 +107,31 @@ function AddPhotoDialog() {
                         setPasswordHelperText('Incorrect password')
                     });
                 }
-            }).catch(error => {
-                console.log(error)
-            });
-        });
-    };            
+            }
+        }
+    }
 
     return (
         <div>
-            <Grid container spacing={0} className={classes.settingsCard} onClick={handleClickOpen}>
+            <Grid container spacing={0} className={classes.settingsCard} onClick={handleClickOpen} >
                 <Grid item xs={12} sm container>
                     <Grid item container direction="column" spacing={2} >
                         <Typography variant='subtitle1'>
-                            Add a photo
+                            Name
                         </Typography>
                         <Typography variant="body2">
-                            Add a photo to your profile
+                            {name}
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <Avatar src={URL}></Avatar>
+                <Grid item style={{marginTop: 10}}>
+                    <ArrowIcon></ArrowIcon>
                 </Grid>
             </Grid>
             <Divider />
+
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Choose a photo</DialogTitle>
+                <DialogTitle id='form-dialog-title'>Change your name</DialogTitle>
                 <DialogContent>
                     { user.providerData[0].providerId === 'password' &&
                         <div>
@@ -142,22 +139,14 @@ function AddPhotoDialog() {
                             <TextField error={passwordError} helperText={passwordHelperText} autoFocus margin='dense' id='password' label='Password' type='password' variant='outlined' fullWidth />
                         </div>
                     }
-                    <Grid container spacing={0} >
-                        <Grid item xs={6} sm container>
-                            <input type='file' accept='image/*' id='file' ref={inputFile} onChange={handleChange} style={{display: 'None'}} />
-                            <Button 
-                            color='primary' variant='contained' style={{marginTop: 5}} onClick={openUploadWindow}>
-                            Choose file
-                            </Button>   
-                            <Typography variant='caption' style={{marginLeft: 10, marginTop: 13}}>{fileName}</Typography>
-                        </Grid>
-                    </Grid>
+                    <Divider style={{marginTop: 5}} />
+                    <TextField error={nameError} helperText={nameHelperText} autoFocus margin='dense' id='name' label='Name' type='string' variant='outlined' fullWidth />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button color='primary' onClick={handleUpload} disabled={disabledSubmit} >
+                    <Button color='primary' onClick={() => changeName(document.getElementById("name").value)} >
                         Submit
                     </Button>
                 </DialogActions>
@@ -166,4 +155,4 @@ function AddPhotoDialog() {
     );
 }
 
-export default AddPhotoDialog;
+export default EditNameDialog;

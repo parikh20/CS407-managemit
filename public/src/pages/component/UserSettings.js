@@ -13,6 +13,7 @@ import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 
 import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
+import EditNameDialog from './EditNameDialog';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -49,24 +50,8 @@ function UserSettings(props) {
         <div className={classes.userSettingsBody}>
             <Paper className={classes.paper} >
                 <Typography variant='h5' className={classes.header}>Change your account details</Typography>
-                < AddPhotoDialog/>
-                <Grid container spacing={0} className={classes.settingsCard} >
-                    <Grid item xs={12} sm container>
-                        <Grid item container direction="column" spacing={2} >
-                            <Typography variant='subtitle1'>
-                                Name
-                            </Typography>
-                            <Typography variant="body2">
-                                {user.displayName}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid item style={{marginTop: 10}}>
-                        <ArrowIcon>
-                        </ArrowIcon>
-                    </Grid>
-                </Grid>
-                <Divider />
+                < AddPhotoDialog />
+                < EditNameDialog />
                 <Grid container spacing={0} className={classes.settingsCard} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
