@@ -15,6 +15,7 @@ import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
 import EditNameDialog from './EditNameDialog';
 import EditPhoneNumberDialog from './EditPhoneNumberDialog';
+import EditEmailDialog from './EditEmailDialog';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -54,22 +55,11 @@ function UserSettings(props) {
                 < AddPhotoDialog />
                 < EditNameDialog />
                 <EditPhoneNumberDialog />
-                <Grid container spacing={0} className={classes.settingsCard} >
-                    <Grid item xs={12} sm container>
-                        <Grid item container direction="column" spacing={2} >
-                            <Typography variant='subtitle1'>
-                                Change Email
-                            </Typography>
-                            <Typography variant="body2">
-                                Change your email address
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid item style={{marginTop: 10}}>
-                        <ArrowIcon></ArrowIcon>
-                    </Grid>
-                </Grid>
-                <Divider />
+                { user.providerData[0].providerId === 'password' &&
+                        <div>
+                            <EditEmailDialog />
+                        </div>
+                    }
                 <Grid container spacing={0} className={classes.settingsCard} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >

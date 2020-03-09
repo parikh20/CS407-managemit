@@ -24,19 +24,17 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function EditPhoneNumberDialog() {
+function EditEmailDialog() {
     const classes = useStyles();
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const regexp = /^(([0-9]{10}))$/;
+    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const [open, setOpen] = React.useState(false);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
-    const [phoneError, setPhoneError] = React.useState(false);
-    const [phoneHelperText, setPhoneHelperText] = React.useState('');
-    const [phone, setPhone] = React.useState(user.phoneNumber);
-
-    console.log(user)
+    const [emailError, setEmailError] = React.useState(false);
+    const [emailHelperText, setEmailHelperText] = React.useState('');
+    const [email, setEmail] = React.useState(user.email);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -50,36 +48,20 @@ function EditPhoneNumberDialog() {
     const cleanState = () => {
         setPasswordError(false);
         setPasswordHelperText('');
-        setPhoneError(false);
-        setPhoneHelperText('');
-    }
+        setEmailError(false);
+        setEmailHelperText('');
+    };
 
-    const changePhone = (phone) => {
+    const changeEmail = (email) => {
         cleanState();
 
-        if (phone.length == 0) {
-            setPhoneError(true);
-            setPhoneHelperText('Phone number cannot be empty');
-        } else if (!regexp.test(phone)) {
-            setPhoneError(true);
-            setPhoneHelperText('Phone number must be 10 digits')
+        if (email.length == 0) {
+            setEmailError(true);
+            setEmailHelperText('Email cannot be empty');
+        } else if (!regexp.test(email)) {
+            setEmailError(true);
+            setEmailHelperText('Email must be properly formatted')
         } else {
-            phone = '+1' + phone
-
-            if (user.providerData[0].providerId === 'google.com') {
-                firebase.auth().currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider()).then(res => {
-                    res.user.updateProfile({
-                        phoneNumber: phone
-                    }).then(() => {
-                        user.phoneNumber = phone;
-                        setPhone(phone);
-                        localStorage.setItem('user', JSON.stringify(user))
-                        handleClose();
-                    }).catch(error => {
-                        console.log(error);
-                    });
-                });
-            } else {
                 const password = document.getElementById('password').value
                 if (password.length == 0) {
                     setPasswordError(true);
@@ -95,15 +77,16 @@ function EditPhoneNumberDialog() {
                         user.email,
                         password
                     )).then(res => {
-                        res.user.updateProfile({
-                            phoneNumber: phone
-                        }).then(res => {
-                            user.phoneNumber = phone;
-                            setPhone(phone);
+                        res.user.updateEmail(email).then(result => {
+                            setEmail(email);
+                            user.email = email;
                             localStorage.setItem('user', JSON.stringify(user))
                             handleClose();
-                        }).catch(error => {
-                            console.log(error);
+                        }).catch(err => {
+                            if (err.code == 'auth/email-already-in-use') {
+                                setEmailError(true);
+                                setEmailHelperText('Email already in use')
+                            }
                         });
                     }).catch(error => {
                         setPasswordError(true);
@@ -111,7 +94,6 @@ function EditPhoneNumberDialog() {
                     });
                 }
             }
-        }
     }
 
     return (
@@ -120,10 +102,10 @@ function EditPhoneNumberDialog() {
                 <Grid item xs={12} sm container>
                     <Grid item container direction="column" spacing={2} >
                         <Typography variant='subtitle1'>
-                            Phone
+                            Change Email
                         </Typography>
                         <Typography variant="body2">
-                            {phone}
+                            {email}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -134,7 +116,7 @@ function EditPhoneNumberDialog() {
             <Divider />
 
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Change your phone number</DialogTitle>
+                <DialogTitle id='form-dialog-title'>Change your email</DialogTitle>
                 <DialogContent>
                     { user.providerData[0].providerId === 'password' &&
                         <div>
@@ -143,14 +125,14 @@ function EditPhoneNumberDialog() {
                         </div>
                     }
                     <Divider style={{marginTop: 5}} />
-                    <TextField error={phoneError} helperText={phoneHelperText} autoFocus margin='dense' id='phone' label='Phone Number' type='string' variant='outlined' fullWidth >
+                    <TextField error={emailError} helperText={emailHelperText} autoFocus margin='dense' id='email' label='Email' type='string' variant='outlined' defaultValue={email} fullWidth >
                     </TextField>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button color='primary' onClick={() => changePhone(document.getElementById("phone").value)} >
+                    <Button color='primary' onClick={() => changeEmail(document.getElementById("email").value)} >
                         Submit
                     </Button>
                 </DialogActions>
@@ -159,4 +141,4 @@ function EditPhoneNumberDialog() {
     );
 }
 
-export default EditPhoneNumberDialog;
+export default EditEmailDialog;

@@ -30,6 +30,7 @@ function EditNameDialog() {
     const user = JSON.parse(localStorage.getItem('user'));
 
     const [open, setOpen] = React.useState(false);
+    const [disabledSubmit, setDisabledSubmit] = React.useState(true);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
     const [nameError, setNameError] = React.useState(false);
@@ -42,6 +43,7 @@ function EditNameDialog() {
 
     const handleClose = () => {
         cleanState();
+        setDisabledSubmit(true);
         setOpen(false);
     };
 
@@ -58,7 +60,7 @@ function EditNameDialog() {
         if (name.length > 50) {
             setNameError(true);
             setNameHelperText('Name cannot be greater than 50 characters long')
-        } else if (name.length === 0) {
+        } else if (name.length == 0) {
             setNameError(true);
             setNameHelperText('Name cannot be empty');
         } else {
@@ -77,7 +79,7 @@ function EditNameDialog() {
                 });
             } else {
                 const password = document.getElementById('password').value
-                if (password.length === 0) {
+                if (password.length == 0) {
                     setPasswordError(true);
                     setPasswordHelperText('Password cannot be empty');
                 } else if (password.length < 6) {
@@ -138,7 +140,7 @@ function EditNameDialog() {
                         </div>
                     }
                     <Divider style={{marginTop: 5}} />
-                    <TextField error={nameError} helperText={nameHelperText} autoFocus margin='dense' id='name' label='Name' type='string' variant='outlined' defaultValue={name} fullWidth />
+                    <TextField error={nameError} helperText={nameHelperText} autoFocus margin='dense' id='name' label='Name' type='string' variant='outlined' fullWidth />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
