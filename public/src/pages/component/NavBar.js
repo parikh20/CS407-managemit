@@ -27,6 +27,8 @@ function NavBar(props) {
 
     const [caseSensitiveChecked, setCaseSensitiveChecked] = React.useState(false);
     const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
+    const [searchInput, setSearchInput] = React.useState('');
+    const [searchMatches, setSearchMatches] = React.useState(0);
 
     const handleMenuOpen = event => {
         setMenuAnchorEl(event.currentTarget);
@@ -61,10 +63,15 @@ function NavBar(props) {
 
     const searchTasks = () => {
         let searchInputElement = document.getElementById('taskSearchInput');
+
+        setSearchMatches(0);
+        setSearchInput('');
+
         if (!searchInputElement) {
             return;
         }
         let searchInput = searchInputElement.value.trim();
+        setSearchInput(searchInput);
         if (!caseSensitiveChecked) {
             searchInput = searchInput.toLowerCase();
         }
@@ -76,6 +83,7 @@ function NavBar(props) {
                 taskElements[i].classList.remove('search_no_matches');
             }
         } else {
+            let matchCount = 0;
             for (let i = 0; i < taskElements.length; i++) {
                 let content = taskElements[i].innerText;
                 if (!caseSensitiveChecked) {
@@ -84,12 +92,15 @@ function NavBar(props) {
                 if (content.includes(searchInput)) {
                     taskElements[i].classList.remove('search_no_matches');
                     taskElements[i].classList.add('search_matches');
+                    matchCount++;
                 } else {
                     taskElements[i].classList.remove('search_matches');
                     taskElements[i].classList.add('search_no_matches');
                 }
             }
+            setSearchMatches(matchCount);
         }
+
     };
 
     return (
@@ -103,6 +114,11 @@ function NavBar(props) {
                         }
                     </Typography>
                     {showBoardFeatures && <>
+                        {searchInput !== '' && (
+                            <Typography color='inherit' style={{marginRight: 10 + 'px'}}>
+                                {searchMatches} match{searchMatches !== 1 ? 'es': ''}
+                            </Typography>
+                        )}
                         <TextField placeholder='Search for task' onChange={() => searchTasks()} id='taskSearchInput' style={{width: '25%', borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
                         <Tooltip title='Case sensitivity' arrow>
                             <ToggleButtonGroup size='small' exclusive value={caseSensitiveChecked} style={{backgroundColor: 'inherit'}} onChange={toggleCaseSensitiveChecked}>
