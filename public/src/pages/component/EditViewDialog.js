@@ -18,6 +18,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import CheckIcon from '@material-ui/icons/Check';
 import IconButton from '@material-ui/core/IconButton';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
@@ -171,6 +173,23 @@ function EditViewDialog(props) {
         }
     };
 
+    const handleSetDefault = colGroup => {
+        props.boardRef.ref.update({
+            defaultColumnGroup: colGroup.id
+        }).then(result => {
+            db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                {
+                    user: user.email,
+                    groupName: colGroup.label,
+                    action: 18,
+                    timestamp: firebase.database.ServerValue
+                }
+            ).catch(err => {
+                console.log("Error logging change default view: " + err);
+            });
+        });
+    };
+
     const inputListener = (event, colGroup) => {
         if (event.target.value === colGroup.label) {
             setDisableStatus(colGroup.id, false);
@@ -237,6 +256,19 @@ function EditViewDialog(props) {
                                         <IconButton aria-label='delete view' style={{float: 'right'}} disabled={deleteDisable[colGroup.id] || false} onClick={() => handleDelete(colGroup)}>
                                             <CheckIcon />
                                         </IconButton>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Divider style={{margin: 10}} />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormControlLabel control={
+                                            <Checkbox
+                                                color='primary'
+                                                checked={props.boardRef.data().defaultColumnGroup === colGroup.id}
+                                                disabled={props.boardRef.data().defaultColumnGroup === colGroup.id}
+                                                onChange={() => handleSetDefault(colGroup)}
+                                            />
+                                        } label='Make this the default view' />
                                     </Grid>
                                 </Grid>
                             </ExpansionPanelDetails>
