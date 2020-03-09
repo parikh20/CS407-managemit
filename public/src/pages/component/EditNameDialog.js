@@ -30,7 +30,6 @@ function EditNameDialog() {
     const user = JSON.parse(localStorage.getItem('user'));
 
     const [open, setOpen] = React.useState(false);
-    const [disabledSubmit, setDisabledSubmit] = React.useState(true);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
     const [nameError, setNameError] = React.useState(false);
@@ -43,7 +42,6 @@ function EditNameDialog() {
 
     const handleClose = () => {
         cleanState();
-        setDisabledSubmit(true);
         setOpen(false);
     };
 
