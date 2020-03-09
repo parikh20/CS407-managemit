@@ -15,6 +15,7 @@ import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
 import EditNameDialog from './EditNameDialog';
 import EditEmailDialog from './EditEmailDialog';
+import EditPasswordDialog from './EditPasswordDialog';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -56,23 +57,9 @@ function UserSettings(props) {
                 { user.providerData[0].providerId === 'password' &&
                         <div>
                             <EditEmailDialog />
+                            <EditPasswordDialog />
                         </div>
                     }
-                <Grid container spacing={0} className={classes.settingsCard} >
-                    <Grid item xs={12} sm container>
-                        <Grid item container direction="column" spacing={2} >
-                            <Typography variant='subtitle1'>
-                                Change Password
-                            </Typography>
-                            <Typography variant="body2">
-                                Change your password
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid item style={{marginTop: 10}}>
-                        <ArrowIcon></ArrowIcon>
-                    </Grid>
-                </Grid>
             </Paper>
         </div>
     );
