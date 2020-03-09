@@ -10,6 +10,7 @@ import NewColumnDialog from './NewColumnDialog';
 import SelectViewDialog from './SelectViewDialog'
 import NewViewDialog from './NewViewDialog';
 import BoardUsersDialog from './BoardUsersDialog';
+import EditViewDialog from './EditViewDialog';
 
 function BoardActions(props) {
     const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
@@ -24,9 +25,12 @@ function BoardActions(props) {
                     {!props.lockFunctionality && <>
                         <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} />
                         <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
-                        <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
                     </>}
                     <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
+                    {!props.lockFunctionality && <>
+                        <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                        <EditViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} currentGroupId={props.currentGroupId} />
+                    </>}
                     <ButtonGroup size='small'>
                         <Button href={'/board/' + props.boardRef.id + '/calendar'}>Calendar</Button>
                     </ButtonGroup>

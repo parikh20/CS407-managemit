@@ -21,7 +21,8 @@ class Board extends React.Component {
         this.state = {
             taskRefs: {},
             taskCommentRefs: {},
-            allColumns: {}
+            allColumns: {},
+            columnGroupId: null
         };
     }
 
@@ -50,9 +51,10 @@ class Board extends React.Component {
             this.colGroupSub.unsubscribe();
         }
         const collection = boardRef.ref.collection("columnGroups");
+        this.setState({columnGroupId: colGroup});
 
         // If a parameter was supplied to the function use it, otherwise use default
-        colGroup = colGroup || boardRef.data().defaultColumnGroup;
+        colGroup = this.props.params.groupId || boardRef.data().defaultColumnGroup;
 
         // If a default is set (not ""), then use it
         if(colGroup.length) {
@@ -81,7 +83,7 @@ class Board extends React.Component {
             this.columnsSub.push(colGroupRef.ref.collection("columns").onSnapshot((columnRefs) => {
                 let copy = Object.assign({}, this.state.allColumns);
 
-                const columnOrder = colGroupRef.data().columnOrder;
+                const columnOrder = colGroupRef.data().columnOrder || [];
                 let docs = columnRefs.docs.map(doc => doc);
                 docs.sort((a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id));
 
@@ -156,6 +158,7 @@ class Board extends React.Component {
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
                     lockFunctionality={this.props.lockFunctionality}
                     taskRefs={this.state.taskRefs}
+                    currentGroupId={this.state.columnGroupId}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}

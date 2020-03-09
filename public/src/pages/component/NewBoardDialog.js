@@ -16,6 +16,7 @@ const createBoard = async (name, description) => {
     const permissionsObj = {};
     permissionsObj[auth.currentUser.email] = { isAdmin: true };
     return new Promise((res,rej) => {
+        let boardRef2 = null;
         db.collection("boards").add({
             owner: auth.currentUser.email,
             label: name,
@@ -25,8 +26,9 @@ const createBoard = async (name, description) => {
             userRefs: [auth.currentUser.email],
             permissions: permissionsObj
         }).then((boardRef) => {
+            boardRef2 = boardRef;
             return boardRef.collection("columnGroups").add({
-                label: "Default Group"
+                label: "Default view"
             });
         }).then(async (columnGroupRef) => {
             let columnRefs = [];
@@ -40,6 +42,9 @@ const createBoard = async (name, description) => {
             await columnGroupRef.set({
                 columnOrder: columnRefs
             }, {merge: true});
+            await boardRef2.update({
+                defaultColumnGroup: columnGroupRef.id
+            });
         }).then(() => {
             res();
         }).catch((err) => {

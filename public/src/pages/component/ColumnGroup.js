@@ -5,7 +5,7 @@ import GridList from '@material-ui/core/GridList';
 import Column from './Column.js';
 
 function ColumnGroup(props) {
-    const columnRefs = props.columnGroup ? props.columnGroup.columnOrder : [];
+    const columnRefs = props.columnGroup && props.columnGroup.columnOrder ? props.columnGroup.columnOrder : [];
     const columns = props.columns.filter(column => columnRefs.includes(column.id));
     columns.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
 

@@ -55,7 +55,7 @@ class RedirectRoute extends React.Component {
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter forceRefresh={true}>
             <Switch>
                 <RedirectRoute path='/login' component={Login} />
                 <RedirectRoute path='/register' component={Register} />
@@ -63,6 +63,7 @@ function App() {
                 <ProtectedRoute path='/board/:boardId/calendar' component={BoardCalendar} />
                 <ProtectedRoute path='/board/:boardId/settings' component={BoardSettings} />
                 <ProtectedRoute path='/board/:boardId/history' component={BoardHistory} />
+                <ProtectedRoute path='/board/:boardId/:groupId' component={Board} />
                 <ProtectedRoute path='/board/:boardId' component={Board} />
                 <ProtectedRoute path='/settings' component={UserSettings} />
                 <Route path='/'>

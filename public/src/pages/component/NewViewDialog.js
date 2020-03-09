@@ -11,18 +11,21 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 
+import { db } from '../../Firebase';
+import firebase from '../../Firebase';
 
 function NewViewDialog(props) {
     const [open, setOpen] = React.useState(false);
-    
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
     const [columnError, setColumnError] = React.useState(false);
     const [columnHelperText, setColumnHelperText] = React.useState('');
     const [columnNames, setColumnNames] = React.useState([]);
 
+    const user = JSON.parse(localStorage.getItem('user'));
+
     let allColGroups = Array.isArray(props.allColGroups) ? props.allColGroups : [];
-    let groupNames = allColGroups.map(colGroup => colGroup.label);
+    let groupNames = allColGroups.map(colGroup => colGroup.data().label);
 
     const handleClickOpen = () => {
         clearState();
@@ -48,7 +51,34 @@ function NewViewDialog(props) {
             setNameError(true);
             setNameHelperText('View name is already in use');
         } else {
-            console.log('TODO: actually create it');
+            db.collection('boards').doc(props.boardRef.id).collection('columnGroups').add({
+                label: groupName
+            }).then(async (columnGroupRef) => {
+                let columnRefs = [];
+                for (const title of columnNames) {
+                    let colRef = await columnGroupRef.collection('columns').add({
+                        label: title,
+                        taskRefs: [],        
+                    });
+                    columnRefs.push(colRef.id);
+                }
+                await columnGroupRef.set({
+                    columnOrder: columnRefs
+                }, {merge: true});
+            }).then(() => {
+                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                    {
+                        user: user.email,
+                        groupName: groupName,
+                        columns: columnNames,
+                        action: 15,
+                        timestamp: firebase.database.ServerValue
+                    }
+                ).catch(err => {
+                    console.log("Error logging new column: " + err);
+                });
+                setOpen(false);
+            });
         }
     }
 

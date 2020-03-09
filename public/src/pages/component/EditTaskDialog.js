@@ -300,7 +300,7 @@ function EditTaskDialog(props) {
                                 Columns and collaborators
                             </Typography>
                         </Grid>
-                        {props.allColGroups && props.allColGroups.map((colGroup) => (
+                        {props.allColGroups && props.allColGroups.sort((a, b) => a.data().label.localeCompare(b.data().label)).map((colGroup) => (
                             <div key={colGroup.id} style={{width: '100%'}}>
                                 {columnHelperText && (
                                     <Grid item xs={12}>
