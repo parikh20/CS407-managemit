@@ -140,7 +140,7 @@ function EditTaskDialog(props) {
                         user: user.email,
                         taskName: label,
                         action: 7,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     });
             }).catch(err => console.error("Error in adding task:", err));
         }
@@ -297,7 +297,7 @@ function EditTaskDialog(props) {
                         )}
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
-                                Columns and collaborators
+                                Columns
                             </Typography>
                         </Grid>
                         {props.allColGroups && props.allColGroups.sort((a, b) => a.data().label.localeCompare(b.data().label)).map((colGroup) => (
@@ -334,6 +334,11 @@ function EditTaskDialog(props) {
                                 </Grid>
                             </div>
                         ))}
+                        <Grid item xs={12}>
+                            <Typography variant='h6' component='h2' style={{marginTop: 10 + 'px'}}>
+                                Collaborators
+                            </Typography>
+                        </Grid>
                         <Grid item xs={12}>
                             <FormControl style={{width: '100%'}}>
                                 <InputLabel id='users-input-label'>Users</InputLabel>

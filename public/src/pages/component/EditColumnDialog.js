@@ -60,7 +60,7 @@ function EditColumnDialog(props) {
                         user: user.email,
                         colName: columnName,
                         action: 5,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging edit column: " + err);
@@ -103,7 +103,7 @@ function EditColumnDialog(props) {
                         user: user.email,
                         colName: props.column.label,
                         action: 6,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging delete column: " + err);

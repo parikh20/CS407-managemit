@@ -103,8 +103,10 @@ function BoardSettings(props) {
                 db.collection('boards').doc(props.board.id).collection('history').add(
                     {
                         user: user.email,
+                        name: name,
+                        description: description,
                         action: 1,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging board update: " + err);
@@ -152,7 +154,7 @@ function BoardSettings(props) {
                         user: user.email,
                         user2: email,
                         action: 2,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging inviting user: " + err);
@@ -174,7 +176,7 @@ function BoardSettings(props) {
                     user: user.email,
                     user2: email,
                     action: 3,
-                    timestamp: firebase.database.ServerValue
+                    timestamp: new Date()
                 }
             ).catch(err => {
                 console.log("Error logging removing user: " + err);
@@ -197,7 +199,7 @@ function BoardSettings(props) {
                     user2: email,
                     newPermission: newValue,
                     action: 12,
-                    timestamp: firebase.database.ServerValue
+                    timestamp: new Date()
                 }
             ).catch(err => {
                 console.log("Error logging changing permisisons: " + err);

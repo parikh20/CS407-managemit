@@ -72,7 +72,7 @@ function NewViewDialog(props) {
                         groupName: groupName,
                         columns: columnNames,
                         action: 15,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging new column: " + err);

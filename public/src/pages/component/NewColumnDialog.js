@@ -68,8 +68,9 @@ function NewColumnDialog(props) {
                     {
                         user: user.email,
                         colName: columnName,
+                        columnGroupName: props.columnGroupRef.data().label,
                         action: 4,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
