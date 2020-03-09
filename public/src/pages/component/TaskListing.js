@@ -52,7 +52,7 @@ function TaskListing(props) {
                     user: user.email,
                     taskName: props.task.title,
                     action: 8,
-                    timestamp: firebase.database.ServerValue
+                    timestamp: new Date()
                 }
             ).catch(err => {
                 console.log("Error logging delete task: " + err);
@@ -84,6 +84,7 @@ function TaskListing(props) {
             props.boardRef.ref.collection('tasks').doc(props.taskRef.id).collection('comments').add({
                 user: user.email,
                 commentText: commentText,
+                taskName: props.task.title, 
                 timestamp: new Date()
             }).then(result => {
                 db.collection('boards').doc(props.boardRef.id).collection('history').add(
@@ -92,7 +93,7 @@ function TaskListing(props) {
                         taskName: props.task.title,
                         commentText: commentText,
                         action: 9,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging delete task: " + err);
@@ -113,8 +114,9 @@ function TaskListing(props) {
                     user: user.email,
                     commentText: commentText,
                     user2: user2,
+                    taskName: props.task.title, 
                     action: 11,
-                    timestamp: firebase.database.ServerValue
+                    timestamp: new Date()
                 }
             ).catch(err => {
                 console.log("Error logging delete comment: " + err);

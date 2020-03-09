@@ -140,7 +140,7 @@ function EditTaskDialog(props) {
                         user: user.email,
                         taskName: label,
                         action: 7,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     });
             }).catch(err => console.error("Error in adding task:", err));
         }

@@ -58,7 +58,7 @@ function TransferBoardDialog(props) {
                     user: user.email,
                     user2: selectedUser,
                     action: 10,
-                    timestamp: firebase.database.ServerValue
+                    timestamp: new Date()
                 }
             ).catch(err => {
                 console.log("Error logging board update: " + err);

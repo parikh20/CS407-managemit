@@ -118,7 +118,7 @@ function EditViewDialog(props) {
                         groupName: newValue,
                         groupName2: oldValue,
                         action: 16,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging rename view: " + err);
@@ -164,7 +164,7 @@ function EditViewDialog(props) {
                         user: user.email,
                         groupName: colGroup.label,
                         action: 17,
-                        timestamp: firebase.database.ServerValue
+                        timestamp: new Date()
                     }
                 ).catch(err => {
                     console.log("Error logging delete view: " + err);
@@ -182,7 +182,7 @@ function EditViewDialog(props) {
                     user: user.email,
                     groupName: colGroup.label,
                     action: 18,
-                    timestamp: firebase.database.ServerValue
+                    timestamp: new Date()
                 }
             ).catch(err => {
                 console.log("Error logging change default view: " + err);
