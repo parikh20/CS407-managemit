@@ -6,3 +6,14 @@ Week 2:
     
  Week 3:
     Working on board history functionality. Also going to work on automated testing for previous user stories.
+    
+ Week 4:
+    Worked on finishing up board history functionality. Worked on sorting tasks and added some UI feedback for some 
+    user story acceptance criteria
+
+Week 5:
+    Working on user settings page and functionality. Also going to be adding notification settings as a placeholder 
+    in the settings page for now. It will be fleshed out when notifications are implemented.
+
+Week 6:
+    This week, I plan on finishing up the user settings page, and then adding the notification settings page. I also plan to                 retroactively add feedback on all user actions where it was previously missing.
