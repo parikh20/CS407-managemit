@@ -23,7 +23,7 @@ function BoardActions(props) {
             {props.board && (
                 <ButtonGroup size='small'>
                     {!props.lockFunctionality && <>
-                        <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} />
+                        <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} fileRefs={props.fileRefs} />
                         <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
                     </>}
                     <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
