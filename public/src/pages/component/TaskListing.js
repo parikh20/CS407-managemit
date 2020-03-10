@@ -34,6 +34,13 @@ function TaskListing(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
 
+    let fileListings = {};
+    if (props.fileRefs) {
+        for (const fileRef of props.fileRefs) {
+            fileListings[fileRef.id] = fileRef.data();
+        }
+    }
+
     const handleClickOpen = () => {
         clearState();
         setOpen(true);
@@ -206,28 +213,23 @@ function TaskListing(props) {
                             <Typography variant='h6' component='h2'>
                                 Documents
                             </Typography>
-                            <List component='nav'>
-                                <ListItem button>
-                                  <ListItemIcon>
-                                    <AttachmentIcon />
-                                  </ListItemIcon>
-                                  <ListItemText primary='Placeholder_Document.docx' />
-                                </ListItem>
-                                <Divider />
-                                <ListItem button>
-                                  <ListItemIcon>
-                                    <AttachmentIcon />
-                                  </ListItemIcon>
-                                  <ListItemText primary='Placeholder_Document.pdf' />
-                                </ListItem>
-                                <Divider />
-                                <ListItem button>
-                                  <ListItemIcon>
-                                    <AttachmentIcon />
-                                  </ListItemIcon>
-                                  <ListItemText primary='Placeholder_Document.png' />
-                                </ListItem>
-                            </List>
+                            {props.task.fileRefs.length === 0 && (
+                                <Typography variant='body2' component='p'>
+                                    (No files attached to task)
+                                </Typography>
+                            )}
+                            {props.task.fileRefs.length > 0 && (
+                                <List component='nav'>
+                                    {props.task.fileRefs.map(fileRef => (
+                                        <ListItem button key={fileRef}>
+                                            <ListItemIcon>
+                                                <AttachmentIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary={fileListings[fileRef] ? fileListings[fileRef].fileName: ''} />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            )}
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>

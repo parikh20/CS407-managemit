@@ -32,6 +32,7 @@ function ColumnGroup(props) {
                         allColumnNames={allColumnNames}
                         lockFunctionality={props.lockFunctionality}
                         sortMode={props.sortMode}
+                        fileRefs={props.fileRefs}
                     />
                 ))}
             </GridList>

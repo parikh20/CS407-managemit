@@ -65,6 +65,7 @@ function Column(props) {
                         taskCommentRefs={props.taskCommentRefs}
                         allColumnNames={props.allColumnNames}
                         lockFunctionality={props.lockFunctionality}
+                        fileRefs={props.fileRefs}
                     />
                 ))}
             </div>

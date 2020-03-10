@@ -17,9 +17,29 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Chip from '@material-ui/core/Chip';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+
+import dateFormat from 'dateformat';
 
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 function EditTaskDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -34,6 +54,8 @@ function EditTaskDialog(props) {
     const [checklistError, setChecklistError] = React.useState(false);
     const [checklistHelperText, setChecklistHelperText] = React.useState('');
     const [checklistItems, setChecklistItems] = React.useState([]);
+    const [fileAttachments, setFileAttachments] = React.useState({});
+    const [successSnackbar, setSuccessSnackbar] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -52,11 +74,22 @@ function EditTaskDialog(props) {
         clearState();
         clearChecklistErrors();
         setChecklistItems([]);
+        setFileAttachments({});
+        setSuccessSnackbar(false);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setSuccessSnackbar(false);
+    };
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSuccessSnackbar(false);
     };
 
     const handleSubmit = () => {
@@ -114,6 +147,13 @@ function EditTaskDialog(props) {
             setDateHelperText('Date cannot be in the past');
         }
 
+        let files = [];
+        for (const file of Object.keys(fileAttachments)) {
+            if (fileAttachments[file]) {
+                files.push(file);
+            }
+        }
+
         if (!hasError) {
             setOpen(false);
 
@@ -124,7 +164,8 @@ function EditTaskDialog(props) {
                 date: date,
                 users: users,
                 columnRefs: columnIds,
-                checklist: checklistItems
+                checklist: checklistItems,
+                fileRefs: files
             }).then((taskRef) => {
                 let columnUpdates = [];
                 Object.keys(columns).forEach((colGroupId) => {
@@ -175,6 +216,45 @@ function EditTaskDialog(props) {
         setChecklistItems(checklistItemsCopy);
     };
 
+    const handleFileUpload = () => {
+        const files = document.getElementById('taskFile').files;
+
+        setSuccessSnackbar(false);
+
+        for (const file of files) {
+            let filePath = props.boardRef.id + '/uploadedFiles/' + file.name;
+            const storageRef = firebase.storage().ref(filePath);
+            storageRef.put(file).then(() => {
+                db.collection('boards').doc(props.boardRef.id).collection('files').add({
+                    fileName: file.name,
+                    filePath: filePath,
+                    uploadedBy: user.email,
+                    timestamp: new Date()
+                }).then(() => {
+                    db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                        {
+                            user: user.email,
+                            fileName: file.name,
+                            action: 19,
+                            timestamp: new Date()
+                        }
+                    ).catch(err => {
+                        console.log("Error logging new file upload: " + err);
+                    });
+                });
+            });
+        }
+        document.getElementById('taskFile').value = null;
+
+        setSuccessSnackbar(true);
+    };
+
+    const handleFileAttachment = (event, fileRef) => {
+        let fileAttachmentsCopy = Object.assign({}, fileAttachments);
+        fileAttachmentsCopy[fileRef.id] = event.target.checked;
+        setFileAttachments(fileAttachmentsCopy);
+    };
+
     const clearState = () => {
         setTitleError(false);
         setTitleHelperText('');
@@ -196,7 +276,7 @@ function EditTaskDialog(props) {
             <ButtonGroup size='small'>
                 <Button {...props} onClick={handleClickOpen}>New task</Button>
             </ButtonGroup>
-            <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
+            <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
                 <DialogContent>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
@@ -231,7 +311,7 @@ function EditTaskDialog(props) {
                                 helperText={descHelperText}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
                             <TextField
                                 margin='dense'
                                 id='taskDueDate'
@@ -244,16 +324,60 @@ function EditTaskDialog(props) {
                                 helperText={dateHelperText}
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
+                            <Typography variant='h6' component='h2'>
+                                Files
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
                             <TextField
                                 margin='dense'
                                 id='taskFile'
-                                label='Files'
+                                label='Upload new file'
                                 type='file'
                                 variant='outlined'
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
+                                style={{width: 92 + '%'}}
                             />
+                            <IconButton aria-label='upload file' onClick={() => handleFileUpload()}>
+                                <CloudUploadIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <ExpansionPanel>
+                                <ExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls='files_content'
+                                    id='files_header'
+                                >
+                                    <Typography>Select files to attach</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                    <TableContainer>
+                                        <Table size='small'>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Attach file</TableCell>
+                                                    <TableCell>Date uploaded</TableCell>
+                                                    <TableCell>Uploaded by</TableCell>
+                                                    <TableCell>Filename</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {props.fileRefs && props.fileRefs.map(fileRef => (
+                                                    <TableRow key={fileRef.id}>
+                                                        <TableCell><Checkbox color='default' value={fileRef.id} onChange={(e) => handleFileAttachment(e, fileRef)}/></TableCell>
+                                                        <TableCell>{dateFormat(fileRef.data().timestamp.toDate(), 'mm/dd/yyyy hh:MM')}</TableCell>
+                                                        <TableCell><Chip size='small' label={fileRef.data().uploadedBy} color='primary' variant={props.boardRef.data().owner === fileRef.data().uploadedBy ? 'default': 'outlined'} /></TableCell>
+                                                        <TableCell>{fileRef.data().fileName}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
@@ -417,6 +541,12 @@ function EditTaskDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar open={successSnackbar} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='success'>
+                    1 file uploaded
+                </Alert>
+            </Snackbar>
         </>
     );
 }

@@ -15,6 +15,7 @@ class Board extends React.Component {
     columnsSub = [];
     taskSub;
     taskCommentSubs = [];
+    filesSub;
 
     constructor(props) {
         super(props);
@@ -40,6 +41,7 @@ class Board extends React.Component {
                 this.loadColGroup(boardRef);
                 this.loadTasks(boardRef);
                 this.loadAllColGroups(boardRef);
+                this.loadFiles(boardRef);
             }
         });
     }
@@ -125,12 +127,23 @@ class Board extends React.Component {
         });
     }
 
+    loadFiles(boardRef) {
+        if (this.filesSub) {
+            this.filesSub.unsubscribe();
+        }
+
+        this.filesSub = boardRef.ref.collection('files').orderBy('timestamp', 'desc').onSnapshot(fileRefs => {
+            this.setState({fileRefs: fileRefs.docs})
+        });
+    }
+
     // When the component is destroyed, unsubscribe from all subscriptions
     componentWillUnmount() {
         this.boardSub && this.boardSub.unsubscribe();
         this.colSub && this.colSub.unsubscribe();
         this.taskSub && this.taskSub.unsubscribe();
         this.colGroupsSub && this.colGroupsSub();
+        this.filesSub && this.filesSub.unsubscribe();
         this.columnsSub.forEach(sub => sub());
         this.taskCommentSubs.forEach(sub => sub());
         if(this.colGroupSub) {
@@ -159,6 +172,7 @@ class Board extends React.Component {
                     lockFunctionality={this.props.lockFunctionality}
                     taskRefs={this.state.taskRefs}
                     currentGroupId={this.state.columnGroupId}
+                    fileRefs={this.state.fileRefs ? this.state.fileRefs : []}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
@@ -174,6 +188,8 @@ class Board extends React.Component {
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
                     lockFunctionality={this.props.lockFunctionality}
                     sortMode={this.props.sortMode}
+                    fileRefs={this.state.fileRefs ? this.state.fileRefs : []}
+
                 />
             </div>
         ); 
