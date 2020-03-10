@@ -29,11 +29,17 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Chip from '@material-ui/core/Chip';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import dateFormat from 'dateformat';
 
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 function EditTaskDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -49,6 +55,7 @@ function EditTaskDialog(props) {
     const [checklistHelperText, setChecklistHelperText] = React.useState('');
     const [checklistItems, setChecklistItems] = React.useState([]);
     const [fileAttachments, setFileAttachments] = React.useState({});
+    const [successSnackbar, setSuccessSnackbar] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -68,11 +75,21 @@ function EditTaskDialog(props) {
         clearChecklistErrors();
         setChecklistItems([]);
         setFileAttachments({});
+        setSuccessSnackbar(false);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setSuccessSnackbar(false);
+    };
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSuccessSnackbar(false);
     };
 
     const handleSubmit = () => {
@@ -202,6 +219,8 @@ function EditTaskDialog(props) {
     const handleFileUpload = () => {
         const files = document.getElementById('taskFile').files;
 
+        setSuccessSnackbar(false);
+
         for (const file of files) {
             let filePath = props.boardRef.id + '/uploadedFiles/' + file.name;
             const storageRef = firebase.storage().ref(filePath);
@@ -226,6 +245,8 @@ function EditTaskDialog(props) {
             });
         }
         document.getElementById('taskFile').value = null;
+
+        setSuccessSnackbar(true);
     };
 
     const handleFileAttachment = (event, fileRef) => {
@@ -520,6 +541,12 @@ function EditTaskDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar open={successSnackbar} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='success'>
+                    1 file uploaded
+                </Alert>
+            </Snackbar>
         </>
     );
 }

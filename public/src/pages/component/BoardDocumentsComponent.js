@@ -163,10 +163,20 @@ function BoardDocumentsComponent(props) {
         document.getElementById('uploadFile').value = null;
     };
 
-    const handleDeleteDocument = rowData => {
+    const handleDeleteDocument = async (rowData) => {
         setSuccessSnackbar(false);
 
-        db.collection('boards').doc(props.board.id).collection('files').doc(rowData.id).delete().then(() => {
+        const fileId = rowData.id;
+
+        await db.collection('boards').doc(props.board.id).collection('files').doc(rowData.id).delete();
+
+        db.collection('boards').doc(props.board.id).collection('tasks').where('fileRefs', 'array-contains', fileId).get().then(async (taskRefs) => {
+            for (const taskRef of taskRefs.docs) {
+                await taskRef.ref.update({
+                    fileRefs: taskRef.data().fileRefs.filter(fileRef => fileRef !== fileId)
+                });
+            }
+        }).then(() => {
             db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
