@@ -12,7 +12,7 @@ import {Typography, Button } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 
 import firebase from '../../Firebase';
-import { db, auth } from '../../Firebase';
+import { db } from '../../Firebase';
 import EditNameDialog from './EditNameDialog';
 import EditEmailDialog from './EditEmailDialog';
 import EditPasswordDialog from './EditPasswordDialog';

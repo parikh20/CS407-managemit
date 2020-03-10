@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 
 import { auth } from '../../Firebase.js';
 import { useHistory } from 'react-router-dom';
+import firebase from '../../Firebase';
 
 
 function Alert(props) {
@@ -68,8 +69,16 @@ function Register(props) {
                 user.updateProfile({
                     displayName: name
                 }).then(res =>  {
-                    history.push('/login');
-                    setSuccessSnackbar(true);
+                    firebase.firestore().collection('users').doc(user.uid).set({
+                        darkMode: false,
+                        emailNotifications: true,
+                        inAppNotifications: true
+                    }).then(res => {
+                        history.push('/login');
+                        setSuccessSnackbar(true);
+                    }).catch(err => {
+                        console.log(err);
+                    });
                 }).catch(error => {
                     console.log(error);
                 });

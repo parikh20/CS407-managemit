@@ -12,7 +12,8 @@ import { Link } from 'react-router-dom';
 
 import getStyles from '../../styling/getStyles';
 
-import { auth, provider } from '../../Firebase.js'
+import { auth, provider } from '../../Firebase'
+import firebase from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -70,11 +71,26 @@ function Login(props) {
 
     const loginWithGoogle = () => {
         auth.signInWithPopup(provider).then(result => {
-            localStorage.setItem('user', JSON.stringify(result.user));
-            history.push('/boards');
+            console.log(result);
+            if (result.additionalUserInfo.isNewUser) {
+                firebase.firestore().collection('users').doc(result.user.uid).set({
+                    darkMode: false,
+                    emailNotifications: true,
+                    inAppNotifications: true
+                }).then(res => {
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    history.push('/boards');
+                }).catch(err => {
+                    console.log(err);
+                });
+            } else {
+                localStorage.setItem('user', JSON.stringify(result.user));
+                history.push('/boards');
+            }
         }).catch(error => {
             setloginErrorSnackbar(true);
-            setErrorText(error.message);        });
+            setErrorText(error.message);        
+        });
     };
 
     const clearState = () => {
