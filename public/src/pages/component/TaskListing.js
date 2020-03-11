@@ -131,6 +131,13 @@ function TaskListing(props) {
         });
     };
 
+    const handleDocumentClick = rowData => {
+        const storageRef = firebase.storage().ref(rowData.filePath);
+        storageRef.getDownloadURL().then(url => {
+            window.open(url, '_blank');
+        });
+    };
+
     const clearState = () => {
         setCommentError(false);
         setCommentHelperText('');
@@ -221,7 +228,7 @@ function TaskListing(props) {
                             {props.task.fileRefs.length > 0 && (
                                 <List component='nav'>
                                     {props.task.fileRefs.map(fileRef => (
-                                        <ListItem button key={fileRef}>
+                                        <ListItem button key={fileRef} onClick={() => handleDocumentClick(fileListings[fileRef])}>
                                             <ListItemIcon>
                                                 <AttachmentIcon />
                                             </ListItemIcon>

@@ -31,6 +31,7 @@ import Chip from '@material-ui/core/Chip';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import Link from '@material-ui/core/Link';
 
 import dateFormat from 'dateformat';
 
@@ -255,6 +256,13 @@ function EditTaskDialog(props) {
         setFileAttachments(fileAttachmentsCopy);
     };
 
+    const handleDocumentClick = rowData => {
+        const storageRef = firebase.storage().ref(rowData.filePath);
+        storageRef.getDownloadURL().then(url => {
+            window.open(url, '_blank');
+        });
+    };
+
     const clearState = () => {
         setTitleError(false);
         setTitleHelperText('');
@@ -370,7 +378,7 @@ function EditTaskDialog(props) {
                                                         <TableCell><Checkbox color='default' value={fileRef.id} onChange={(e) => handleFileAttachment(e, fileRef)}/></TableCell>
                                                         <TableCell>{dateFormat(fileRef.data().timestamp.toDate(), 'mm/dd/yyyy hh:MM')}</TableCell>
                                                         <TableCell><Chip size='small' label={fileRef.data().uploadedBy} color='primary' variant={props.boardRef.data().owner === fileRef.data().uploadedBy ? 'default': 'outlined'} /></TableCell>
-                                                        <TableCell>{fileRef.data().fileName}</TableCell>
+                                                        <TableCell><Link onClick={() => handleDocumentClick(fileRef.data())} style={{cursor: 'pointer'}}>{fileRef.data().fileName}</Link></TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
