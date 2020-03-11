@@ -57,6 +57,7 @@ function EditTaskDialog(props) {
     const [checklistItems, setChecklistItems] = React.useState([]);
     const [fileAttachments, setFileAttachments] = React.useState({});
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
+    const [warningSnackbar, setWarningSnackbar] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -71,18 +72,40 @@ function EditTaskDialog(props) {
         allTasks.sort((a, b) => a.title.localeCompare(b.title));
     }
 
+    // Pre-fill file attachments, if possible
+    let defaultFileAttachments = {};
+    if (props.existingTask) {
+        for (const fileRef of props.existingTask.fileRefs) {
+            defaultFileAttachments[fileRef] = true;
+        }
+    }
+
+    // Pre-fill checklist items, if possible
+    let defaultChecklistItems = [];
+    if (props.existingTask) {
+        for (const checklistItem of props.existingTask.checklist) {
+            defaultChecklistItems.push(Object.assign({}, checklistItem));
+        }
+    }
+
     const handleClickOpen = () => {
         clearState();
         clearChecklistErrors();
         setChecklistItems([]);
         setFileAttachments({});
         setSuccessSnackbar(false);
+        setWarningSnackbar(false);
+
+        setFileAttachments(defaultFileAttachments);
+        setChecklistItems(defaultChecklistItems);
+
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
         setSuccessSnackbar(false);
+        setWarningSnackbar(false);
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -91,6 +114,7 @@ function EditTaskDialog(props) {
         }
 
         setSuccessSnackbar(false);
+        setWarningSnackbar(false);
     };
 
     const handleSubmit = () => {
@@ -221,6 +245,12 @@ function EditTaskDialog(props) {
         const files = document.getElementById('taskFile').files;
 
         setSuccessSnackbar(false);
+        setWarningSnackbar(false);
+
+        if (files.length == 0) {
+            setWarningSnackbar(true);
+            return;
+        }
 
         for (const file of files) {
             let filePath = props.boardRef.id + '/uploadedFiles/' + file.name;
@@ -281,8 +311,8 @@ function EditTaskDialog(props) {
 
     return (
         <>
-            <ButtonGroup size='small'>
-                <Button {...props} onClick={handleClickOpen}>New task</Button>
+            <ButtonGroup size={props.buttonSize ? props.buttonSize : 'small'}>
+                <Button onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
                 <DialogContent>
@@ -303,6 +333,7 @@ function EditTaskDialog(props) {
                                 InputLabelProps={{shrink: true}}
                                 error={titleError}
                                 helperText={titleHelperText}
+                                defaultValue={props.existingTask ? props.existingTask.title : ''}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -317,6 +348,7 @@ function EditTaskDialog(props) {
                                 InputLabelProps={{shrink: true}}
                                 error={descError}
                                 helperText={descHelperText}
+                                defaultValue={props.existingTask ? props.existingTask.desc : ''}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -330,6 +362,9 @@ function EditTaskDialog(props) {
                                 InputLabelProps={{shrink: true}}
                                 error={dateError}
                                 helperText={dateHelperText}
+                                defaultValue={props.existingTask && props.existingTask.date ? dateFormat(props.existingTask.date.toDate(), 'yyyy-mm-dd') : ''}
+                                /* The above defaultValue may or may not actually be the user-displayed selected date - this is OS, browser, and locale-
+                                   dependent. Setting it to a standard ISO date seems to work regardless though */
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -375,7 +410,14 @@ function EditTaskDialog(props) {
                                             <TableBody>
                                                 {props.fileRefs && props.fileRefs.map(fileRef => (
                                                     <TableRow key={fileRef.id}>
-                                                        <TableCell><Checkbox color='default' value={fileRef.id} onChange={(e) => handleFileAttachment(e, fileRef)}/></TableCell>
+                                                        <TableCell>
+                                                            <Checkbox
+                                                                color='default'
+                                                                value={fileRef.id}
+                                                                onClick={(e) => handleFileAttachment(e, fileRef)}
+                                                                checked={fileAttachments[fileRef.id]}
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{dateFormat(fileRef.data().timestamp.toDate(), 'mm/dd/yyyy hh:MM')}</TableCell>
                                                         <TableCell><Chip size='small' label={fileRef.data().uploadedBy} color='primary' variant={props.boardRef.data().owner === fileRef.data().uploadedBy ? 'default': 'outlined'} /></TableCell>
                                                         <TableCell><Link onClick={() => handleDocumentClick(fileRef.data())} style={{cursor: 'pointer'}}>{fileRef.data().fileName}</Link></TableCell>
@@ -415,7 +457,11 @@ function EditTaskDialog(props) {
                                         {checklistItems.map((checklistItem, index) => (
                                             <Grid item xs={12} key={index}>
                                                 <FormControlLabel
-                                                    control={<Checkbox defaultValue={checklistItem.completed} onClick={(event) => handleChecklistItemStatusChange(event, index)} />}
+                                                    control={
+                                                        <Checkbox
+                                                            checked={checklistItem.completed}
+                                                            onClick={(event) => handleChecklistItemStatusChange(event, index)
+                                                    } />}
                                                     label={checklistItem.text}
                                                 />
                                                 <IconButton onClick={() => handleChecklistItemDelete(index)}>
@@ -452,6 +498,8 @@ function EditTaskDialog(props) {
                                             labelId={'group-input-label-' + colGroup.id}
                                             error={columnError}
                                             name='taskColumnGroup'
+                                            defaultValue={props.existingTask && props.existingTask.columnRefs.filter(item => props.allCols[colGroup.id].map(colRef => colRef.id).includes(item)).length > 0 ? props.existingTask.columnRefs.filter(item => props.allCols[colGroup.id].map(colRef => colRef.id).includes(item))[0] : ''}
+                                            /* that line is awful */
                                         >
                                             <MenuItem value=''>
                                                 (None)
@@ -483,6 +531,7 @@ function EditTaskDialog(props) {
                                     defaultValue={[]}
                                     style={{marginTop: 12}}
                                     labelId='users-input-label'
+                                    defaultValue={props.existingTask ? props.existingTask.users : []}
                                 >
                                    {props.board.userRefs && props.board.userRefs.map((user) => (
                                        <MenuItem key={user} value={user}>
@@ -545,7 +594,7 @@ function EditTaskDialog(props) {
                         Cancel
                     </Button>
                     <Button onClick={handleSubmit} color='primary'>
-                        Create task
+                        {props.buttonConfirmText ? props.buttonConfirmText : 'Create task'}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -553,6 +602,11 @@ function EditTaskDialog(props) {
             <Snackbar open={successSnackbar} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='success'>
                     1 file uploaded
+                </Alert>
+            </Snackbar>
+            <Snackbar open={warningSnackbar} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='warning'>
+                    No file selected
                 </Alert>
             </Snackbar>
         </>

@@ -264,7 +264,7 @@ function BoardDocumentsComponent(props) {
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='warning'>
-                    No files selected!
+                    No file selected
                 </Alert>
             </Snackbar>
         </div>

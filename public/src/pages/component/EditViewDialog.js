@@ -239,9 +239,19 @@ function EditViewDialog(props) {
                                         <Divider style={{margin: 10}} />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography>
+                                        <Typography component='p'>
                                             Type the view to confirm deletion.<br /><br />Warning: this cannot be undone. Any tasks associated with only this view will be lost.
                                         </Typography>
+                                        {colGroupDisplay.length === 1 && (
+                                            <Typography component='p' color='secondary'>
+                                                At least one view is required. To delete this view, create another one first.
+                                            </Typography>
+                                        )}
+                                        {props.boardRef.data().defaultColumnGroup === colGroup.id && (
+                                            <Typography component='p' color='secondary'>
+                                                The default view cannot be deleted. To delete this view, create another one and set it as the default.
+                                            </Typography>
+                                        )}
                                         <TextField
                                             margin='dense'
                                             id={'groupNameConfirmation-' + colGroup.id}
@@ -252,8 +262,9 @@ function EditViewDialog(props) {
                                             InputLabelProps={{shrink: true}}
                                             style={{width: 90 + '%'}}
                                             onChange={(e) => inputListener(e, colGroup)}
+                                            disabled={colGroupDisplay.length === 1 || props.boardRef.data().defaultColumnGroup === colGroup.id}
                                         />
-                                        <IconButton aria-label='delete view' style={{float: 'right'}} disabled={deleteDisable[colGroup.id] || false} onClick={() => handleDelete(colGroup)}>
+                                        <IconButton aria-label='delete view' style={{float: 'right'}} disabled={colGroupDisplay.length === 1  || props.boardRef.data().defaultColumnGroup === colGroup.id || deleteDisable[colGroup.id] || false} onClick={() => handleDelete(colGroup)}>
                                             <CheckIcon />
                                         </IconButton>
                                     </Grid>

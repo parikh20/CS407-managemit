@@ -59,6 +59,7 @@ function Column(props) {
                 {taskRefs.map(taskRef => (
                     <TaskListing
                         boardRef={props.boardRef}
+                        board={props.board}
                         key={taskRef.id}
                         taskRef={taskRef}
                         task={taskRef.data()}
@@ -66,6 +67,8 @@ function Column(props) {
                         allColumnNames={props.allColumnNames}
                         lockFunctionality={props.lockFunctionality}
                         fileRefs={props.fileRefs}
+                        allCols={props.allCols}
+                        allColGroups={props.allColGroups}
                     />
                 ))}
             </div>

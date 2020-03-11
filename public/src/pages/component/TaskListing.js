@@ -22,6 +22,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 
+import EditTaskDialog from './EditTaskDialog';
+
 import dateFormat from 'dateformat';
 
 import { db } from '../../Firebase';
@@ -307,9 +309,20 @@ function TaskListing(props) {
                         <Button onClick={handleDelete} color='secondary'>
                             Delete
                         </Button>
-                        <Button onClick={handleClose}>
-                            Edit
-                        </Button>
+                        <EditTaskDialog
+                            buttonSize='medium'
+                            buttonVariant='default'
+                            buttonText='Edit'
+                            buttonConfirmText='Save changes'
+                            boardRef={props.boardRef}
+                            board={props.board}
+                            columns={props.columns}
+                            allColGroups={props.allColGroups}
+                            allCols={props.allCols} 
+                            askRefs={props.taskRefs}
+                            fileRefs={props.fileRefs}
+                            existingTask={props.task}
+                        />
                     </>}
                     <Button onClick={handleClose} color='primary'>
                         Close

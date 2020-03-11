@@ -26,6 +26,7 @@ function ColumnGroup(props) {
                         column={column}
                         columns={columns}
                         boardRef={props.boardRef}
+                        board={props.board}
                         columnGroupRef={props.columnGroupRef}
                         taskRefs={props.taskRefs.filter((task) => task.data().columnRefs.includes(column.id))}
                         taskCommentRefs={props.taskCommentRefs}
@@ -33,6 +34,8 @@ function ColumnGroup(props) {
                         lockFunctionality={props.lockFunctionality}
                         sortMode={props.sortMode}
                         fileRefs={props.fileRefs}
+                        allCols={props.allCols}
+                        allColGroups={props.allColGroups}
                     />
                 ))}
             </GridList>

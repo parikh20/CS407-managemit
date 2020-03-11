@@ -117,7 +117,7 @@ class Board extends React.Component {
     }
 
     loadTasks(boardRef) {
-        if (this.taskSub) {
+        if (this.taskSub && this.taskSub.unsubscribe && typeof this.taskSub.unsubscribe === 'function') {
             this.taskSub.unsubscribe();
         }
 
@@ -128,7 +128,7 @@ class Board extends React.Component {
     }
 
     loadFiles(boardRef) {
-        if (this.filesSub) {
+        if (this.filesSub && this.filesSub.unsubscribe && typeof this.filesSub.unsubscribe === 'function') {
             this.filesSub.unsubscribe();
         }
 
@@ -176,6 +176,7 @@ class Board extends React.Component {
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
+                    board={this.state.boardRef ? this.state.boardRef.data() : {}}
                     columnGroupRef={this.state.colGroupRef ? this.state.colGroupRef : {}}
                     columns={this.state.columnRefs ? this.state.columnRefs.map((c) => {
                         let data = c.data();
@@ -185,6 +186,7 @@ class Board extends React.Component {
                     columnGroup={this.state.colGroupRef ? this.state.colGroupRef.data() : {}} 
                     taskRefs={this.state.taskRefs}
                     taskCommentRefs={this.state.taskCommentRefs}
+                    allColGroups={this.state.colGroups ? this.state.colGroups : []}
                     allCols={this.state.allColumns ? this.state.allColumns : {}}
                     lockFunctionality={this.props.lockFunctionality}
                     sortMode={this.props.sortMode}
