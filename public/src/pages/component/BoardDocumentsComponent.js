@@ -6,7 +6,6 @@ import Paper from '@material-ui/core/Paper';
 import MaterialTable from 'material-table';
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';

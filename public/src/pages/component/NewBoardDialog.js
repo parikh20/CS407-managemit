@@ -8,6 +8,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import LoadingAnimation from './LoadingAnimation';
+
 import {auth, db} from '../../Firebase';
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
@@ -61,6 +63,7 @@ function NewBoardDialog() {
     const [nameHelperText, setNameHelperText] = React.useState('');
     const [descriptionError, setDescriptionError] = React.useState(false);
     const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
+    const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -87,8 +90,11 @@ function NewBoardDialog() {
             setDescriptionHelperText('Board description must be greater than 150 characters long')
         } else {
             try {
-                setOpen(false);
-                createBoard(name,description).catch((err) => {console.error(err)});
+                setShowLoadingAnimation(true);
+                createBoard(name,description).then(() => {
+                    setShowLoadingAnimation(false);
+                    setOpen(false);
+                }).catch((err) => {console.error(err)});
             } catch (err) {
                 setOpen(true);
                 setNameError(true);
@@ -136,6 +142,9 @@ function NewBoardDialog() {
                     error={descriptionError}
                     helperText={descriptionHelperText}
                     />
+                    {showLoadingAnimation && (
+                        <LoadingAnimation />
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
