@@ -1,5 +1,6 @@
 import React from 'react';
 import { forwardRef } from 'react';
+
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import Link from '@material-ui/core/Link';
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -114,7 +116,8 @@ function BoardDocumentsComponent(props) {
             },
             {
                 title: 'Filename',
-                field: 'fileName'
+                field: 'fileName',
+                render: rowData => <Link onClick={() => handleDocumentClick(rowData)} style={{cursor: 'pointer'}}>{rowData.fileName}</Link>
             }
         ];
     }
@@ -190,6 +193,13 @@ function BoardDocumentsComponent(props) {
 
         setSuccessSnackbar(true);
         setSuccessMessage('File deleted');
+    };
+
+    const handleDocumentClick = rowData => {
+        const storageRef = firebase.storage().ref(rowData.filePath);
+        storageRef.getDownloadURL().then(url => {
+            window.open(url, '_blank');
+        });
     };
     
     const handleClose = (event, reason) => {
