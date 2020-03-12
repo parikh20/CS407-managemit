@@ -247,7 +247,7 @@ function EditTaskDialog(props) {
         setSuccessSnackbar(false);
         setWarningSnackbar(false);
 
-        if (files.length == 0) {
+        if (files.length === 0) {
             setWarningSnackbar(true);
             return;
         }
@@ -493,7 +493,6 @@ function EditTaskDialog(props) {
                                         <Select
                                             id={colGroup.id}
                                             fullWidth
-                                            defaultValue=''
                                             margin='dense'
                                             labelId={'group-input-label-' + colGroup.id}
                                             error={columnError}
@@ -528,7 +527,6 @@ function EditTaskDialog(props) {
                                     multiple
                                     margin='dense'
                                     fullWidth
-                                    defaultValue={[]}
                                     style={{marginTop: 12}}
                                     labelId='users-input-label'
                                     defaultValue={props.existingTask ? props.existingTask.users : []}
@@ -546,47 +544,56 @@ function EditTaskDialog(props) {
                                 Task relations
                             </Typography>
                         </Grid>
-                        <Grid item xs={12}>
-                            <FormControl style={{width: '100%'}}>
-                                <InputLabel id='dependencies-input-label'>Dependencies</InputLabel>
-                                <Select
-                                    id="taskDependencies"
-                                    label="Dependencies"
-                                    multiple
-                                    margin='dense'
-                                    fullWidth
-                                    defaultValue={[]}
-                                    labelId='dependencies-input-label'
-                                >
-                                   {allTasks.map(task => (
-                                       <MenuItem key={task.id} value={task.id}>
-                                           {task.title}
-                                       </MenuItem>
-                                   ))} 
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl style={{width: '100%'}}>
-                                <InputLabel id='dependents-input-label'>Dependents</InputLabel>
-                                <Select
-                                    id="taskDependents"
-                                    label="Dependents"
-                                    multiple
-                                    margin='dense'
-                                    fullWidth
-                                    defaultValue={[]}
-                                    style={{marginTop: 12}}
-                                    labelId='dependents-input-label'
-                                >
-                                   {allTasks.map(task => (
-                                       <MenuItem key={task.id} value={task.id}>
-                                           {task.title}
-                                       </MenuItem>
-                                   ))} 
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                        {allTasks && allTasks.length === 0 && (
+                            <Grid item xs={12}>
+                                <Typography variant='body2' component='p'>
+                                    (No other tasks exist on board)
+                                </Typography>
+                            </Grid>
+                        )}
+                        {allTasks && allTasks.length > 0 && (<>
+                            <Grid item xs={12}>
+                                <FormControl style={{width: '100%'}}>
+                                    <InputLabel id='dependencies-input-label'>Dependencies</InputLabel>
+                                    <Select
+                                        id="taskDependencies"
+                                        label="Dependencies"
+                                        multiple
+                                        margin='dense'
+                                        fullWidth
+                                        defaultValue={[]}
+                                        labelId='dependencies-input-label'
+                                    >
+                                       {allTasks.map(task => (
+                                           <MenuItem key={task.id} value={task.id}>
+                                               {task.title}
+                                           </MenuItem>
+                                       ))} 
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl style={{width: '100%'}}>
+                                    <InputLabel id='dependents-input-label'>Dependents</InputLabel>
+                                    <Select
+                                        id="taskDependents"
+                                        label="Dependents"
+                                        multiple
+                                        margin='dense'
+                                        fullWidth
+                                        defaultValue={[]}
+                                        style={{marginTop: 12}}
+                                        labelId='dependents-input-label'
+                                    >
+                                       {allTasks.map(task => (
+                                           <MenuItem key={task.id} value={task.id}>
+                                               {task.title}
+                                           </MenuItem>
+                                       ))} 
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </>)}
                      </Grid>
                 </DialogContent>
                 <DialogActions>
@@ -601,7 +608,7 @@ function EditTaskDialog(props) {
 
             <Snackbar open={successSnackbar} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='success'>
-                    1 file uploaded
+                    File uploaded
                 </Alert>
             </Snackbar>
             <Snackbar open={warningSnackbar} onClose={handleSnackbarClose}>

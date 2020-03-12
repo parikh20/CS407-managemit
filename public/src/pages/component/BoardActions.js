@@ -18,7 +18,7 @@ function BoardActions(props) {
     return (
         <Grid container style={{padding: '10px 10px 0px 10px'}}>
             <div style={{flexGrow: 1}}>
-                <BoardBreadcrumbs board={props.board} />
+                <BoardBreadcrumbs board={props.board} columnGroupRef={props.columnGroupRef} />
             </div>
             {props.board && (
                 <ButtonGroup size='small'>

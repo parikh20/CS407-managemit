@@ -23,7 +23,6 @@ import Typography from '@material-ui/core/Typography';
 import DeleteBoardDialog from './DeleteBoardDialog';
 import TransferBoardDialog from './TransferBoardDialog';
 
-import firebase from '../../Firebase';
 import { db, auth } from '../../Firebase';
 
 function Alert(props) {

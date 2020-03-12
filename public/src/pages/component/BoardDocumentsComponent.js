@@ -34,6 +34,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 import dateFormat from 'dateformat';
 
+import LoadingAnimation from './LoadingAnimation';
+
 import firebase from '../../Firebase';
 import { db } from '../../Firebase';
 
@@ -98,6 +100,7 @@ function BoardDocumentsComponent(props) {
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [successMessage, setSuccessMessage] = React.useState('');
+    const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -122,7 +125,7 @@ function BoardDocumentsComponent(props) {
         ];
     }
 
-    const handleUpload = () => {
+    const handleUpload = async () => {
         const files = document.getElementById('uploadFile').files;
 
         setSuccessSnackbar(false);
@@ -133,34 +136,31 @@ function BoardDocumentsComponent(props) {
             return;
         }
 
-        let numUploaded = 0;
+        setShowLoadingAnimation(true);
+
         for (const file of files) {
             let filePath = props.board.id + '/uploadedFiles/' + file.name;
             const storageRef = firebase.storage().ref(filePath);
-            storageRef.put(file).then(() => {
-                db.collection('boards').doc(props.board.id).collection('files').add({
-                    fileName: file.name,
-                    filePath: filePath,
-                    uploadedBy: user.email,
-                    timestamp: new Date()
-                }).then(() => {
-                    db.collection('boards').doc(props.board.id).collection('history').add(
-                        {
-                            user: user.email,
-                            fileName: file.name,
-                            action: 19,
-                            timestamp: new Date()
-                        }
-                    ).catch(err => {
-                        console.log("Error logging new file upload: " + err);
-                    });
-                });
+            await storageRef.put(file);
+            await db.collection('boards').doc(props.board.id).collection('files').add({
+                fileName: file.name,
+                filePath: filePath,
+                uploadedBy: user.email,
+                timestamp: new Date()
             });
-            numUploaded++;
+            await  db.collection('boards').doc(props.board.id).collection('history').add(
+                {
+                    user: user.email,
+                    fileName: file.name,
+                    action: 19,
+                    timestamp: new Date()
+                }
+            );
         }
 
         setSuccessSnackbar(true);
-        setSuccessMessage(numUploaded + ' file' + (numUploaded !== 1 ? 's' : '') + ' uploaded');
+        setSuccessMessage('File uploaded');
+        setShowLoadingAnimation(false);
 
         document.getElementById('uploadFile').value = null;
     };
@@ -238,6 +238,9 @@ function BoardDocumentsComponent(props) {
                         </IconButton>
                     </Grid>
                     <Grid item xs={12}>
+                        {showLoadingAnimation && (
+                            <LoadingAnimation />
+                        )}
                         <Divider />
                     </Grid>
                     <Grid item xs={12}>

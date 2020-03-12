@@ -1,9 +1,7 @@
 import React from 'react';
-import { forwardRef } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import MaterialTable from 'material-table';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 

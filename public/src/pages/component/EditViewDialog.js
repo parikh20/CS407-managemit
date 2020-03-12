@@ -8,7 +8,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from '@material-ui/core/Grid';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -22,7 +21,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import { db } from '../../Firebase';
-import firebase from '../../Firebase';
 
 function EditViewDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -35,6 +33,7 @@ function EditViewDialog(props) {
 
     let colGroups = Array.isArray(props.allColGroups) ? props.allColGroups : [];
     let allCols = props.allCols || {};
+    let defaultDeleteDisable = {};
     let colGroupDisplay = colGroups.map((colGroup, index) => {
         if (!(colGroup.id in allCols)) {
             return {
@@ -44,6 +43,7 @@ function EditViewDialog(props) {
             };
         }
         let columnNames = allCols[colGroup.id].map(column => column.data().label);
+        defaultDeleteDisable[colGroup.id] = true;
         return {
             label: colGroup.data().label,
             id: colGroup.id,
@@ -54,8 +54,10 @@ function EditViewDialog(props) {
 
     let allGroupNames = colGroupDisplay.map(colGroup => colGroup.label);
 
+
     const handleClickOpen = () => {
         clearAllState();
+        setDeleteDisable(defaultDeleteDisable);
         setOpen(true);
     };
 
@@ -249,7 +251,7 @@ function EditViewDialog(props) {
                                         )}
                                         {props.boardRef.data().defaultColumnGroup === colGroup.id && (
                                             <Typography component='p' color='secondary'>
-                                                The default view cannot be deleted. To delete this view, create another one and set it as the default.
+                                                The default view cannot be deleted. To delete this view, set another view as default first.
                                             </Typography>
                                         )}
                                         <TextField

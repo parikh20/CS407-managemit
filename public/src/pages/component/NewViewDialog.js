@@ -10,9 +10,16 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+
+import LoadingAnimation from './LoadingAnimation';
 
 import { db } from '../../Firebase';
-import firebase from '../../Firebase';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 function NewViewDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -21,6 +28,8 @@ function NewViewDialog(props) {
     const [columnError, setColumnError] = React.useState(false);
     const [columnHelperText, setColumnHelperText] = React.useState('');
     const [columnNames, setColumnNames] = React.useState([]);
+    const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
+    const [successSnackbar, setSuccessSnackbar] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -51,6 +60,7 @@ function NewViewDialog(props) {
             setNameError(true);
             setNameHelperText('View name is already in use');
         } else {
+            setShowLoadingAnimation(true);
             db.collection('boards').doc(props.boardRef.id).collection('columnGroups').add({
                 label: groupName
             }).then(async (columnGroupRef) => {
@@ -77,10 +87,20 @@ function NewViewDialog(props) {
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
                 });
+                setShowLoadingAnimation(false);
                 setOpen(false);
+                setSuccessSnackbar(true);
             });
         }
-    }
+    };
+    
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSuccessSnackbar(false);
+    };
 
     const handleAddColumn = () => {
         const columnName = document.getElementById('newColumnName').value.trim();
@@ -108,6 +128,8 @@ function NewViewDialog(props) {
     const clearState = () => {
         setNameError(false);
         setNameHelperText('');
+        setShowLoadingAnimation(false);
+        setSuccessSnackbar(false);
         clearColumnState();
     };
 
@@ -177,6 +199,9 @@ function NewViewDialog(props) {
                             </Grid>
                         </Grid>
                     </>)}
+                    {showLoadingAnimation && (
+                        <LoadingAnimation />
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>
@@ -187,6 +212,12 @@ function NewViewDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar open={successSnackbar} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='success'>
+                    New view created
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

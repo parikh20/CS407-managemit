@@ -11,7 +11,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
 
 import { db } from '../../Firebase';
-import firebase from '../../Firebase';
 
 function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);

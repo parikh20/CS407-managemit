@@ -14,7 +14,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import AttachmentIcon from '@material-ui/icons/Attachment';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -222,12 +221,12 @@ function TaskListing(props) {
                             <Typography variant='h6' component='h2'>
                                 Documents
                             </Typography>
-                            {props.task.fileRefs.length === 0 && (
+                            {(!Array.isArray(props.task.fileRefs) || props.task.fileRefs.length === 0) && (
                                 <Typography variant='body2' component='p'>
                                     (No files attached to task)
                                 </Typography>
                             )}
-                            {props.task.fileRefs.length > 0 && (
+                            {Array.isArray(props.task.fileRefs) && props.task.fileRefs.length > 0 && (
                                 <List component='nav'>
                                     {props.task.fileRefs.map(fileRef => (
                                         <ListItem button key={fileRef} onClick={() => handleDocumentClick(fileListings[fileRef])}>

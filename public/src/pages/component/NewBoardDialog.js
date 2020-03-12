@@ -7,6 +7,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import LoadingAnimation from './LoadingAnimation';
 
@@ -55,6 +57,9 @@ const createBoard = async (name, description) => {
     });
 };
 
+function Alert(props) {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 function NewBoardDialog() {
     const [open, setOpen] = React.useState(false);
@@ -64,6 +69,7 @@ function NewBoardDialog() {
     const [descriptionError, setDescriptionError] = React.useState(false);
     const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
     const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
+    const [successSnackbar, setSuccessSnackbar] = React.useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -94,6 +100,7 @@ function NewBoardDialog() {
                 createBoard(name,description).then(() => {
                     setShowLoadingAnimation(false);
                     setOpen(false);
+                    setSuccessSnackbar(true);
                 }).catch((err) => {console.error(err)});
             } catch (err) {
                 setOpen(true);
@@ -108,6 +115,16 @@ function NewBoardDialog() {
         setNameHelperText('');
         setDescriptionError(false);
         setDescriptionHelperText('');
+        setShowLoadingAnimation(false);
+        setSuccessSnackbar(false);
+    };
+    
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSuccessSnackbar(false);
     };
     
     return (
@@ -155,6 +172,12 @@ function NewBoardDialog() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar open={successSnackbar} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} autoHideDuration={6000} severity='success'>
+                    New board created
+                </Alert>
+            </Snackbar>
         </div>
         );
     }

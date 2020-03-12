@@ -13,6 +13,9 @@ function BoardBreadcrumbs(props) {
             <Typography color='textPrimary'>
                 {props.board ? props.board.label : ''}
             </Typography>
+            <Typography color='textPrimary'>
+                {props.columnGroupRef && props.columnGroupRef.data ? props.columnGroupRef.data().label : ''}
+            </Typography>
         </Breadcrumbs>
     );
 }

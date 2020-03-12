@@ -9,7 +9,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
-import firebase from '../../Firebase';
+
 import { db } from '../../Firebase';
 
 
