@@ -139,7 +139,7 @@ function BoardDocumentsComponent(props) {
         setShowLoadingAnimation(true);
 
         for (const file of files) {
-            let filePath = props.board.id + '/uploadedFiles/' + file.name;
+            let filePath = props.board.id + '/uploadedFiles/' + Date.now() + '-' + file.name;
             const storageRef = firebase.storage().ref(filePath);
             await storageRef.put(file);
             await db.collection('boards').doc(props.board.id).collection('files').add({

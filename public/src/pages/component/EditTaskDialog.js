@@ -253,7 +253,7 @@ function EditTaskDialog(props) {
         }
 
         for (const file of files) {
-            let filePath = props.boardRef.id + '/uploadedFiles/' + file.name;
+            let filePath = props.boardRef.id + '/uploadedFiles/' + Date.now() + '-' + file.name;
             const storageRef = firebase.storage().ref(filePath);
             storageRef.put(file).then(() => {
                 db.collection('boards').doc(props.boardRef.id).collection('files').add({
