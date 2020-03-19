@@ -58,6 +58,9 @@ function EditTaskDialog(props) {
     const [fileAttachments, setFileAttachments] = React.useState({});
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [warningSnackbar, setWarningSnackbar] = React.useState(false);
+    const [selectedUsers, setSelectedUsers] = React.useState([]);
+    const [selectedDependencies, setSelectedDependencies] = React.useState([]);
+    const [selectedDependents, setSelectedDependents] = React.useState([]);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -70,6 +73,13 @@ function EditTaskDialog(props) {
             };
         });
         allTasks.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    let allTasksNameDisplay = {};
+    if (props.taskRefs && Array.isArray(props.taskRefs)) {
+        for (const task of allTasks) {
+            allTasksNameDisplay[task.id] = task.title;
+        }
     }
 
     // Pre-fill file attachments, if possible
@@ -95,6 +105,9 @@ function EditTaskDialog(props) {
         setFileAttachments({});
         setSuccessSnackbar(false);
         setWarningSnackbar(false);
+        setSelectedUsers([]);
+        setSelectedDependents([]);
+        setSelectedDependencies([]);
 
         setFileAttachments(defaultFileAttachments);
         setChecklistItems(defaultChecklistItems);
@@ -136,10 +149,6 @@ function EditTaskDialog(props) {
                 columnIds.push(columnElement.value);
             }
         }
-
-        let usersElement = document.getElementById('taskUsers');
-        let users = usersElement.textContent.split(', '); // temporary solution - this is unpleasant
-        users = users.filter(user => user.trim().length > 1);
 
         clearState();
         let hasError = false;
@@ -187,10 +196,12 @@ function EditTaskDialog(props) {
                 title: label,
                 desc: desc,
                 date: date,
-                users: users,
+                users: selectedUsers,
                 columnRefs: columnIds,
                 checklist: checklistItems,
-                fileRefs: files
+                fileRefs: files,
+                dependencies: selectedDependencies,
+                dependents: selectedDependents
             }).then((taskRef) => {
                 let columnUpdates = [];
                 Object.keys(columns).forEach((colGroupId) => {
@@ -291,6 +302,18 @@ function EditTaskDialog(props) {
         storageRef.getDownloadURL().then(url => {
             window.open(url, '_blank');
         });
+    };
+
+    const handleUserSelect = event => {
+        setSelectedUsers(event.target.value);
+    };
+
+    const handleDependenciesSelect = event => {
+        setSelectedDependencies(event.target.value);
+    };
+
+    const handleDependentsSelect = event => {
+        setSelectedDependents(event.target.value);
     };
 
     const clearState = () => {
@@ -530,6 +553,14 @@ function EditTaskDialog(props) {
                                     style={{marginTop: 12}}
                                     labelId='users-input-label'
                                     defaultValue={props.existingTask ? props.existingTask.users : []}
+                                    onChange={handleUserSelect}
+                                    renderValue={selected => (
+                                        <div>
+                                            {selected.map(value => (
+                                                <Chip key={value} label={value} size='small' color='primary' variant={value === props.boardRef.data().owner ? 'default' : 'contained'} />
+                                            ))}
+                                        </div>
+                                    )}
                                 >
                                    {props.board.userRefs && props.board.userRefs.map((user) => (
                                        <MenuItem key={user} value={user}>
@@ -563,8 +594,16 @@ function EditTaskDialog(props) {
                                         fullWidth
                                         defaultValue={[]}
                                         labelId='dependencies-input-label'
+                                        onChange={handleDependenciesSelect}
+                                        renderValue={selected => (
+                                            <div>
+                                                {selected.map(value => (
+                                                    <Chip key={value} label={allTasksNameDisplay[value]} size='small' color='secondary' variant='contained' />
+                                                ))}
+                                            </div>
+                                        )}
                                     >
-                                       {allTasks.map(task => (
+                                       {allTasks.filter(item => !selectedDependents.includes(item.id)).map(task => (
                                            <MenuItem key={task.id} value={task.id}>
                                                {task.title}
                                            </MenuItem>
@@ -584,8 +623,16 @@ function EditTaskDialog(props) {
                                         defaultValue={[]}
                                         style={{marginTop: 12}}
                                         labelId='dependents-input-label'
+                                        onChange={handleDependentsSelect}
+                                        renderValue={selected => (
+                                            <div>
+                                                {selected.map(value => (
+                                                    <Chip key={value} label={allTasksNameDisplay[value]} size='small' color='secondary' variant='contained' />
+                                                ))}
+                                            </div>
+                                        )}
                                     >
-                                       {allTasks.map(task => (
+                                       {allTasks.filter(item => !selectedDependencies.includes(item.id)).map(task => (
                                            <MenuItem key={task.id} value={task.id}>
                                                {task.title}
                                            </MenuItem>
