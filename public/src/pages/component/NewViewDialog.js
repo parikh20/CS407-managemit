@@ -163,7 +163,7 @@ function NewViewDialog(props) {
                     <DialogContentText>
                         Optionally, enter a set of columns for your new view. Columns can be added, deleted, renamed, or rearranged later.
                         <br /><br />
-                        While not required at this step, at least one column must be added to the board before any tasks can be created.
+                        While not required at this step, at least one column must be added before any tasks can be assigned to the view.
                     </DialogContentText>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
