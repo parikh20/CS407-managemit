@@ -187,6 +187,12 @@ function HistoryAction(props) {
                     Document "{rowData.fileName}" deleted
                 </span>
             );
+        case 21:
+            return (
+                <span>
+                    Task <TaskChip label={rowData.taskName} /> edited
+                </span>
+            );
     }
     return (
         <span>HISTORY ENTRY MISSING</span>

@@ -131,6 +131,8 @@ function EditTaskDialog(props) {
     };
 
     const handleSubmit = () => {
+        const editMode = props.existingTask ? true : false;
+
         let label = document.getElementById('taskTitle').value.trim();
         let desc = document.getElementById('taskDescription').value.trim();
         let date = document.getElementById('taskDueDate').valueAsDate;
@@ -176,9 +178,11 @@ function EditTaskDialog(props) {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // We want to check for the current day at midnight
         if (date !== null && date < today) {
-            hasError = true;
-            setDateError(true);
-            setDateHelperText('Date cannot be in the past');
+            if (!editMode || (editMode && date.getTime() !== props.existingTask.date.toDate().getTime())) {
+                hasError = true;
+                setDateError(true);
+                setDateHelperText('Date cannot be in the past');
+            }
         }
 
         let files = [];
@@ -188,38 +192,74 @@ function EditTaskDialog(props) {
             }
         }
 
+        console.log(checklistItems);
+
         if (!hasError) {
             setOpen(false);
 
-
-            props.boardRef.ref.collection("tasks").add({
-                title: label,
-                desc: desc,
-                date: date,
-                users: selectedUsers,
-                columnRefs: columnIds,
-                checklist: checklistItems,
-                fileRefs: files,
-                dependencies: selectedDependencies,
-                dependents: selectedDependents
-            }).then((taskRef) => {
-                let columnUpdates = [];
-                Object.keys(columns).forEach((colGroupId) => {
-                    columnUpdates.push(
-                        props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
-                            taskRefs: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
-                        })
-                    );
-                });
-                return Promise.all(columnUpdates);
-            }).then(result => {
-                return db.collection('boards').doc(props.boardRef.id).collection('history').add({
-                        user: user.email,
-                        taskName: label,
-                        action: 7,
-                        timestamp: new Date()
+            if (editMode) {
+                let prevColumnRefs = [...props.existingTask.columnRefs];
+                let newColumnRefs = columnIds.filter(item => !prevColumnRefs.includes(item));
+                props.boardRef.ref.collection('tasks').doc(props.existingTaskRef.id).update({
+                    title: label,
+                    desc: desc,
+                    date: date,
+                    users: selectedUsers,
+                    columnRefs: columnIds,
+                    checklist: checklistItems,
+                    fileRefs: files,
+                    dependencies: selectedDependencies,
+                    dependents: selectedDependents
+                }).then(taskRef => {
+                    let columnUpdates = [];
+                    Object.keys(columns).forEach((colGroupId) => {
+                        if (newColumnRefs.includes(columns[colGroupId])) {
+                            columnUpdates.push(
+                                props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
+                                    taskRefs: firebase.firestore.FieldValue.arrayUnion(props.existingTaskRef.id)
+                                })
+                            );
+                        }
                     });
-            }).catch(err => console.error("Error in adding task:", err));
+                    return Promise.all(columnUpdates);
+                }).then(result => {
+                    return db.collection('boards').doc(props.boardRef.id).collection('history').add({
+                            user: user.email,
+                            taskName: label,
+                            action: 21,
+                            timestamp: new Date()
+                        });
+                }).catch(err => console.error("Error in editing task:", err));
+            } else {
+                props.boardRef.ref.collection("tasks").add({
+                    title: label,
+                    desc: desc,
+                    date: date,
+                    users: selectedUsers,
+                    columnRefs: columnIds,
+                    checklist: checklistItems,
+                    fileRefs: files,
+                    dependencies: selectedDependencies,
+                    dependents: selectedDependents
+                }).then((taskRef) => {
+                    let columnUpdates = [];
+                    Object.keys(columns).forEach((colGroupId) => {
+                        columnUpdates.push(
+                            props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
+                                taskRefs: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
+                            })
+                        );
+                    });
+                    return Promise.all(columnUpdates);
+                }).then(result => {
+                    return db.collection('boards').doc(props.boardRef.id).collection('history').add({
+                            user: user.email,
+                            taskName: label,
+                            action: 7,
+                            timestamp: new Date()
+                        });
+                }).catch(err => console.error("Error in adding task:", err));
+            }
         }
     }
 
@@ -406,7 +446,7 @@ function EditTaskDialog(props) {
                                 InputLabelProps={{shrink: true}}
                                 style={{width: 92 + '%'}}
                             />
-                            <IconButton aria-label='upload file' onClick={() => handleFileUpload()}>
+                            <IconButton aria-label='upload file' onClick={() => handleFileUpload()} style={{float: 'right'}}>
                                 <CloudUploadIcon />
                             </IconButton>
                         </Grid>
@@ -465,7 +505,7 @@ function EditTaskDialog(props) {
                                 variant='outlined'
                                 fullWidth
                                 InputLabelProps={{shrink: true}}
-                                style={{width: '90%'}}
+                                style={{width: '92%'}}
                                 error={checklistError}
                                 helperText={checklistHelperText}
                             />
@@ -604,7 +644,7 @@ function EditTaskDialog(props) {
                                             </div>
                                         )}
                                     >
-                                       {allTasks.filter(item => !selectedDependents.includes(item.id)).map(task => (
+                                       {allTasks.filter(item => !selectedDependents.includes(item.id)).filter(item => !props.existingTask || item.id !== props.existingTaskRef.id).map(task => (
                                            <MenuItem key={task.id} value={task.id}>
                                                {task.title}
                                            </MenuItem>
@@ -634,7 +674,7 @@ function EditTaskDialog(props) {
                                             </div>
                                         )}
                                     >
-                                       {allTasks.filter(item => !selectedDependencies.includes(item.id)).map(task => (
+                                       {allTasks.filter(item => !selectedDependencies.includes(item.id)).filter(item => !props.existingTask || item.id !== props.existingTaskRef.id).map(task => (
                                            <MenuItem key={task.id} value={task.id}>
                                                {task.title}
                                            </MenuItem>

@@ -317,10 +317,10 @@ function TaskListing(props) {
                             board={props.board}
                             columns={props.columns}
                             allColGroups={props.allColGroups}
-                            allCols={props.allCols} 
-                            askRefs={props.taskRefs}
+                            allCols={props.allCols}
                             fileRefs={props.fileRefs}
                             existingTask={props.task}
+                            existingTaskRef={props.taskRef}
                             taskRefs={props.taskRefs}
                         />
                     </>}
