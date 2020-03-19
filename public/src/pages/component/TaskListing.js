@@ -321,6 +321,7 @@ function TaskListing(props) {
                             askRefs={props.taskRefs}
                             fileRefs={props.fileRefs}
                             existingTask={props.task}
+                            taskRefs={props.taskRefs}
                         />
                     </>}
                     <Button onClick={handleClose} color='primary'>

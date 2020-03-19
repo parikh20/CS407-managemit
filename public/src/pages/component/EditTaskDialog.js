@@ -595,6 +595,7 @@ function EditTaskDialog(props) {
                                         defaultValue={[]}
                                         labelId='dependencies-input-label'
                                         onChange={handleDependenciesSelect}
+                                        defaultValue={props.existingTask ? props.existingTask.dependencies : []}
                                         renderValue={selected => (
                                             <div>
                                                 {selected.map(value => (
@@ -624,6 +625,7 @@ function EditTaskDialog(props) {
                                         style={{marginTop: 12}}
                                         labelId='dependents-input-label'
                                         onChange={handleDependentsSelect}
+                                        defaultValue={props.existingTask ? props.existingTask.dependents : []}
                                         renderValue={selected => (
                                             <div>
                                                 {selected.map(value => (

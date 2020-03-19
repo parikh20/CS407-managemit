@@ -69,6 +69,7 @@ function Column(props) {
                         fileRefs={props.fileRefs}
                         allCols={props.allCols}
                         allColGroups={props.allColGroups}
+                        taskRefs={props.allTaskRefs}
                     />
                 ))}
             </div>

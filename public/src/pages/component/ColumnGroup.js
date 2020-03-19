@@ -36,6 +36,7 @@ function ColumnGroup(props) {
                         fileRefs={props.fileRefs}
                         allCols={props.allCols}
                         allColGroups={props.allColGroups}
+                        allTaskRefs={props.taskRefs}
                     />
                 ))}
             </GridList>
