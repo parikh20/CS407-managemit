@@ -24,11 +24,17 @@ export default (props) => {
         history.push('/boards');
     });
 
+    let today = new Date();
 
     return (
         <div>
             <NavBar location={viewableHistory.location.pathname}  />
-            <BoardCalendar boardId={props.match.params.boardId} />
+            <BoardCalendar
+                boardId={props.match.params.boardId}
+                month={props.match.params.month || today.getMonth()}
+                day={props.match.params.day || today.getDate()}
+                year={props.match.params.year || today.getFullYear()}
+            />
         </div>
     );
 };

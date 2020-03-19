@@ -193,7 +193,7 @@ function TaskListing(props) {
                                                 size='small'
                                                 color='primary'
                                                 style={{float: 'right'}}
-                                                href={'/board/' + props.boardRef.id + '/calendar'}
+                                                href={'/board/' + props.boardRef.id + '/calendar/' + props.task.date.toDate().getMonth() + '/' + props.task.date.toDate().getDate() + '/' + props.task.date.toDate().getFullYear()}
                                             >
                                                 View on calendar
                                             </Button>

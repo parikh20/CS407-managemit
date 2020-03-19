@@ -61,6 +61,7 @@ function App() {
                 <RedirectRoute path='/login' component={Login} />
                 <RedirectRoute path='/register' component={Register} />
                 <ProtectedRoute path='/boards' component={Boards} />
+                <ProtectedRoute path='/board/:boardId/calendar/:month/:day/:year' component={BoardCalendar} />
                 <ProtectedRoute path='/board/:boardId/calendar' component={BoardCalendar} />
                 <ProtectedRoute path='/board/:boardId/settings' component={BoardSettings} />
                 <ProtectedRoute path='/board/:boardId/history' component={BoardHistory} />

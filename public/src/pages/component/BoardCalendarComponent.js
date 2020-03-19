@@ -35,8 +35,26 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const buildEvents = taskRefs => {
+    return taskRefs.filter(taskRef => taskRef.data().date !== null).map(taskRef => {
+        let data = taskRef.data();
+        return {
+            id: taskRef.id,
+            title: data.title,
+            allDay: true,
+            start: data.date.toDate(),
+            end: data.date.toDate()
+        };
+    });
+};
+
 function BoardCalendarComponent(props) {
     const classes = useStyles();
+
+    let defaultDate = new Date();
+    if (typeof props.month === 'string' && typeof props.day === 'string' &&  typeof props.year === 'string') {
+        defaultDate = new Date(props.year, props.month, props.day);
+    }
 
     return (
         <div className={classes.settingsBody}>
@@ -46,9 +64,10 @@ function BoardCalendarComponent(props) {
                         <h2>Calendar</h2>
                         <Calendar
                             localizer={localizer}
-                            startAccessor="start"
-                            events={[]}
-                            endAccessor="end"
+                            startAccessor='start'
+                            events={props.taskRefs ? buildEvents(props.taskRefs) : []}
+                            endAccessor='end'
+                            defaultDate={defaultDate}
                             style={{ height: 700 }}
                         />
                     </Grid>
