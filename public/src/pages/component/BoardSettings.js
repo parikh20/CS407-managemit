@@ -89,9 +89,6 @@ function BoardSettings(props) {
         } else if (description.length > 150) {
             setDescriptionError(true);
             setDescriptionHelperText('Board description must be less than 150 characters long!');
-        } else if (description === '') {
-            setDescriptionError(true);
-            setDescriptionHelperText('Board description cannot be empty!');
         } else {
             db.collection('boards').doc(props.board.id).update(
                 {

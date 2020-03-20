@@ -632,7 +632,6 @@ function EditTaskDialog(props) {
                                         multiple
                                         margin='dense'
                                         fullWidth
-                                        defaultValue={[]}
                                         labelId='dependencies-input-label'
                                         onChange={handleDependenciesSelect}
                                         defaultValue={props.existingTask ? props.existingTask.dependencies : []}
@@ -661,7 +660,6 @@ function EditTaskDialog(props) {
                                         multiple
                                         margin='dense'
                                         fullWidth
-                                        defaultValue={[]}
                                         style={{marginTop: 12}}
                                         labelId='dependents-input-label'
                                         onChange={handleDependentsSelect}
