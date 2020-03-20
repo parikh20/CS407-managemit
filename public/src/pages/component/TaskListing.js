@@ -304,26 +304,24 @@ function TaskListing(props) {
                     <Button onClick={handleClose}>
                         View connected tasks
                     </Button>
-                    {!props.lockFunctionality && <>
-                        <Button onClick={handleDelete} color='secondary'>
-                            Delete
-                        </Button>
-                        <EditTaskDialog
-                            buttonSize='medium'
-                            buttonVariant='default'
-                            buttonText='Edit'
-                            buttonConfirmText='Save changes'
-                            boardRef={props.boardRef}
-                            board={props.board}
-                            columns={props.columns}
-                            allColGroups={props.allColGroups}
-                            allCols={props.allCols}
-                            fileRefs={props.fileRefs}
-                            existingTask={props.task}
-                            existingTaskRef={props.taskRef}
-                            taskRefs={props.taskRefs}
-                        />
-                    </>}
+                    <Button onClick={handleDelete} color='secondary'>
+                        Delete
+                    </Button>
+                    <EditTaskDialog
+                        buttonSize='medium'
+                        buttonVariant='default'
+                        buttonText='Edit'
+                        buttonConfirmText='Save changes'
+                        boardRef={props.boardRef}
+                        board={props.board}
+                        columns={props.columns}
+                        allColGroups={props.allColGroups}
+                        allCols={props.allCols}
+                        fileRefs={props.fileRefs}
+                        existingTask={props.task}
+                        existingTaskRef={props.taskRef}
+                        taskRefs={props.taskRefs}
+                    />
                     <Button onClick={handleClose} color='primary'>
                         Close
                     </Button>

@@ -2,9 +2,8 @@ import React from 'react';
 
 import GridListTile from '@material-ui/core/GridListTile';
 import Typography from '@material-ui/core/Typography';
-import RootRef from '@material-ui/core/RootRef';
 
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 import TaskListing from './TaskListing'
 import EditColumnDialog from './EditColumnDialog';
@@ -50,65 +49,46 @@ function Column(props) {
         taskRefs.sort((a, b) => columnTaskRefs.indexOf(a.id) - columnTaskRefs.indexOf(b.id));
     }
 
-    const onDragEnd = result => {
-        // dropped outside the list
-        if (!result.destination) {
-            return;
-        }
-
-        let newOrder = Array.from(props.column.taskRefs);
-        let [removedId] = newOrder.splice(result.source.index, 1);
-        newOrder.splice(result.destination.index, 0, removedId);
-
-        props.columnGroupRef.ref.collection('columns').doc(props.column.id).update({
-            taskRefs: newOrder
-        });
-    };
-
     return (
         <GridListTile style={{margin: 5, width: 300}}>
             <Typography variant='h6' color='inherit'>
                 {props.column.label}
-                {!props.lockFunctionality && (
-                    <EditColumnDialog column={props.column} columns={props.columns} boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} />
-                )}
+                <EditColumnDialog column={props.column} columns={props.columns} boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} />
             </Typography>
             <div style={{overflow: 'auto', height: '800px'}}> {/*yeah I know, this is very very bad. css is awful to work with, this height definition needs to be fixed*/}
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId={props.column.id}>
-                        {(droppableProvided, droppableSnapshot) => (
-                            <div ref={droppableProvided.innerRef}>
-                                {taskRefs.map((taskRef, index) => (
-                                    <Draggable key={taskRef.id} draggableId={taskRef.id} index={index}>
-                                        {(draggableProvided, draggableSnapshot) => (
-                                            <div
-                                                ref={draggableProvided.innerRef}
-                                                {...draggableProvided.draggableProps}
-                                                {...draggableProvided.dragHandleProps}
-                                            >
-                                                <TaskListing
-                                                    boardRef={props.boardRef}
-                                                    board={props.board}
-                                                    key={taskRef.id}
-                                                    taskRef={taskRef}
-                                                    task={taskRef.data()}
-                                                    taskCommentRefs={props.taskCommentRefs}
-                                                    allColumnNames={props.allColumnNames}
-                                                    lockFunctionality={props.lockFunctionality}
-                                                    fileRefs={props.fileRefs}
-                                                    allCols={props.allCols}
-                                                    allColGroups={props.allColGroups}
-                                                    taskRefs={props.allTaskRefs}
-                                                />
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {droppableProvided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                <Droppable droppableId={props.column.id}>
+                    {(droppableProvided, droppableSnapshot) => (
+                        <div ref={droppableProvided.innerRef} style={{minHeight: 200 + 'px'}}>
+                            {taskRefs.map((taskRef, index) => (
+                                <Draggable key={taskRef.id} draggableId={taskRef.id} index={index}>
+                                    {(draggableProvided, draggableSnapshot) => (
+                                        <div
+                                            ref={draggableProvided.innerRef}
+                                            {...draggableProvided.draggableProps}
+                                            {...draggableProvided.dragHandleProps}
+                                        >
+                                            <TaskListing
+                                                boardRef={props.boardRef}
+                                                board={props.board}
+                                                key={taskRef.id}
+                                                taskRef={taskRef}
+                                                task={taskRef.data()}
+                                                taskCommentRefs={props.taskCommentRefs}
+                                                allColumnNames={props.allColumnNames}
+                                                lockFunctionality={props.lockFunctionality}
+                                                fileRefs={props.fileRefs}
+                                                allCols={props.allCols}
+                                                allColGroups={props.allColGroups}
+                                                taskRefs={props.allTaskRefs}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {droppableProvided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
             </div>
         </GridListTile>
     );

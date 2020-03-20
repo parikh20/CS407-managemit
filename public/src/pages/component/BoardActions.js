@@ -22,15 +22,11 @@ function BoardActions(props) {
             </div>
             {props.board && (
                 <ButtonGroup size='small'>
-                    {!props.lockFunctionality && <>
-                        <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} fileRefs={props.fileRefs} />
-                        <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
-                    </>}
+                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} fileRefs={props.fileRefs} />
+                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
                     <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
-                    {!props.lockFunctionality && <>
-                        <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
-                        <EditViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} currentGroupId={props.currentGroupId} />
-                    </>}
+                    <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                    <EditViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} currentGroupId={props.currentGroupId} />
                     <ButtonGroup size='small'>
                         <Button href={'/board/' + props.boardRef.id + '/calendar'}>Calendar</Button>
                     </ButtonGroup>
