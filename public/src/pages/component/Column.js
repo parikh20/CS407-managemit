@@ -2,6 +2,9 @@ import React from 'react';
 
 import GridListTile from '@material-ui/core/GridListTile';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -49,11 +52,41 @@ function Column(props) {
         taskRefs.sort((a, b) => columnTaskRefs.indexOf(a.id) - columnTaskRefs.indexOf(b.id));
     }
 
+    const handleColumnMove = diff => {
+        let columnOrder = [...props.columnGroupRef.data().columnOrder];
+        let swap  = columnOrder[props.columnIndex];
+        let swap2 = columnOrder[props.columnIndex + diff];
+        columnOrder[props.columnIndex] = swap2;
+        columnOrder[props.columnIndex + diff] = swap;
+
+        props.columnGroupRef.ref.update({
+            columnOrder: columnOrder
+        });
+    };
+
     return (
         <GridListTile style={{margin: 5, width: 300}}>
             <Typography variant='h6' color='inherit'>
                 {props.column.label}
                 <EditColumnDialog column={props.column} columns={props.columns} boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} />
+                <div style={{float: 'right'}}>
+                    <IconButton
+                        edge='end'
+                        aria-label='move column left'
+                        color='inherit'
+                        disabled={props.columnIndex === 0}
+                        onClick={() => handleColumnMove(-1)}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                    <IconButton
+                        edge='end'
+                        aria-label='move column right'
+                        color='inherit'
+                        disabled={props.columnIndex + 1 === props.columnCount}
+                        onClick={() => handleColumnMove(1)}>
+                        <ChevronRightIcon />
+                    </IconButton>
+                </div>
             </Typography>
             <div style={{overflow: 'auto', height: '800px'}}> {/*yeah I know, this is very very bad. css is awful to work with, this height definition needs to be fixed*/}
                 <Droppable droppableId={props.column.id}>
