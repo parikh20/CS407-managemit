@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { fade } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -19,62 +18,90 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextFormatIcon from '@material-ui/icons/TextFormat';
+import Badge from '@material-ui/core/Badge';
 
-function NavBar(props) {
-    const showNavigation = !(['/login', '/register'].includes(props.location));
-    const showBoardFeatures = props.location.startsWith('/board') && props.location !== '/boards' && !props.location.endsWith('settings') && !props.location.endsWith('history') && !props.location.endsWith('calendar') && !props.location.endsWith('documents');
-    const history = useHistory();
+import { db } from '../../Firebase';
 
-    const [caseSensitiveChecked, setCaseSensitiveChecked] = React.useState(false);
-    const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
-    const [searchInput, setSearchInput] = React.useState('');
-    const [searchMatches, setSearchMatches] = React.useState(0);
+class NavBar extends React.Component {
 
-    const handleMenuOpen = event => {
-        setMenuAnchorEl(event.currentTarget);
-    };
+    notificationCountSub;
 
-    const handleMenuClose = () => {
-        setMenuAnchorEl(null);
-    };
+    constructor(props) {
+        super(props);
 
-    const handleMenuClick = (sortMode) => {
-        setMenuAnchorEl(null);
-        history.push(props.location + '?sort=' + sortMode);;
-    };
+        try {
+            this.user = JSON.parse(localStorage.getItem('user'));
+        } catch (e) {
+            // Nothing to do here
+        }
 
-    const handleUnlock = () => {
-        setMenuAnchorEl(null);
-        history.push(props.location);
-    };
+        const boardSubpages = ['settings', 'history', 'calendar', 'documents'];
+        this.showNavigation = !(['/login', '/register'].includes(this.props.location));
+        this.showBoardFeatures = this.props.location.startsWith('/board') && this.props.location !== '/boards';
+        this.showBoardFeatures = this.showBoardFeatures && boardSubpages.map(subpage => this.props.location.endsWith(subpage)).filter(item => item === true).length === 0;
 
-    const toggleCaseSensitiveChecked = (event, newValue) => {
-        setCaseSensitiveChecked(newValue);
-    };
+        this.state = {
+            caseSensitiveChecked: false,
+            menuAnchorEl: null,
+            searchInput: '',
+            searchMatches: 0,
+            notificationCount: 0
+        }
 
-    React.useEffect(() => {
-        searchTasks();
-    }, [caseSensitiveChecked]);
+        this.handleMenuOpen = this.handleMenuOpen.bind(this);
+        this.handleMenuClose = this.handleMenuClose.bind(this);
+        this.handleMenuClick = this.handleMenuClick.bind(this);
+        this.handleUnlock = this.handleUnlock.bind(this);
+        this.toggleCaseSensitiveChecked = this.toggleCaseSensitiveChecked.bind(this);
+        this.logOut = this.logOut.bind(this);
+        this.searchTasks = this.searchTasks.bind(this);
 
-    const logOut = () => {
-        localStorage.removeItem('user');
-        history.push('/login');
+        this.loadNotificationCount();
     }
 
-    const searchTasks = () => {
+    handleMenuOpen(event) {
+        this.setState({menuAnchorEl: event.currentTarget});
+    }
+
+    handleMenuClose(event) {
+        this.setState({menuAnchorEl: null});
+    }
+
+    handleMenuClick(sortMode) {
+        this.setState({menuAnchorEl: null});
+        window.location.href = this.props.location + '?sort=' + sortMode;
+    }
+
+    handleUnlock() {
+        this.setState({menuAnchorEl: null});
+        window.location.href = this.props.location;
+    }
+
+    toggleCaseSensitiveChecked(event, newValue) {
+        this.setState({caseSensitiveChecked: newValue}, () => this.searchTasks());
+    }
+
+    logOut() {
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+    }
+
+    searchTasks() {
         let searchInputElement = document.getElementById('taskSearchInput');
 
-        setSearchMatches(0);
-        setSearchInput('');
+        this.setState({
+            searchMatches: 0,
+            searchInput: ''
+        });
 
         if (!searchInputElement) {
             return;
         }
         let searchInput = searchInputElement.value.trim();
-        setSearchInput(searchInput);
-        if (!caseSensitiveChecked) {
+        if (!this.state.caseSensitiveChecked) {
             searchInput = searchInput.toLowerCase();
         }
+        this.setState({searchInput: searchInput});
         const taskElements = document.getElementsByClassName('taskListing');
 
         if (searchInput === '') {
@@ -86,7 +113,7 @@ function NavBar(props) {
             let matchCount = 0;
             for (let i = 0; i < taskElements.length; i++) {
                 let content = taskElements[i].innerText;
-                if (!caseSensitiveChecked) {
+                if (!this.state.caseSensitiveChecked) {
                     content = content.toLowerCase();
                 }
                 if (content.includes(searchInput)) {
@@ -98,105 +125,129 @@ function NavBar(props) {
                     taskElements[i].classList.add('search_no_matches');
                 }
             }
-            setSearchMatches(matchCount);
+            this.setState({searchMatches: matchCount});
+        }
+    }
+
+    loadNotificationCount() {
+        if (this.notificationCountSub) {
+            this.notificationCountSub();
         }
 
-    };
+        if (!this.user) {
+            return;
+        }
+        
+        this.notificationCountSub = db.collection('users').doc(this.user.email).collection('notifications').where('unread', '==', true).onSnapshot(notificationRefs => {
+            this.setState({notificationCount: notificationRefs.size});
+        });
+    }
 
-    return (
-        <div style={{flexGrow: 1}}>
-            <AppBar position='sticky'>
-                <Toolbar variant='dense'>
-                    <Typography variant='h6' color='inherit' style={{flexGrow: 1}}>
-                        Managemit
-                        {showNavigation &&
-                            <Button href='/boards' color='inherit' style={{marginLeft: 5}}>Boards</Button>
-                        }
-                    </Typography>
-                    {showBoardFeatures && <>
-                        {searchInput !== '' && (
-                            <Typography color='inherit' style={{marginRight: 10 + 'px'}}>
-                                {searchMatches} match{searchMatches !== 1 ? 'es': ''}
-                            </Typography>
-                        )}
-                        <TextField placeholder='Search for task' onChange={() => searchTasks()} id='taskSearchInput' style={{width: '25%', borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
-                        <Tooltip title='Case sensitivity' arrow>
-                            <ToggleButtonGroup size='small' exclusive value={caseSensitiveChecked} style={{backgroundColor: 'inherit'}} onChange={toggleCaseSensitiveChecked}>
-                                <ToggleButton value={true} style={{border: 0, color: 'white'}}>
-                                    <TextFormatIcon />
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </Tooltip>
-                        <Tooltip title='Sort tasks' arrow>
-                            <IconButton
-                                edge='end'
-                                aria-label='sort'
-                                color='inherit'
-                                aria-controls='sort-menu'
-                                aria-haspopup='true'
-                                onClick={handleMenuOpen}
-                            >
-                                <SortIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            id='sort-menu'
-                            anchorEl={menuAnchorEl}
-                            keepMounted
-                            open={Boolean(menuAnchorEl)}
-                            onClose={handleMenuClose}
-                        >
-                            <MenuItem onClick={() => handleMenuClick('titleAsc')}>Sort by title (ascending)</MenuItem>
-                            <MenuItem onClick={() => handleMenuClick('titleDesc')}>Sort by title (descending)</MenuItem>
-                            <MenuItem onClick={() => handleMenuClick('date')}>Sort by due date</MenuItem>
-                            <MenuItem onClick={() => handleMenuClick('users')}>Sort by assigned to me</MenuItem>
-                        </Menu>
-                        {props.sortMode !== null && (
-                            <Tooltip title='Return to default task display and unlock functionality' arrow>
+
+    componentWillUnmount() {
+        this.notificationCountSub && this.notificationCountSub();
+    }
+
+
+    render() {
+        return (
+            <div style={{flexGrow: 1}}>
+                <AppBar position='sticky'>
+                    <Toolbar variant='dense'>
+                        <Typography variant='h6' color='inherit' style={{flexGrow: 1}}>
+                            Managemit
+                            {this.showNavigation &&
+                                <Button href='/boards' color='inherit' style={{marginLeft: 5}}>Boards</Button>
+                            }
+                        </Typography>
+                        {this.showBoardFeatures && <>
+                            {this.state.searchInput !== '' && (
+                                <Typography color='inherit' style={{marginRight: 10 + 'px'}}>
+                                    {this.state.searchMatches} match{this.state.searchMatches !== 1 ? 'es': ''}
+                                </Typography>
+                            )}
+                            <TextField placeholder='Search for task' onChange={() => this.searchTasks()} id='taskSearchInput' style={{width: '25%', borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                            <Tooltip title='Case sensitivity' arrow>
+                                <ToggleButtonGroup size='small' exclusive value={this.state.caseSensitiveChecked} style={{backgroundColor: 'inherit'}} onChange={this.toggleCaseSensitiveChecked}>
+                                    <ToggleButton value={true} style={{border: 0, color: 'white'}}>
+                                        <TextFormatIcon />
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Tooltip>
+                            <Tooltip title='Sort tasks' arrow>
                                 <IconButton
                                     edge='end'
-                                    aria-label='unlock'
+                                    aria-label='sort'
                                     color='inherit'
-                                    onClick={handleUnlock}
+                                    aria-controls='sort-menu'
+                                    aria-haspopup='true'
+                                    onClick={this.handleMenuOpen}
                                 >
-                                    <LockOpenIcon />
+                                    <SortIcon />
                                 </IconButton>
                             </Tooltip>
-                        )}
-                    </>}
-                    {showNavigation && <>
-                        <Tooltip title='Notifications' arrow>
-                            <IconButton
-                                edge='end'
-                                aria-label='notifications'
-                                color='inherit'
-                                style={{marginLeft: 30}}>
-                                <MailIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title='Account Settings' arrow>
-                            <IconButton
-                                edge='end'
-                                aria-label='user account'
-                                color='inherit'
-                                href='/settings' >
-                                <AccountCircle />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title='Log out' arrow>
-                            <IconButton
-                                edge='end'
-                                aria-label='log out'
-                                color='inherit'
-                                onClick={logOut}>
-                                <ExitToAppIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </>}
-                </Toolbar>
-            </AppBar>
-        </div>
-    );
+                            <Menu
+                                id='sort-menu'
+                                anchorEl={this.state.menuAnchorEl}
+                                keepMounted
+                                open={Boolean(this.state.menuAnchorEl)}
+                                onClose={this.handleMenuClose}
+                            >
+                                <MenuItem onClick={() => this.handleMenuClick('titleAsc')}>Sort by title (ascending)</MenuItem>
+                                <MenuItem onClick={() => this.handleMenuClick('titleDesc')}>Sort by title (descending)</MenuItem>
+                                <MenuItem onClick={() => this.handleMenuClick('date')}>Sort by due date</MenuItem>
+                                <MenuItem onClick={() => this.handleMenuClick('users')}>Sort by assigned to me</MenuItem>
+                            </Menu>
+                            {this.props.sortMode !== null && (
+                                <Tooltip title='Return to default task display and unlock functionality' arrow>
+                                    <IconButton
+                                        edge='end'
+                                        aria-label='unlock'
+                                        color='inherit'
+                                        onClick={this.handleUnlock}
+                                    >
+                                        <LockOpenIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </>}
+                        {this.showNavigation && <>
+                            <Tooltip title='Notifications' arrow>
+                                <IconButton
+                                    edge='end'
+                                    aria-label='notifications'
+                                    color='inherit'
+                                    href='/notifications'
+                                    style={{marginLeft: 30}}>
+                                    <Badge badgeContent={this.state.notificationCount} color='secondary'>
+                                        <MailIcon />
+                                    </Badge>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Account Settings' arrow>
+                                <IconButton
+                                    edge='end'
+                                    aria-label='user account'
+                                    color='inherit'
+                                    href='/settings' >
+                                    <AccountCircle />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Log out' arrow>
+                                <IconButton
+                                    edge='end'
+                                    aria-label='log out'
+                                    color='inherit'
+                                    onClick={this.logOut}>
+                                    <ExitToAppIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </>}
+                    </Toolbar>
+                </AppBar>
+            </div>
+        );
+    }
 }
 
 export default NavBar;

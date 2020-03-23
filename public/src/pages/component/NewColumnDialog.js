@@ -84,6 +84,24 @@ function NewColumnDialog(props) {
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
                 });
+
+                for (const userEmail of props.boardRef.data().userRefs) {
+                    if (userEmail === user.email) {
+                        continue;
+                    }
+                    db.collection('users').doc(userEmail).collection('notifications').add({
+                        user: user.email,
+                        userIsOwner: props.boardRef.data().owner === user.email,
+                        colName: columnName,
+                        columnGroupName: props.columnGroupRef.data().label,
+                        action: 4,
+                        timestamp: new Date(),
+                        board: props.boardRef.data().label,
+                        boardId: props.boardRef.id,
+                        unread: true
+                    });
+                }
+
                 setShowLoadingAnimation(false);
                 setSuccessSnackbar(true);
                 setOpen(false);
