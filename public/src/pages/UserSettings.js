@@ -11,10 +11,7 @@ class UserSettingsPage extends React.Component {
         super(props);
 
         this.viewableHistory = createBrowserHistory();
-        const user = JSON.parse(localStorage.getItem('user'));
     }
-
-    
 
     render() {
         return (

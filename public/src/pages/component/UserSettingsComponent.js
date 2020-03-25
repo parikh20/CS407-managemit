@@ -5,21 +5,15 @@ import AddPhotoDialog from './AddPhotoDialog';
 
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import {Typography, Button } from '@material-ui/core';
+import {Typography } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 
-import firebase from '../../Firebase';
 import { db } from '../../Firebase';
 import EditNameDialog from './EditNameDialog';
 import EditEmailDialog from './EditEmailDialog';
 import EditPasswordDialog from './EditPasswordDialog';
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
 
 const useStyles = makeStyles(theme => ({
     userSettingsBody: {
@@ -44,26 +38,18 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function UserSettings(props) {
+function UserSettingsComponent(props) {
     const classes = useStyles();
-
     const user = JSON.parse(localStorage.getItem('user'));
 
-    const [state, setState] = React.useState({
-        darkMode: false,
-        emailNotifications: false,
-        inAppNotifications: false
-      });
-
     const handleChange = name => event => {
-        setState({ ...state, [name]: event.target.checked });
         db.collection('users').doc(user.uid).set(
             {[name]: event.target.checked},
             {merge: true}
         ).then(res => {
 
         }).catch(err => {
-
+            console.log(err);
         })
       };
 
@@ -95,7 +81,7 @@ function UserSettings(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Switch checked={state.darkModeChecked} onChange={handleChange('darkMode')} value="darkMode" color="primary" />
+                    <Switch checked={props.settings.darkMode} onChange={handleChange('darkMode')} value="darkMode" color="primary" />
                 </Grid>
             <Divider />
             </Paper>
@@ -114,7 +100,7 @@ function UserSettings(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Switch checked={state.emailNotifications} onChange={handleChange('emailNotifications')} value="emailNotifications" color="primary" />   
+                    <Switch checked={props.settings.emailNotifications} onChange={handleChange('emailNotifications')} value="emailNotifications" color="primary" />   
                 </Grid>
 
                 <Grid container spacing={0} className={classes.settingsCard} >
@@ -128,7 +114,7 @@ function UserSettings(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Switch checked={state.inAppNotifications} onChange={handleChange('inAppNotifications')} value="inAppNotifications" color="primary" />   
+                    <Switch checked={props.settings.inAppNotifications} onChange={handleChange('inAppNotifications')} value="inAppNotifications" color="primary" />   
                 </Grid>
             <Divider />
             </Paper>
@@ -136,4 +122,4 @@ function UserSettings(props) {
     );
 }
 
-export default UserSettings;
+export default UserSettingsComponent;

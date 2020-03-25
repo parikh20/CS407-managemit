@@ -71,7 +71,6 @@ function Login(props) {
 
     const loginWithGoogle = () => {
         auth.signInWithPopup(provider).then(result => {
-            console.log(result);
             if (result.additionalUserInfo.isNewUser) {
                 firebase.firestore().collection('users').doc(result.user.uid).set({
                     darkMode: false,
