@@ -51,14 +51,14 @@ function UserSettingsComponent(props) {
         }).catch(err => {
             console.log(err);
         })
-      };
+    };
 
     return (
         <div className={classes.userSettingsBody}>
             <Paper className={classes.paper} >
                 <Typography variant='h5' className={classes.header}>Change your account details</Typography>
-                < AddPhotoDialog />
-                < EditNameDialog />
+                <AddPhotoDialog />
+                <EditNameDialog />
                 { user.providerData[0].providerId === 'password' &&
                         <div>
                             <EditEmailDialog />
@@ -81,7 +81,7 @@ function UserSettingsComponent(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Switch checked={props.settings.darkMode} onChange={handleChange('darkMode')} value="darkMode" color="primary" />
+                    <Switch checked={props.settings.darkMode || false} onChange={handleChange('darkMode')} color="primary" />
                 </Grid>
             <Divider />
             </Paper>
@@ -100,7 +100,7 @@ function UserSettingsComponent(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Switch checked={props.settings.emailNotifications} onChange={handleChange('emailNotifications')} value="emailNotifications" color="primary" />   
+                    <Switch checked={props.settings.emailNotifications || false} onChange={handleChange('emailNotifications')} color="primary" />   
                 </Grid>
 
                 <Grid container spacing={0} className={classes.settingsCard} >
@@ -114,7 +114,7 @@ function UserSettingsComponent(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Switch checked={props.settings.inAppNotifications} onChange={handleChange('inAppNotifications')} value="inAppNotifications" color="primary" />   
+                    <Switch checked={props.settings.inAppNotifications || false} onChange={handleChange('inAppNotifications')} color="primary" />   
                 </Grid>
             <Divider />
             </Paper>

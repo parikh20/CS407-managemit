@@ -12,7 +12,7 @@ class UserSettings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            settings: []
+            settings: {}
         }
         this.loadSettings();
     }
