@@ -1,22 +1,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors')();
+const cors = require('cors');
 const sg = require("@sendgrid/mail");
 sg.setApiKey("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");
 const app = express()
 const port = process.env.PORT || 3001
 
-app.use(cors);
+app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => res.send("Email Server up and Running"))
 
 app.post('/sendNotification', (req, res) => {
+    res.setHeader("Content-Type", "application/json")
     const emails = req.body.emails;
     const boardName = req.body.boardName;
     const message = req.body.message;
 
     let promises = [];
+
+    console.log(emails,boardName,message);
 
     emails.forEach((destEmail) => {
         promises.push(sg.send({
@@ -28,6 +31,7 @@ app.post('/sendNotification', (req, res) => {
     })
 
     Promise.all(promises).then(() => {
+        console.log("Emails successfully sent");
         res.status(200).end(JSON.stringify({message: "Emails Sent"}));
     }).catch((err) => {
         console.error(err);
