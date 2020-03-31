@@ -2,8 +2,6 @@ import firebase from 'firebase'
 import {ReplaySubject} from 'rxjs';
 import {email} from './Email';
 
-email.sendNotification(["vinyardjoseph@gmail.com"], "Test Board", "This is a test notification");
-
 const firebaseConfig = {
     apiKey: "AIzaSyCEN33oNb29C4H6rUj9H5do_zimBQS7ycI",
     authDomain: "managemit.firebaseapp.com",
