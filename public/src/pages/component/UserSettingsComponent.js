@@ -7,13 +7,14 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import {Typography, Button } from '@material-ui/core';
+import {Typography } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 
 import { db } from '../../Firebase';
 import EditNameDialog from './EditNameDialog';
 import EditEmailDialog from './EditEmailDialog';
 import EditPasswordDialog from './EditPasswordDialog';
+import DeleteAccountDialog from './DeleteAccountDialog';
 
 const useStyles = makeStyles(theme => ({
     userSettingsBody: {
@@ -119,24 +120,7 @@ function UserSettingsComponent(props) {
             <Divider />
             </Paper>
 
-            <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Delete Account</Typography>
-                <Divider />
-                <Grid container spacing={0} className={classes.settingsCard} >
-                    <Grid item xs={12} sm container>
-                        <Grid item container direction="column" spacing={2} >
-                            <Typography variant='subtitle1'>
-                                Delete Your Account
-                            </Typography>
-                            <Typography color='error' variant="body2">
-                                Warning! This action is permanent
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Button variant='contained' color='secondary' >Delete</Button>
-                </Grid>
-            <Divider />
-            </Paper>
+            <DeleteAccountDialog />
         </div>
     );
 }
