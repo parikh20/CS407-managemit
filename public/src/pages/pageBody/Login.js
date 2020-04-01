@@ -72,7 +72,7 @@ function Login(props) {
     const loginWithGoogle = () => {
         auth.signInWithPopup(provider).then(result => {
             if (result.additionalUserInfo.isNewUser) {
-                firebase.firestore().collection('users').doc(result.user.uid).set({
+                firebase.firestore().collection('users').doc(result.user.email).set({
                     darkMode: false,
                     emailNotifications: true,
                     inAppNotifications: true

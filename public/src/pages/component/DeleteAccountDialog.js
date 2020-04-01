@@ -7,6 +7,8 @@ import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import {Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,6 +17,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import firebase from '../../Firebase';
 import { db } from '../../Firebase';
+import { cache } from '../../Firebase';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 const useStyles = makeStyles(theme => ({
     userSettingsBody: {
@@ -47,7 +54,10 @@ function DeleteAccountDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
-    const [checked, setChecked] = React.useState(false);
+    const [successSnackbar, setSuccessSnackbar] = React.useState(false);
+    const [errorSnackbar, setErrorSnackbar] = React.useState(false);
+    const [successMessage, setSuccessMessage] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -61,12 +71,82 @@ function DeleteAccountDialog(props) {
     const cleanState = () => {
         setPasswordError(false);
         setPasswordHelperText('');
-        setChecked(false);
+        setSuccessSnackbar(false);
+        setErrorSnackbar(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
-    const handleCheck = (event) => {
-        setChecked(event.target.checked);
+    const checkBoards = () => {
+        for (const board of props.boards) {
+            console.log(board);
+            if (board.owner === user.email && board.userRefs.length > 1) {
+                setErrorSnackbar(true);
+                setErrorMessage("You must transfer ownership of boards with collaborators or remove all collaborators before you can delete your account")
+                return false;
+            }
+        }
+        return true;
     }
+
+    const deleteData = () => {
+        const batch = db.batch();
+        const recursiveDelete = firebase.functions().httpsCallable('recursiveDelete');
+        for (const board of props.boards) {
+            const ref = db.collection('boards').doc(board.id);
+            if (board.owner !== user.email) {
+                batch.update(ref, {"userRefs": firebase.firestore.FieldValue.arrayRemove(user.email)});
+                //batch.update(ref, {["permissions." + user.email]: true});
+            } else if (board.owner === user.email && board.userRefs.length === 1) {
+                console.log(ref.path);
+                recursiveDelete({path: ref.path});
+            }
+        }
+
+        const ref = db.collection('users').doc(user.email);
+        console.log(ref.path)
+        recursiveDelete({path: ref.path});
+
+        batch.commit();
+    }
+
+    const handleDelete = () => {
+        cleanState();
+
+        if (user.providerData[0].providerId === 'google.com') {
+            if (checkBoards() == true) {
+                firebase.auth().currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider()).then(res => {
+                    deleteData();
+                    res.user.delete().then(() => {
+                        localStorage.removeItem('user');
+                        window.location.href = '/login';
+                    }).catch(err => {
+                        setErrorSnackbar(true);
+                        setErrorMessage("Unable to delete account. Please try again later.");
+                    });
+                });
+            }
+        } else {
+            if (checkBoards() == true) {
+                firebase.auth().currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(
+                    user.email,
+                    document.getElementById('password').value
+                )).then(res => {
+                    deleteData();
+                    res.user.delete().then(() => {
+                        localStorage.removeItem('user');
+                        window.location.href = '/login';
+                    }).catch(err => {
+                        setErrorSnackbar(true);
+                        setErrorMessage("Unable to delete account. Please try again later.");
+                    });
+                }).catch(error => {
+                    setPasswordError(true);
+                    setPasswordHelperText('Incorrect password')
+                });
+            }
+        }
+    };
 
     return (
         <>
@@ -109,11 +189,21 @@ function DeleteAccountDialog(props) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button color='primary' >
+                    <Button color='primary' onClick={handleDelete} >
                         Delete
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar open={successSnackbar} onClose={handleClose}>
+                <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={errorSnackbar} onClose={handleClose}>
+                <Alert onClose={handleClose} autoHideDuration={6000} severity='error'>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 }

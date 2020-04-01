@@ -69,7 +69,7 @@ function Register(props) {
                 user.updateProfile({
                     displayName: name
                 }).then(res =>  {
-                    firebase.firestore().collection('users').doc(user.uid).set({
+                    firebase.firestore().collection('users').doc(user.email).set({
                         darkMode: false,
                         emailNotifications: true,
                         inAppNotifications: true

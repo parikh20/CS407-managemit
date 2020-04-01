@@ -44,11 +44,10 @@ function UserSettingsComponent(props) {
     const user = JSON.parse(localStorage.getItem('user'));
 
     const handleChange = name => event => {
-        db.collection('users').doc(user.uid).set(
+        db.collection('users').doc(user.email).set(
             {[name]: event.target.checked},
             {merge: true}
         ).then(res => {
-
         }).catch(err => {
             console.log(err);
         })
@@ -120,7 +119,7 @@ function UserSettingsComponent(props) {
             <Divider />
             </Paper>
 
-            <DeleteAccountDialog />
+            <DeleteAccountDialog boards={props.boards} />
         </div>
     );
 }
