@@ -12,22 +12,23 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 import LoadingAnimation from './LoadingAnimation';
 
-import {auth, db} from '../../Firebase';
+import { db } from '../../Firebase';
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
 const createBoard = async (name, description) => {
+    const currentUser = JSON.parse(localStorage.getItem('user'));
     const permissionsObj = {};
-    permissionsObj[auth.currentUser.email] = { isAdmin: true };
+    permissionsObj[currentUser.email] = { isAdmin: true };
     return new Promise((res,rej) => {
         let boardRef2 = null;
         db.collection("boards").add({
-            owner: auth.currentUser.email,
+            owner: currentUser.email,
             label: name,
             description: description,
             defaultColumnGroup: "",
             taskRefs: [],
-            userRefs: [auth.currentUser.email],
+            userRefs: [currentUser.email],
             permissions: permissionsObj
         }).then((boardRef) => {
             boardRef2 = boardRef;

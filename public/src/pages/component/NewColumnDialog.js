@@ -14,6 +14,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import LoadingAnimation from './LoadingAnimation';
 
 import { db } from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -85,22 +86,18 @@ function NewColumnDialog(props) {
                     console.log("Error logging new column: " + err);
                 });
 
-                for (const userEmail of props.boardRef.data().userRefs) {
-                    if (userEmail === user.email) {
-                        continue;
-                    }
-                    db.collection('users').doc(userEmail).collection('notifications').add({
-                        user: user.email,
-                        userIsOwner: props.boardRef.data().owner === user.email,
-                        colName: columnName,
-                        columnGroupName: props.columnGroupRef.data().label,
-                        action: 4,
-                        timestamp: new Date(),
-                        board: props.boardRef.data().label,
-                        boardId: props.boardRef.id,
-                        unread: true
-                    });
-                }
+                const emailText = 'Column "' + columnName + '" created in the view "' + props.columnGroupRef.data().label + '"';
+                dispatchUserNotifications(props.boardRef, user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.boardRef.data().owner === user.email,
+                    colName: columnName,
+                    columnGroupName: props.columnGroupRef.data().label,
+                    action: 4,
+                    timestamp: new Date(),
+                    board: props.boardRef.data().label,
+                    boardId: props.boardRef.id,
+                    unread: true
+                });
 
                 setShowLoadingAnimation(false);
                 setSuccessSnackbar(true);
