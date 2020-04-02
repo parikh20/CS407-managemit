@@ -91,6 +91,8 @@ function DeleteAccountDialog(props) {
 
     const deleteData = () => {
         const batch = db.batch();
+        const path = [];
+
         const recursiveDelete = firebase.functions().httpsCallable('recursiveDelete');
         for (const board of props.boards) {
             const ref = db.collection('boards').doc(board.id);
@@ -98,14 +100,13 @@ function DeleteAccountDialog(props) {
                 batch.update(ref, {"userRefs": firebase.firestore.FieldValue.arrayRemove(user.email)});
                 //batch.update(ref, {["permissions." + user.email]: true});
             } else if (board.owner === user.email && board.userRefs.length === 1) {
-                console.log(ref.path);
-                recursiveDelete({path: ref.path});
+                path.push(ref.path);
             }
         }
 
         const ref = db.collection('users').doc(user.email);
-        console.log(ref.path)
-        recursiveDelete({path: ref.path});
+        path.push(ref.path);
+        recursiveDelete({path: path});
 
         batch.commit();
     }

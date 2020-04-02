@@ -32,7 +32,7 @@ function DeleteBoardDialog(props) {
             const boardId = props.board.id;
             const boardRef = db.collection("boards").doc(boardId).path;
             const recursiveDelete = firebase.functions().httpsCallable('recursiveDelete');
-            recursiveDelete({path: boardRef}).then(result => {
+            recursiveDelete({path: [boardRef]}).then(result => {
                 history.push("/boards")
             }).catch(err => {
                 console.log(err);
