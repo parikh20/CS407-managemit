@@ -50,7 +50,6 @@ function DeleteAccountDialog(props) {
     const classes = useStyles();
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const [open, setOpen] = React.useState(false);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
@@ -79,7 +78,7 @@ function DeleteAccountDialog(props) {
 
     const checkBoards = () => {
         for (const board of props.boards) {
-            console.log(board);
+            console.log(board.permissions);
             if (board.owner === user.email && board.userRefs.length > 1) {
                 setErrorSnackbar(true);
                 setErrorMessage("You must transfer ownership of boards with collaborators or remove all collaborators before you can delete your account")
@@ -97,8 +96,11 @@ function DeleteAccountDialog(props) {
         for (const board of props.boards) {
             const ref = db.collection('boards').doc(board.id);
             if (board.owner !== user.email) {
+                const newPerm = board.permissions;
+                delete newPerm[user.email];
+                console.log(newPerm);
                 batch.update(ref, {"userRefs": firebase.firestore.FieldValue.arrayRemove(user.email)});
-                //batch.update(ref, {["permissions." + user.email]: true});
+                batch.update(ref, {"permissions": newPerm});
             } else if (board.owner === user.email && board.userRefs.length === 1) {
                 path.push(ref.path);
             }
@@ -108,7 +110,11 @@ function DeleteAccountDialog(props) {
         path.push(ref.path);
         recursiveDelete({path: path});
 
-        batch.commit();
+        batch.commit().then(res => {
+
+        }).catch(err => {
+            console.log(err);
+        });
     }
 
     const handleDelete = () => {
