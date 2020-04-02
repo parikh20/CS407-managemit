@@ -12,22 +12,24 @@ exports.recursiveDelete = functions
   })
   .https.onCall((data, context) => {
 
-    const path = data.path;
-    console.log(
-      `User ${context.auth.uid} has requested to delete path ${path}`
-    );
+    const pathArr = data.path;
 
-    return firebase_tools.firestore
+    for (path of pathArr) {
+      console.log(
+        `User ${context.auth.uid} has requested to delete path ${path}`
+      );
+
+      firebase_tools.firestore
       .delete(path, {
         project: process.env.GCLOUD_PROJECT,
         recursive: true,
         yes: true,
       })
       .then(() => {
-        return {
-          path: path 
-        };
       });
+    }
+
+    return true;
   });
 
 const {getColumnGroups, createColumnGroups, getColumn, createColumn} = require("./handler/columns");
