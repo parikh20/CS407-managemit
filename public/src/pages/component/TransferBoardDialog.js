@@ -54,18 +54,18 @@ function TransferBoardDialog(props) {
         db.collection('boards').doc(props.board.id).update({
             owner: selectedUser
         }).then(result => {
+            const emailText = 'Ownership transferred from ' + user.email + ' to ' + selectedUser;
             db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
                     user2: selectedUser,
                     action: 10,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging board update: " + err);
             });
-
-            const emailText = 'Ownership transferred from ' + user.email + ' to ' + selectedUser;
             dispatchUserNotifications(props.board, user, emailText, {
                 user: user.email,
                 userIsOwner: props.board.owner === user.email,

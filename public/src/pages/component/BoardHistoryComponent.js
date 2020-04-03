@@ -218,7 +218,7 @@ function BoardHistoryComponent(props) {
             },
             {
                 title: 'Action',
-                field: 'action',
+                field: 'actionText',
                 render: rowData => <HistoryAction board={props.board} rowData={rowData} />
             }
         ];
@@ -230,7 +230,15 @@ function BoardHistoryComponent(props) {
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Board History</h2>
-                        <MaterialTable icons={tableIcons} columns={columns} title='' data={props.history || []} />
+                        <MaterialTable
+                            icons={tableIcons}
+                            columns={columns}
+                            title=''
+                            data={props.history || []}
+                            options={{
+                                search: true
+                            }}
+                        />
                     </Grid>
                 </Grid>
             </Paper>

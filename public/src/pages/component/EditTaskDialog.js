@@ -239,7 +239,8 @@ function EditTaskDialog(props) {
                             user: user.email,
                             taskName: label,
                             action: 21,
-                            timestamp: new Date()
+                            timestamp: new Date(),
+                            actionText: emailText
                         });
                 }).catch(err => console.error("Error in editing task:", err));
             } else {
@@ -279,7 +280,8 @@ function EditTaskDialog(props) {
                             user: user.email,
                             taskName: label,
                             action: 7,
-                            timestamp: new Date()
+                            timestamp: new Date(),
+                            actionText: emailText
                         });
                 }).catch(err => console.error("Error in adding task:", err));
             }
@@ -336,18 +338,18 @@ function EditTaskDialog(props) {
                     uploadedBy: user.email,
                     timestamp: new Date()
                 }).then(() => {
+                    const emailText = 'Document "' + file.name + '" uploaded';
                     db.collection('boards').doc(props.boardRef.id).collection('history').add(
                         {
                             user: user.email,
                             fileName: file.name,
                             action: 19,
-                            timestamp: new Date()
+                            timestamp: new Date(),
+                            actionText: emailText
                         }
                     ).catch(err => {
                         console.log("Error logging new file upload: " + err);
                     });
-
-                    const emailText = 'Document "' + file.name + '" uploaded';
                     dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                         user: user.email,
                         userIsOwner: props.boardRef.data().owner === user.email,

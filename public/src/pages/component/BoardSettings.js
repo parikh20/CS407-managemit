@@ -97,19 +97,19 @@ function BoardSettings(props) {
                     description: description
                 }
             ).then(result => {
+                const emailText = 'Board name changed to "' + name + '" and description changed to "' + description + '"';
                 db.collection('boards').doc(props.board.id).collection('history').add(
                     {
                         user: user.email,
                         name: name,
                         description: description,
                         action: 1,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
                 ).catch(err => {
                     console.log("Error logging board update: " + err);
                 });
-
-                const emailText = 'Board name changed to "' + name + '" and description changed to "' + description + '"';
                 dispatchUserNotifications(props.board, user, emailText, {
                     user: user.email,
                     userIsOwner: props.board.owner === user.email,
@@ -159,18 +159,18 @@ function BoardSettings(props) {
                     setInviteEmailHelperText('User does not exist!');
                 }
             }).then(result => {
+                const emailText = email + ' invited to the board';
                 db.collection('boards').doc(props.board.id).collection('history').add(
                     {
                         user: user.email,
                         user2: email,
                         action: 2,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
                 ).catch(err => {
                     console.log("Error logging inviting user: " + err);
                 });
-
-                const emailText = email + ' invited to the board';
                 dispatchUserNotifications(props.board, user, emailText, {
                     user: user.email,
                     userIsOwner: props.board.owner === user.email,
@@ -193,18 +193,19 @@ function BoardSettings(props) {
         }).then(result => {
             setSuccessSnackbar(true);
             setSuccessMessage('Successfully removed ' + email + '!');
+
+            const emailText = email + ' removed from the board';
             db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
                     user2: email,
                     action: 3,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging removing user: " + err);
             });
-
-            const emailText = email + ' removed from the board';
             dispatchUserNotifications(props.board, user, emailText, {
                 user: user.email,
                 userIsOwner: props.board.owner === user.email,
@@ -227,19 +228,19 @@ function BoardSettings(props) {
         db.collection('boards').doc(props.board.id).update({
             permissions: permissionsCopy
         }).then(result => {
+            const emailText = 'Permissions for ' + email + ' changed to ' + (newValue ? 'administrator' : 'collaborator');
             db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
                     user2: email,
                     newPermission: newValue,
                     action: 12,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging changing permisisons: " + err);
             });
-
-            const emailText = 'Permissions for ' + email + ' changed to ' + (newValue ? 'administrator' : 'collaborator');
             dispatchUserNotifications(props.board, user, emailText, {
                 user: user.email,
                 userIsOwner: props.board.owner === user.email,

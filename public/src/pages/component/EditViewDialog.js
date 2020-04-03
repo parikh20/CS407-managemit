@@ -115,19 +115,19 @@ function EditViewDialog(props) {
             props.boardRef.ref.collection('columnGroups').doc(colGroup.id).update({
                 label: newValue
             }).then(() => {
+                const emailText = 'View "' + oldValue + '" renamed to "' + newValue + '"';
                 props.boardRef.ref.collection('history').add(
                     {
                         user: user.email,
                         groupName: newValue,
                         groupName2: oldValue,
                         action: 16,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
                 ).catch(err => {
                     console.log("Error logging rename view: " + err);
                 });
-
-                const emailText = 'View "' + oldValue + '" renamed to "' + newValue + '"';
                 dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                     user: user.email,
                     userIsOwner: props.boardRef.data().owner === user.email,
@@ -171,22 +171,17 @@ function EditViewDialog(props) {
                 
                 await colGroupRef.delete();
 
-                if (props.currentGroupId === colGroup.id) {
-                    history.push('/board/' + props.boardRef.id);
-                }
-            }).then(result => {
-                db.collection('boards').doc(props.boardRef.id).collection('history').add(
+                const emailText = 'View "' + colGroup.label + '" deleted';
+                await db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
                         user: user.email,
                         groupName: colGroup.label,
                         action: 17,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
-                ).catch(err => {
-                    console.log("Error logging delete view: " + err);
-                });
+                );
 
-                const emailText = 'View "' + colGroup.label + '" deleted';
                 dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                     user: user.email,
                     userIsOwner: props.boardRef.data().owner === user.email,
@@ -197,6 +192,10 @@ function EditViewDialog(props) {
                     groupName: colGroup.label,
                     unread: true
                 });
+
+                if (props.currentGroupId === colGroup.id) {
+                    history.push('/board/' + props.boardRef.id);
+                }
             });
         }
     };
@@ -205,18 +204,19 @@ function EditViewDialog(props) {
         props.boardRef.ref.update({
             defaultColumnGroup: colGroup.id
         }).then(result => {
+            const emailText = 'View "' + colGroup.label + '" set to default view';
             db.collection('boards').doc(props.boardRef.id).collection('history').add(
                 {
                     user: user.email,
                     groupName: colGroup.label,
                     action: 18,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging change default view: " + err);
             });
 
-            const emailText = 'View "' + colGroup.label + '" set to default view';
             dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                 user: user.email,
                 userIsOwner: props.boardRef.data().owner === user.email,

@@ -53,10 +53,10 @@ class Board extends React.Component {
             this.colGroupSub.unsubscribe();
         }
         const collection = boardRef.ref.collection("columnGroups");
-        this.setState({columnGroupId: colGroup});
 
         // If a parameter was supplied to the function use it, otherwise use default
         colGroup = this.props.params.groupId || boardRef.data().defaultColumnGroup;
+        this.setState({columnGroupId: colGroup});
 
         // If a default is set (not ""), then use it
         if(colGroup.length) {
@@ -143,7 +143,9 @@ class Board extends React.Component {
         this.colSub && this.colSub.unsubscribe();
         this.taskSub && this.taskSub.unsubscribe();
         this.colGroupsSub && this.colGroupsSub();
-        this.filesSub && this.filesSub.unsubscribe();
+        if (this.filesSub && this.filesSub.unsubscribe && typeof this.filesSub.unsubscribe === 'function') {
+            this.filesSub.unsubscribe();
+        }
         this.columnsSub.forEach(sub => sub());
         this.taskCommentSubs.forEach(sub => sub());
         if(this.colGroupSub) {

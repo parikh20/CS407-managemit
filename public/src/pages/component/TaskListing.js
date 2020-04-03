@@ -56,18 +56,18 @@ function TaskListing(props) {
         db.runTransaction(async (t) => {
             props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
         }).then(result => {
+            const emailText = 'Task "' + props.task.title + '" deleted';
             db.collection('boards').doc(props.boardRef.id).collection('history').add(
                 {
                     user: user.email,
                     taskName: props.task.title,
                     action: 8,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging delete task: " + err);
             });
-
-            const emailText = 'Task "' + props.task.title + '" deleted';
             dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                 user: user.email,
                 userIsOwner: props.boardRef.data().owner === user.email,
@@ -108,19 +108,19 @@ function TaskListing(props) {
                 taskName: props.task.title, 
                 timestamp: new Date()
             }).then(result => {
+                const emailText = 'Comment posted on task "' + props.task.title + '":\n"' + commentText + '"';
                 db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
                         user: user.email,
                         taskName: props.task.title,
                         commentText: commentText,
                         action: 9,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
                 ).catch(err => {
                     console.log("Error logging delete task: " + err);
                 });
-
-                const emailText = 'Comment posted on task "' + props.task.title + '":\n"' + commentText + '"';
                 dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                     user: user.email,
                     userIsOwner: props.boardRef.data().owner === user.email,
@@ -143,6 +143,7 @@ function TaskListing(props) {
         db.runTransaction(async (t) => {
             props.boardRef.ref.collection('tasks').doc(props.taskRef.id).collection('comments').doc(commentRef.id).delete();
         }).then(result => {
+            const emailText = 'Comment deleted on task "' + props.task.title + '":\n"' + commentText + '"';
             db.collection('boards').doc(props.boardRef.id).collection('history').add(
                 {
                     user: user.email,
@@ -150,13 +151,12 @@ function TaskListing(props) {
                     user2: user2,
                     taskName: props.task.title, 
                     action: 11,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging delete comment: " + err);
             });
-
-            const emailText = 'Comment deleted on task "' + props.task.title + '":\n"' + commentText + '"';
             dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                 user: user.email,
                 userIsOwner: props.boardRef.data().owner === user.email,

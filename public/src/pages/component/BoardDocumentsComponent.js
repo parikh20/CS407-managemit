@@ -149,16 +149,16 @@ function BoardDocumentsComponent(props) {
                 uploadedBy: user.email,
                 timestamp: new Date()
             });
+            const emailText = 'Document "' + file.name + '" uploaded';
             await db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
                     fileName: file.name,
                     action: 19,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             );
-
-            const emailText = 'Document "' + file.name + '" uploaded';
             dispatchUserNotifications(props.board, user, emailText, {
                 user: user.email,
                 userIsOwner: props.board.owner === user.email,
@@ -192,18 +192,18 @@ function BoardDocumentsComponent(props) {
                 });
             }
         }).then(() => {
+            const emailText = 'Document "' + rowData.fileName + '" deleted';
             db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
                     fileName: rowData.fileName,
                     action: 20,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    actionText: emailText
                 }
             ).catch(err => {
                 console.log("Error logging file delete: " + err);
             });
-
-            const emailText = 'Document "' + rowData.fileName + '" deleted';
             dispatchUserNotifications(props.board, user, emailText, {
                 user: user.email,
                 userIsOwner: props.board.owner === user.email,

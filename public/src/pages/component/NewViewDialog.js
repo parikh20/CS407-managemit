@@ -77,19 +77,19 @@ function NewViewDialog(props) {
                     columnOrder: columnRefs
                 }, {merge: true});
             }).then(() => {
+                const emailText = 'View "' + groupName + '" created with the columns:\n' + columnNames.map(name => '* "' + name + '"').join('\n');
                 db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
                         user: user.email,
                         groupName: groupName,
                         columns: columnNames,
                         action: 15,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
                 });
-
-                const emailText = 'View "' + groupName + '" created with the columns:\n' + columnNames.map(name => '* "' + name + '"').join('\n');
                 dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                     user: user.email,
                     userIsOwner: props.boardRef.data().owner === user.email,

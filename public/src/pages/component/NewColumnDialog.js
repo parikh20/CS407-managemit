@@ -74,19 +74,19 @@ function NewColumnDialog(props) {
                     'columnOrder': columnOrder
                 });
             }).then(result => {
+                const emailText = 'Column "' + columnName + '" created in the view "' + props.columnGroupRef.data().label + '"';
                 db.collection('boards').doc(props.boardRef.id).collection('history').add(
                     {
                         user: user.email,
                         colName: columnName,
                         columnGroupName: props.columnGroupRef.data().label,
                         action: 4,
-                        timestamp: new Date()
+                        timestamp: new Date(),
+                        actionText: emailText
                     }
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
                 });
-
-                const emailText = 'Column "' + columnName + '" created in the view "' + props.columnGroupRef.data().label + '"';
                 dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                     user: user.email,
                     userIsOwner: props.boardRef.data().owner === user.email,
