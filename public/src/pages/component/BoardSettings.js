@@ -180,7 +180,7 @@ function BoardSettings(props) {
                     boardId: props.board.id,
                     user2: email,
                     unread: true
-                });
+                }, email);
             }).catch(err => {
                 console.log(err);
             });

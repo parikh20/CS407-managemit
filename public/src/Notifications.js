@@ -1,10 +1,14 @@
 import { db } from './Firebase';
 import { email } from './Email';
 
-const dispatchUserNotifications = (boardData, currentUser, emailText, data) => {
+const dispatchUserNotifications = (boardData, currentUser, emailText, data, extraUser) => {
     emailText = 'New notification from your board "' + boardData.label + '":\n' + emailText + '\n\nIf you wish to stop receiving these emails, disable email notifications from your user settings page.';
 
-    for (const userEmail of boardData.userRefs) {
+    let userList = boardData.userRefs;
+    if (extraUser && !userList.includes(extraUser)) {
+        userList.push(extraUser);
+    }
+    for (const userEmail of userList) {
         if (userEmail === currentUser.email) {
             continue;
         }
