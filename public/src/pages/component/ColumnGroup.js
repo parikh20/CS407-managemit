@@ -29,16 +29,16 @@ class ColumnGroup extends React.Component {
         this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
     }
 
-    componentWillReceiveProps() {
-        const columnRefs = this.props.columnGroup && this.props.columnGroup.columnOrder ? this.props.columnGroup.columnOrder : [];
-        const columns = this.props.columns.filter(column => columnRefs.includes(column.id));
+    componentWillReceiveProps(next) {
+        const columnRefs = next.columnGroup && next.columnGroup.columnOrder ? next.columnGroup.columnOrder : [];
+        const columns = next.columns.filter(column => columnRefs.includes(column.id));
         columns.sort((a, b) => columnRefs.indexOf(a.id) - columnRefs.indexOf(b.id));
         this.setState({columns: columns});
 
         let allColumnNames = {};
-        for (let colGroupId of Object.keys(this.props.allCols)) {
-            for (let i = 0; i < this.props.allCols[colGroupId].length; i++) {
-                let item = this.props.allCols[colGroupId][i];
+        for (let colGroupId of Object.keys(next.allCols)) {
+            for (let i = 0; i < next.allCols[colGroupId].length; i++) {
+                let item = next.allCols[colGroupId][i];
                 allColumnNames[item.id] = item.data().label;
             }
         }
