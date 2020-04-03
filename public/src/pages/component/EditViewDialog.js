@@ -21,6 +21,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import { db } from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 function EditViewDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -125,6 +126,19 @@ function EditViewDialog(props) {
                 ).catch(err => {
                     console.log("Error logging rename view: " + err);
                 });
+
+                const emailText = 'View "' + oldValue + '" renamed to "' + newValue + '"';
+                dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.boardRef.data().owner === user.email,
+                    action: 16,
+                    timestamp: new Date(),
+                    board: props.boardRef.data().label,
+                    boardId: props.boardRef.id,
+                    groupName: newValue,
+                    groupName2: oldValue,
+                    unread: true
+                });
             })
         }
     };
@@ -171,6 +185,18 @@ function EditViewDialog(props) {
                 ).catch(err => {
                     console.log("Error logging delete view: " + err);
                 });
+
+                const emailText = 'View "' + colGroup.label + '" deleted';
+                dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.boardRef.data().owner === user.email,
+                    action: 17,
+                    timestamp: new Date(),
+                    board: props.boardRef.data().label,
+                    boardId: props.boardRef.id,
+                    groupName: colGroup.label,
+                    unread: true
+                });
             });
         }
     };
@@ -188,6 +214,18 @@ function EditViewDialog(props) {
                 }
             ).catch(err => {
                 console.log("Error logging change default view: " + err);
+            });
+
+            const emailText = 'View "' + colGroup.label + '" set to default view';
+            dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                user: user.email,
+                userIsOwner: props.boardRef.data().owner === user.email,
+                action: 18,
+                timestamp: new Date(),
+                board: props.boardRef.data().label,
+                boardId: props.boardRef.id,
+                groupName: colGroup.label,
+                unread: true
             });
         });
     };
@@ -242,7 +280,7 @@ function EditViewDialog(props) {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography component='p'>
-                                            Type the view to confirm deletion.<br /><br />Warning: this cannot be undone. Any tasks associated with only this view will be lost.
+                                            Type the view name to confirm deletion.<br /><br />Warning: this cannot be undone. Any tasks associated with only this view will be lost.
                                         </Typography>
                                         {colGroupDisplay.length === 1 && (
                                             <Typography component='p' color='secondary'>

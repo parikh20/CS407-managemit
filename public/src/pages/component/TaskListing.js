@@ -27,6 +27,7 @@ import dateFormat from 'dateformat';
 
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
@@ -64,6 +65,18 @@ function TaskListing(props) {
                 }
             ).catch(err => {
                 console.log("Error logging delete task: " + err);
+            });
+
+            const emailText = 'Task "' + props.task.title + '" deleted';
+            dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                user: user.email,
+                userIsOwner: props.boardRef.data().owner === user.email,
+                action: 8,
+                timestamp: new Date(),
+                board: props.boardRef.data().label,
+                boardId: props.boardRef.id,
+                taskName: props.task.title,
+                unread: true
             });
         });
         setOpen(false);
@@ -106,6 +119,19 @@ function TaskListing(props) {
                 ).catch(err => {
                     console.log("Error logging delete task: " + err);
                 });
+
+                const emailText = 'Comment posted on task "' + props.task.title + '":\n"' + commentText + '"';
+                dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.boardRef.data().owner === user.email,
+                    action: 9,
+                    timestamp: new Date(),
+                    board: props.boardRef.data().label,
+                    boardId: props.boardRef.id,
+                    taskName: props.task.title,
+                    commentText: commentText,
+                    unread: true
+                });
             });
             document.getElementById('taskComment').value = '';
         }
@@ -128,6 +154,19 @@ function TaskListing(props) {
                 }
             ).catch(err => {
                 console.log("Error logging delete comment: " + err);
+            });
+
+            const emailText = 'Comment deleted on task "' + props.task.title + '":\n"' + commentText + '"';
+            dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                user: user.email,
+                userIsOwner: props.boardRef.data().owner === user.email,
+                action: 11,
+                timestamp: new Date(),
+                board: props.boardRef.data().label,
+                boardId: props.boardRef.id,
+                taskName: props.task.title,
+                commentText: commentText,
+                unread: true
             });
         });
     };

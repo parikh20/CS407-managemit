@@ -87,7 +87,7 @@ function NewColumnDialog(props) {
                 });
 
                 const emailText = 'Column "' + columnName + '" created in the view "' + props.columnGroupRef.data().label + '"';
-                dispatchUserNotifications(props.boardRef, user, emailText, {
+                dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                     user: user.email,
                     userIsOwner: props.boardRef.data().owner === user.email,
                     colName: columnName,

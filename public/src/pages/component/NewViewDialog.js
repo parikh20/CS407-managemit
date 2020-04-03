@@ -16,6 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import LoadingAnimation from './LoadingAnimation';
 
 import { db } from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -87,6 +88,20 @@ function NewViewDialog(props) {
                 ).catch(err => {
                     console.log("Error logging new column: " + err);
                 });
+
+                const emailText = 'View "' + groupName + '" created with the columns:\n' + columnNames.map(name => '* "' + name + '"').join('\n');
+                dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.boardRef.data().owner === user.email,
+                    action: 15,
+                    timestamp: new Date(),
+                    board: props.boardRef.data().label,
+                    boardId: props.boardRef.id,
+                    groupName: groupName,
+                    columns: columnNames,
+                    unread: true
+                });
+
                 setShowLoadingAnimation(false);
                 setOpen(false);
                 setSuccessSnackbar(true);

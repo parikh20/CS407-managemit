@@ -37,6 +37,7 @@ import dateFormat from 'dateformat';
 
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -223,6 +224,17 @@ function EditTaskDialog(props) {
                     });
                     return Promise.all(columnUpdates);
                 }).then(result => {
+                    const emailText = 'Task "' + label + '" edited';
+                    dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                        user: user.email,
+                        userIsOwner: props.boardRef.data().owner === user.email,
+                        action: 21,
+                        timestamp: new Date(),
+                        board: props.boardRef.data().label,
+                        boardId: props.boardRef.id,
+                        taskName: label,
+                        unread: true
+                    });
                     return db.collection('boards').doc(props.boardRef.id).collection('history').add({
                             user: user.email,
                             taskName: label,
@@ -252,6 +264,17 @@ function EditTaskDialog(props) {
                     });
                     return Promise.all(columnUpdates);
                 }).then(result => {
+                    const emailText = 'Task "' + label + '" created';
+                    dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                        user: user.email,
+                        userIsOwner: props.boardRef.data().owner === user.email,
+                        action: 7,
+                        timestamp: new Date(),
+                        board: props.boardRef.data().label,
+                        boardId: props.boardRef.id,
+                        taskName: label,
+                        unread: true
+                    });
                     return db.collection('boards').doc(props.boardRef.id).collection('history').add({
                             user: user.email,
                             taskName: label,
@@ -322,6 +345,18 @@ function EditTaskDialog(props) {
                         }
                     ).catch(err => {
                         console.log("Error logging new file upload: " + err);
+                    });
+
+                    const emailText = 'Document "' + file.name + '" uploaded';
+                    dispatchUserNotifications(props.boardRef.data(), user, emailText, {
+                        user: user.email,
+                        userIsOwner: props.boardRef.data().owner === user.email,
+                        action: 19,
+                        timestamp: new Date(),
+                        board: props.boardRef.data().label,
+                        boardId: props.boardRef.id,
+                        fileName: file.name,
+                        unread: true
                     });
                 });
             });

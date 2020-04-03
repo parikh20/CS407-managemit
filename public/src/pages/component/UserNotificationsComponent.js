@@ -95,10 +95,108 @@ function HistoryAction(props) {
     const board = props.board;
 
     switch (rowData.action) {
+        case 1:
+            return (
+                <span>
+                    Board name changed to "{rowData.name}" and description changed to "{rowData.description}"
+                </span>
+            );
+        case 2:
+            return (
+                <span>
+                    <HistoryUser user={rowData.user2} userIsOwner={false} /> invited to the board
+                </span>
+            );
+        case 3:
+            return (
+                <span>
+                    <HistoryUser user={rowData.user2} userIsOwner={false} /> removed from the board
+                </span>
+            );
         case 4:
             return (
                 <span>
                     Column <ColumnChip label={rowData.colName} /> created in the view <ColumnChip label={rowData.columnGroupName} />
+                </span>
+            );
+        case 7:
+            return (
+                <span>
+                    Task <TaskChip label={rowData.taskName} /> created
+                </span>
+            );
+        case 8:
+            return (
+                <span>
+                    Task <TaskChip label={rowData.taskName} /> deleted
+                </span>
+            );
+        case 9:
+            return (
+                <span>
+                    Comment posted on task <TaskChip label={rowData.taskName} />: "{rowData.commentText}"
+                </span>
+            );
+        case 10:
+            return (
+                <span>
+                    Ownership transferred from <HistoryUser user={rowData.user} userIsOwner={rowData.userIsOwner} /> to <HistoryUser user={rowData.user2} userIsOwner={false} />
+                </span>
+            );
+        case 11:
+            return (
+                <span>
+                    Comment deleted on task <TaskChip label={rowData.taskName} />: "{rowData.commentText}"
+                </span>
+            );
+        case 12:
+            return (
+                <span>
+                    Permissions for <HistoryUser user={rowData.user2} userIsOwner={false} /> changed to {rowData.newPermission ? 'administrator' : 'collaborator'}
+                </span>
+            );
+        case 15:
+            return (
+                <span>
+                    View <ColumnChip label={rowData.groupName} /> created with the columns {rowData.columns.map(columnName => (
+                        <ColumnChip label={columnName} />
+                    ))}
+                </span>
+            );
+        case 16:
+            return (
+                <span>
+                    View <ColumnChip label={rowData.groupName2} /> renamed to <ColumnChip label={rowData.groupName} />
+                </span>
+            );
+        case 17:
+            return (
+                <span>
+                    View <ColumnChip label={rowData.groupName} /> deleted
+                </span>
+            );
+        case 18:
+            return (
+                <span>
+                    View <ColumnChip label={rowData.groupName} /> set to default view
+                </span>
+            );
+        case 19:
+            return (
+                <span>
+                    Document "{rowData.fileName}" uploaded
+                </span>
+            );
+        case 20:
+            return (
+                <span>
+                    Document "{rowData.fileName}" deleted
+                </span>
+            );
+        case 21:
+            return (
+                <span>
+                    Task <TaskChip label={rowData.taskName} /> edited
                 </span>
             );
     }

@@ -38,6 +38,7 @@ import LoadingAnimation from './LoadingAnimation';
 
 import firebase from '../../Firebase';
 import { db } from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -148,7 +149,7 @@ function BoardDocumentsComponent(props) {
                 uploadedBy: user.email,
                 timestamp: new Date()
             });
-            await  db.collection('boards').doc(props.board.id).collection('history').add(
+            await db.collection('boards').doc(props.board.id).collection('history').add(
                 {
                     user: user.email,
                     fileName: file.name,
@@ -156,6 +157,18 @@ function BoardDocumentsComponent(props) {
                     timestamp: new Date()
                 }
             );
+
+            const emailText = 'Document "' + file.name + '" uploaded';
+            dispatchUserNotifications(props.board, user, emailText, {
+                user: user.email,
+                userIsOwner: props.board.owner === user.email,
+                action: 19,
+                timestamp: new Date(),
+                board: props.board.label,
+                boardId: props.board.id,
+                fileName: file.name,
+                unread: true
+            });
         }
 
         setSuccessSnackbar(true);
@@ -188,6 +201,18 @@ function BoardDocumentsComponent(props) {
                 }
             ).catch(err => {
                 console.log("Error logging file delete: " + err);
+            });
+
+            const emailText = 'Document "' + rowData.fileName + '" deleted';
+            dispatchUserNotifications(props.board, user, emailText, {
+                user: user.email,
+                userIsOwner: props.board.owner === user.email,
+                action: 20,
+                timestamp: new Date(),
+                board: props.board.label,
+                boardId: props.board.id,
+                fileName: rowData.fileName,
+                unread: true
             });
         });
 

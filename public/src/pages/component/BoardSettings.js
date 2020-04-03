@@ -24,6 +24,7 @@ import DeleteBoardDialog from './DeleteBoardDialog';
 import TransferBoardDialog from './TransferBoardDialog';
 
 import { db, auth } from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -107,6 +108,19 @@ function BoardSettings(props) {
                 ).catch(err => {
                     console.log("Error logging board update: " + err);
                 });
+
+                const emailText = 'Board name changed to "' + name + '" and description changed to "' + description + '"';
+                dispatchUserNotifications(props.board, user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.board.owner === user.email,
+                    action: 1,
+                    timestamp: new Date(),
+                    board: props.board.label,
+                    boardId: props.board.id,
+                    name: name,
+                    description: description,
+                    unread: true
+                });
             }).catch(err => {
                 setErrorSnackbar(true);
                 console.log(err);
@@ -155,6 +169,18 @@ function BoardSettings(props) {
                 ).catch(err => {
                     console.log("Error logging inviting user: " + err);
                 });
+
+                const emailText = email + ' invited to the board';
+                dispatchUserNotifications(props.board, user, emailText, {
+                    user: user.email,
+                    userIsOwner: props.board.owner === user.email,
+                    action: 2,
+                    timestamp: new Date(),
+                    board: props.board.label,
+                    boardId: props.board.id,
+                    user2: email,
+                    unread: true
+                });
             }).catch(err => {
                 console.log(err);
             });
@@ -176,6 +202,18 @@ function BoardSettings(props) {
                 }
             ).catch(err => {
                 console.log("Error logging removing user: " + err);
+            });
+
+            const emailText = email + ' removed from the board';
+            dispatchUserNotifications(props.board, user, emailText, {
+                user: user.email,
+                userIsOwner: props.board.owner === user.email,
+                action: 3,
+                timestamp: new Date(),
+                board: props.board.label,
+                boardId: props.board.id,
+                user2: email,
+                unread: true
             });
         }).catch(err => {
             console.log(err);
@@ -199,6 +237,19 @@ function BoardSettings(props) {
                 }
             ).catch(err => {
                 console.log("Error logging changing permisisons: " + err);
+            });
+
+            const emailText = 'Permissions for ' + email + ' changed to ' + (newValue ? 'administrator' : 'collaborator');
+            dispatchUserNotifications(props.board, user, emailText, {
+                user: user.email,
+                userIsOwner: props.board.owner === user.email,
+                action: 12,
+                timestamp: new Date(),
+                board: props.board.label,
+                boardId: props.board.id,
+                user2: email,
+                newValue: newValue,
+                unread: true
             });
         }).catch(err => {
             console.log(err);

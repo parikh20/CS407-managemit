@@ -11,6 +11,7 @@ import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
 
 import { db } from '../../Firebase';
+import { dispatchUserNotifications } from '../../Notifications';
 
 
 function TransferBoardDialog(props) {
@@ -62,6 +63,18 @@ function TransferBoardDialog(props) {
                 }
             ).catch(err => {
                 console.log("Error logging board update: " + err);
+            });
+
+            const emailText = 'Ownership transferred from ' + user.email + ' to ' + selectedUser;
+            dispatchUserNotifications(props.board, user, emailText, {
+                user: user.email,
+                userIsOwner: props.board.owner === user.email,
+                action: 10,
+                timestamp: new Date(),
+                board: props.board.label,
+                boardId: props.board.id,
+                user2: selectedUser,
+                unread: true
             });
         });
     }
