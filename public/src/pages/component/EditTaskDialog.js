@@ -76,6 +76,13 @@ function EditTaskDialog(props) {
         allTasks.sort((a, b) => a.title.localeCompare(b.title));
     }
 
+    let allTasksById = {};
+    if (props.taskRefs && Array.isArray(props.taskRefs)) {
+        for (const taskRef of props.taskRefs) {
+            allTasksById[taskRef.id] = taskRef;
+        }
+    }
+
     let allTasksNameDisplay = {};
     if (props.taskRefs && Array.isArray(props.taskRefs)) {
         for (const task of allTasks) {
@@ -193,13 +200,13 @@ function EditTaskDialog(props) {
             }
         }
 
-        console.log(checklistItems);
-
         if (!hasError) {
             setOpen(false);
 
             if (editMode) {
                 let prevColumnRefs = [...props.existingTask.columnRefs];
+                let removedDependencies = props.existingTask.dependencies.filter(item => !selectedDependencies.includes(item));
+                let removedDependents = props.existingTask.dependents.filter(item => !selectedDependents.includes(item));
                 let newColumnRefs = columnIds.filter(item => !prevColumnRefs.includes(item));
                 props.boardRef.ref.collection('tasks').doc(props.existingTaskRef.id).update({
                     title: label,
@@ -212,17 +219,45 @@ function EditTaskDialog(props) {
                     dependencies: selectedDependencies,
                     dependents: selectedDependents
                 }).then(taskRef => {
-                    let columnUpdates = [];
+                    let updates = [];
                     Object.keys(columns).forEach((colGroupId) => {
                         if (newColumnRefs.includes(columns[colGroupId])) {
-                            columnUpdates.push(
+                            updates.push(
                                 props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
                                     taskRefs: firebase.firestore.FieldValue.arrayUnion(props.existingTaskRef.id)
                                 })
                             );
                         }
                     });
-                    return Promise.all(columnUpdates);
+                    selectedDependencies.forEach(dependency => {
+                        updates.push(
+                            props.boardRef.ref.collection('tasks').doc(dependency).update({
+                                dependents: firebase.firestore.FieldValue.arrayUnion(props.existingTaskRef.id)
+                            })
+                        );
+                    });
+                    selectedDependents.forEach(dependent => {
+                        updates.push(
+                            props.boardRef.ref.collection('tasks').doc(dependent).update({
+                                dependencies: firebase.firestore.FieldValue.arrayUnion(props.existingTaskRef.id)
+                            })
+                        );
+                    });
+                    removedDependencies.forEach(dependency => {
+                        updates.push(
+                            props.boardRef.ref.collection('tasks').doc(dependency).update({
+                                dependents: allTasksById[dependency].data().dependents.filter(item => item !== props.existingTaskRef.id)
+                            })
+                        );
+                    });
+                    removedDependents.forEach(dependent => {
+                        updates.push(
+                            props.boardRef.ref.collection('tasks').doc(dependent).update({
+                                dependencies: allTasksById[dependent].data().dependencies.filter(item => item !== props.existingTaskRef.id)
+                            })
+                        );
+                    });
+                    return Promise.all(updates);
                 }).then(result => {
                     const emailText = 'Task "' + label + '" edited';
                     dispatchUserNotifications(props.boardRef.data(), user, emailText, {
@@ -255,15 +290,29 @@ function EditTaskDialog(props) {
                     dependencies: selectedDependencies,
                     dependents: selectedDependents
                 }).then((taskRef) => {
-                    let columnUpdates = [];
+                    let updates = [];
                     Object.keys(columns).forEach((colGroupId) => {
-                        columnUpdates.push(
+                        updates.push(
                             props.boardRef.ref.collection("columnGroups").doc(colGroupId).collection("columns").doc(columns[colGroupId]).update({
                                 taskRefs: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
                             })
                         );
                     });
-                    return Promise.all(columnUpdates);
+                    selectedDependencies.forEach(dependency => {
+                        updates.push(
+                            props.boardRef.ref.collection('tasks').doc(dependency).update({
+                                dependents: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
+                            })
+                        );
+                    });
+                    selectedDependents.forEach(dependent => {
+                        updates.push(
+                            props.boardRef.ref.collection('tasks').doc(dependent).update({
+                                dependencies: firebase.firestore.FieldValue.arrayUnion(taskRef.id)
+                            })
+                        );
+                    });
+                    return Promise.all(updates);
                 }).then(result => {
                     const emailText = 'Task "' + label + '" created';
                     dispatchUserNotifications(props.boardRef.data(), user, emailText, {

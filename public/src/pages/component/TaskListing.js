@@ -22,6 +22,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 
 import EditTaskDialog from './EditTaskDialog';
+import ConnectedTasksDialog from './ConnectedTasksDialog';
 
 import dateFormat from 'dateformat';
 
@@ -40,6 +41,16 @@ function TaskListing(props) {
     if (props.fileRefs) {
         for (const fileRef of props.fileRefs) {
             fileListings[fileRef.id] = fileRef.data();
+        }
+    }
+
+    let allTasksById = {};
+    if (props.taskRefs && Array.isArray(props.taskRefs)) {
+        for (const taskRef of props.taskRefs) {
+            allTasksById[taskRef.id] = {
+                ref: taskRef,
+                data: taskRef.data()
+            };
         }
     }
 
@@ -340,9 +351,11 @@ function TaskListing(props) {
                      </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>
-                        View connected tasks
-                    </Button>
+                    <ConnectedTasksDialog
+                        boardRef={props.boardRef}
+                        taskRef={props.taskRef}
+                        allTasksById={allTasksById}
+                    />
                     <Button onClick={handleDelete} color='secondary'>
                         Delete
                     </Button>
