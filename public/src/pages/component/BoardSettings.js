@@ -1,5 +1,6 @@
 import '../../App.css';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
@@ -19,6 +20,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import DeleteBoardDialog from './DeleteBoardDialog';
 import TransferBoardDialog from './TransferBoardDialog';
@@ -53,11 +56,22 @@ const useStyles = makeStyles(theme => ({
     chip: {
         marginRight: 5,
         marginLeft: 5
+    },
+    settingsCard: {
+        cursor: 'pointer',
+        padding: theme.spacing(2.5),
+        '&:hover': {
+            background: "#D3D3D3",
+        }
+    },
+    typography: {
+        color: 'black'
     }
 }));
 
 function BoardSettings(props) {
     const classes = useStyles();
+    const history = useHistory();
 
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
@@ -282,7 +296,7 @@ function BoardSettings(props) {
             <Paper className={classes.paper}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <h2>Board Details</h2>
+                        <h2>Board details</h2>
                     </Grid>
                     <Grid item xs={12}>
                         <TextField id='boardName' label='Name' error={nameError} helperText={nameHelperText} variant='outlined' className={classes.textField} InputLabelProps={{shrink: true}} key={props.board.label} defaultValue={props.board.label} />
@@ -316,9 +330,9 @@ function BoardSettings(props) {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell>
-                                            {props.board && <>
+                                            {props.board && (
                                                 <Chip label={props.board.owner} color='primary' className={classes.chip} />
-                                            </>}
+                                            )}
                                         </TableCell>
                                         <TableCell align='right'>
                                             <FormControl disabled>
@@ -330,8 +344,8 @@ function BoardSettings(props) {
                                             </FormControl>
                                         </TableCell>
                                     </TableRow>
-                                    {props.board && props.board.userRefs && <>
-                                        {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => <>
+                                    {props.board && props.board.userRefs && <React.Fragment>
+                                        {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
                                             <TableRow>
                                                 <TableCell>
                                                     <Chip label={userEmail} color='primary' key={userEmail} className={classes.chip} variant='outlined' onDelete={() => deleteUser(userEmail)} />
@@ -345,8 +359,8 @@ function BoardSettings(props) {
                                                     </FormControl>
                                                 </TableCell>
                                             </TableRow>
-                                        </>)}
-                                    </>}
+                                        ))}
+                                    </React.Fragment>}
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -361,15 +375,80 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
+            <Paper className={classes.paper}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>API calls</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/settings')}>
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Edit API calls
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Add, edit, or remove an automatic API call
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <ChevronRightIcon />
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.settingsCard}>
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        View API call log
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        View the results of previous API calls
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <ChevronRightIcon />
+                        </Grid>
+                        <Divider />
+                    </Grid>
+                </Grid>
+            </Paper>
             {props.board && props.board.owner === user.email && (
                 <Paper className={classes.paper}>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                         <Grid item xs={12}>
                             <h2>Here be dragons</h2>
                         </Grid>
-                        <Grid item xs={12}>
-                            <DeleteBoardDialog board={props.board} />
-                            <TransferBoardDialog board={props.board} />
+                        <Grid item xs={12} style={{textAlign: 'left'}}>
+                            <Divider />
+                            <Grid container spacing={0} className={classes.settingsCard}>
+                                <Grid item xs={12} sm container>
+                                    <Grid item container direction="column" spacing={2}>
+                                        <Typography variant='subtitle1' className={classes.typography}>
+                                            Delete board
+                                        </Typography>
+                                        <Typography variant="body2" color='error'>
+                                            Permanently delete the board
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <DeleteBoardDialog board={props.board} />
+                            </Grid>
+                            <Divider />
+                            <Grid container spacing={0} className={classes.settingsCard}>
+                                <Grid item xs={12} sm container>
+                                    <Grid item container direction="column" spacing={2}>
+                                        <Typography variant='subtitle1' className={classes.typography}>
+                                            Transfer board ownership
+                                        </Typography>
+                                        <Typography variant="body2" color='error'>
+                                            Transfer ownership of the board to an administrator of the board
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <TransferBoardDialog board={props.board} />
+                            </Grid>
+                            <Divider />
                         </Grid>
                     </Grid>
                 </Paper>

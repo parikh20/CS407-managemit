@@ -14,6 +14,11 @@ function BoardSubpageBreadcrumbs(props) {
                 <Link color='inherit' href={'/board/' + props.board.id}>
                     {props.board.label}
                 </Link>
+                {props.showSettings && (
+                    <Link color='inherit' href={'/board/' + props.board.id + '/settings'}>
+                        Settings
+                    </Link>
+                )}
                 <Typography color='textPrimary'>
                     {props.currentPageName}
                 </Typography>
