@@ -20,6 +20,7 @@ class ConnectedTasksDialog extends React.Component {
         };
 
         this.buildData = this.buildData.bind(this);
+        this.buildDataRecur = this.buildDataRecur.bind(this);
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
@@ -36,49 +37,89 @@ class ConnectedTasksDialog extends React.Component {
         this.buildData(this.props);
     }
 
-    componentWillRecieveProps(next) {
+    componentWillReceiveProps(next) {
         this.buildData(next);
     }
 
     buildData(props) {
-        let taskData = props.taskRef.data();
-        let graph = [
-            {
+        this.buildDataRecur(props, [], {}, {});
+    }
+
+    buildDataRecur(props, graph, drawnNodes, drawnEdges, startingNode=null) {
+        let taskData = {};
+        let currentId = -1;
+
+        if (startingNode === null) {
+            taskData = props.taskRef.data();
+            currentId = props.taskRef.id;
+            graph.push({
                 data: {
                     id: props.taskRef.id,
                     label: taskData.title
                 }
-            }
-        ];
+            });
+            drawnNodes[currentId] = true;
+        } else {
+            taskData = startingNode.data;
+            currentId = startingNode.id;
+        }
+
         for (const dependency of taskData.dependencies) {
+            //if (drawnNodes[dependency] === true || props.allTasksById[dependency] === undefined) {
+            //    continue;
+            //}
             graph.push({
                 data: {
                     id: dependency,
                     label: props.allTasksById[dependency].data.title
                 }
             });
+            drawnNodes[dependency] = true;
+
+            if (drawnEdges[dependency] !== undefined && drawnEdges[dependency][currentId] === true) {
+                continue;
+            }
             graph.push({
                 data: {
                     source: dependency,
-                    target: props.taskRef.id,
+                    target: currentId,
                     label: ''
                 }
-            })
+            });
+            if (drawnEdges[dependency] === undefined) {
+                drawnEdges[dependency] = {};
+            }
+            drawnEdges[dependency][currentId] = true;
+            this.buildDataRecur(props, graph, drawnNodes, drawnEdges, props.allTasksById[dependency]);
         }
+
         for (const dependent of taskData.dependents) {
+            //if (drawnNodes[dependent] === true || props.allTasksById[dependent] === undefined) {
+            //    continue;
+            //}
             graph.push({
                 data: {
                     id: dependent,
                     label: props.allTasksById[dependent].data.title
                 }
             });
+            drawnNodes[dependent] = true;
+
+            if (drawnEdges[currentId] !== undefined && drawnEdges[currentId][dependent] === true) {
+                continue;
+            }
             graph.push({
                 data: {
-                    source: props.taskRef.id,
+                    source: currentId,
                     target: dependent,
                     label: ''
                 }
             })
+            if (drawnEdges[currentId] === undefined) {
+                drawnEdges[currentId] = {};
+            }
+            drawnEdges[currentId][dependent] = true;
+            this.buildDataRecur(props, graph, drawnNodes, drawnEdges, props.allTasksById[dependent]);
         }
         this.setState({graph: graph});
     }
@@ -94,7 +135,7 @@ class ConnectedTasksDialog extends React.Component {
                             elements={this.state.graph}
                             layout={{
                                 name: 'dagre',
-                                spacingFactor: 5
+                                spacingFactor: 4
                             }}
                             style={{ width: '100%', height: '700px', display: 'block' }}
                             minZoom={0.5}

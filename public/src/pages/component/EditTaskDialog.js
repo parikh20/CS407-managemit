@@ -60,8 +60,10 @@ function EditTaskDialog(props) {
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [warningSnackbar, setWarningSnackbar] = React.useState(false);
     const [selectedUsers, setSelectedUsers] = React.useState([]);
-    const [selectedDependencies, setSelectedDependencies] = React.useState([]);
-    const [selectedDependents, setSelectedDependents] = React.useState([]);
+    let [selectedDependencies, setSelectedDependencies] = React.useState([]); // using let here is not good practice, but is 'required' - 
+    let [selectedDependents, setSelectedDependents] = React.useState([]);     // in other words, I didn't want to rewrite a bunch of stuff
+    const [hasModifiedDependencies, setHasModifiedDependencies] = React.useState(false);
+    const [hasModifiedDependents, setHasModifiedDependents] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -200,14 +202,28 @@ function EditTaskDialog(props) {
             }
         }
 
+        console.log(hasModifiedDependencies);
+        console.log(selectedDependencies);
+        console.log(hasModifiedDependents);
+        console.log(selectedDependents);
+        console.log('----');
+
         if (!hasError) {
             setOpen(false);
 
             if (editMode) {
+                if (!hasModifiedDependencies) {
+                    selectedDependencies = props.existingTask.dependencies;
+                }
+                if (!hasModifiedDependents) {
+                    selectedDependents = props.existingTask.dependents;
+                }
+
                 let prevColumnRefs = [...props.existingTask.columnRefs];
-                let removedDependencies = props.existingTask.dependencies.filter(item => !selectedDependencies.includes(item));
-                let removedDependents = props.existingTask.dependents.filter(item => !selectedDependents.includes(item));
+                let removedDependencies = props.existingTask.dependencies.filter(item => !selectedDependencies.includes(item) && item.trim() !== '');
+                let removedDependents = props.existingTask.dependents.filter(item => !selectedDependents.includes(item) && item.trim() !== '');
                 let newColumnRefs = columnIds.filter(item => !prevColumnRefs.includes(item));
+
                 props.boardRef.ref.collection('tasks').doc(props.existingTaskRef.id).update({
                     title: label,
                     desc: desc,
@@ -216,8 +232,8 @@ function EditTaskDialog(props) {
                     columnRefs: columnIds,
                     checklist: checklistItems,
                     fileRefs: files,
-                    dependencies: selectedDependencies,
-                    dependents: selectedDependents
+                    dependencies: selectedDependencies.filter(item => item.trim() !== ''),
+                    dependents: selectedDependents.filter(item => item.trim() !== '')
                 }).then(taskRef => {
                     let updates = [];
                     Object.keys(columns).forEach((colGroupId) => {
@@ -287,8 +303,8 @@ function EditTaskDialog(props) {
                     columnRefs: columnIds,
                     checklist: checklistItems,
                     fileRefs: files,
-                    dependencies: selectedDependencies,
-                    dependents: selectedDependents
+                    dependencies: selectedDependencies.filter(item => item.trim() !== ''),
+                    dependents: selectedDependents.filter(item => item.trim() !== '')
                 }).then((taskRef) => {
                     let updates = [];
                     Object.keys(columns).forEach((colGroupId) => {
@@ -436,10 +452,12 @@ function EditTaskDialog(props) {
 
     const handleDependenciesSelect = event => {
         setSelectedDependencies(event.target.value);
+        setHasModifiedDependencies(true);
     };
 
     const handleDependentsSelect = event => {
         setSelectedDependents(event.target.value);
+        setHasModifiedDependents(true);
     };
 
     const clearState = () => {
@@ -451,6 +469,8 @@ function EditTaskDialog(props) {
         setDescHelperText('');
         setDateError(false);
         setDateHelperText('');
+        setHasModifiedDependencies(false);
+        setHasModifiedDependents(false);
     };
 
     const clearChecklistErrors = () => {
@@ -724,7 +744,7 @@ function EditTaskDialog(props) {
                                         renderValue={selected => (
                                             <div>
                                                 {selected.map(value => (
-                                                    <Chip key={value} label={allTasksNameDisplay[value]} size='small' color='secondary' variant='contained' />
+                                                    <Chip key={value} label={allTasksNameDisplay[value]} size='small' color='secondary' variant='outlined' />
                                                 ))}
                                             </div>
                                         )}
@@ -753,7 +773,7 @@ function EditTaskDialog(props) {
                                         renderValue={selected => (
                                             <div>
                                                 {selected.map(value => (
-                                                    <Chip key={value} label={allTasksNameDisplay[value]} size='small' color='secondary' variant='contained' />
+                                                    <Chip key={value} label={allTasksNameDisplay[value]} size='small' color='secondary' variant='outlined' />
                                                 ))}
                                             </div>
                                         )}

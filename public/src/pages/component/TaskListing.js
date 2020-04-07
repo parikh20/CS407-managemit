@@ -49,11 +49,12 @@ function TaskListing(props) {
         for (const taskRef of props.taskRefs) {
             allTasksById[taskRef.id] = {
                 ref: taskRef,
-                data: taskRef.data()
+                data: taskRef.data(),
+                id: taskRef.id
             };
         }
     }
-
+    
     const handleClickOpen = () => {
         clearState();
         setOpen(true);
@@ -66,6 +67,21 @@ function TaskListing(props) {
     const handleDelete = () => {
         db.runTransaction(async (t) => {
             props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
+
+            props.boardRef.ref.collection('tasks').where('dependents', 'array-contains', props.taskRef.id).get().then(taskRefs => {
+                taskRefs.docs.forEach(taskRef => {
+                    taskRef.ref.update({
+                        dependents: taskRef.data().dependents.filter(item => item !== props.taskRef.id)
+                    });
+                });
+            });
+            props.boardRef.ref.collection('tasks').where('dependencies', 'array-contains', props.taskRef.id).get().then(taskRefs => {
+                taskRefs.docs.forEach(taskRef => {
+                    taskRef.ref.update({
+                        dependencies: taskRef.data().dependencies.filter(item => item !== props.taskRef.id)
+                    });
+                });
+            });
         }).then(result => {
             const emailText = 'Task "' + props.task.title + '" deleted';
             db.collection('boards').doc(props.boardRef.id).collection('history').add(
@@ -79,6 +95,7 @@ function TaskListing(props) {
             ).catch(err => {
                 console.log("Error logging delete task: " + err);
             });
+
             dispatchUserNotifications(props.boardRef.data(), user, emailText, {
                 user: user.email,
                 userIsOwner: props.boardRef.data().owner === user.email,
@@ -236,7 +253,7 @@ function TaskListing(props) {
                                         {props.task.date === null && (
                                             '(No due date)'
                                         )}
-                                        {props.task.date !== null && (<>
+                                        {props.task.date !== null && <React.Fragment>
                                             {dateFormat(props.task.date.toDate(), 'mm/dd/yyyy')}
                                             <Button
                                                 variant='outlined'
@@ -247,7 +264,7 @@ function TaskListing(props) {
                                             >
                                                 View on calendar
                                             </Button>
-                                        </>)}
+                                        </React.Fragment>}
                                     </Typography>
                                 </Grid>
                             </Grid>
