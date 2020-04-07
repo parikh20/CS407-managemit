@@ -20,6 +20,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import IconButton from '@material-ui/core/IconButton';
 
+import ApiHelpDialog from './ApiHelpDialog';
+
 import { db } from '../../Firebase';
 
 const useStyles = makeStyles(theme => ({
@@ -76,6 +78,11 @@ function BoardApiSettingsComponent(props) {
         name: '',
         value: ''
     }]);
+    const [editMode, setEditMode] = React.useState(false);
+    const [nameError, setNameError] = React.useState(false);
+    const [nameHelperText, setNameHelperText] = React.useState('');
+    const [urlError, setUrlError] = React.useState(false);
+    const [urlHelperText, setUrlHelperText] = React.useState('');
 
     const handleAddRow = () => {
         let paramsCopy = [...params];
@@ -98,6 +105,25 @@ function BoardApiSettingsComponent(props) {
             });
         }
         setParams(paramsCopy);
+    };
+
+    const handleSubmit = () => {
+        clearState();
+
+        const name = document.getElementById('callName').value.trim();
+        const url = document.getElementById('callUrl').value.trim();
+        const method = document.getElementById('callMethod').value;
+        const action = document.getElementById('callAction').value;
+        const body = document.getElementById('callBody').value;
+
+
+    };
+
+    const clearState = () => {
+        setNameError(false);
+        setNameHelperText('');
+        setUrlError(false);
+        setUrlHelperText('');
     };
 
     return (
@@ -141,17 +167,19 @@ function BoardApiSettingsComponent(props) {
                                             variant='outlined'
                                             InputLabelProps={{shrink: true}}
                                             className={classes.textField}
-                                                margin='dense'
+                                            margin='dense'
+                                            error={nameError}
+                                            helperText={nameHelperText}
                                         />
                                     </Grid>
                                     <Grid item xs={4}>
                                         <FormControl variant='outlined' className={classes.textField} margin='dense'>
-                                            <InputLabel id='demo-simple-select-outlined-label'>Method</InputLabel>
+                                            <InputLabel id='callMethodLabel'>Method</InputLabel>
                                             <Select
-                                                labelId='demo-simple-select-outlined-label'
-                                                id='demo-simple-select-outlined'
+                                                labelId='callMethodLabel'
+                                                id='callMethod'
                                                 label='Method'
-                                                value='GET'
+                                                defaultValue='GET'
                                             >
                                                 <MenuItem value='GET'>GET</MenuItem>
                                                 <MenuItem value='POST'>POST</MenuItem>
@@ -160,10 +188,10 @@ function BoardApiSettingsComponent(props) {
                                     </Grid>
                                     <Grid item xs={4}>
                                         <FormControl variant='outlined' className={classes.textField} margin='dense'>
-                                            <InputLabel id='demo-simple-select-outlined-label'>Action</InputLabel>
+                                            <InputLabel id='callActionLabel'>Action</InputLabel>
                                             <Select
-                                                labelId='demo-simple-select-outlined-label'
-                                                id='demo-simple-select-outlined'
+                                                labelId='callActionLabel'
+                                                id='callAction'
                                                 label='Action'
                                                 value={7}
                                             >
@@ -199,6 +227,8 @@ function BoardApiSettingsComponent(props) {
                                             InputLabelProps={{shrink: true}}
                                             className={classes.textField}
                                             margin='dense'
+                                            error={urlError}
+                                            helperText={urlHelperText}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -206,18 +236,40 @@ function BoardApiSettingsComponent(props) {
                                     </Grid>
                                     <Grid item xs={12} style={{textAlign: 'left'}}>
                                         <Typography variant='h6'>
-                                            Parameters
+                                            Body (optional)
                                         </Typography>
                                     </Grid>
-                                    {params.map((param, index) => (<React.Fragment>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            id='callBody'
+                                            label='Body'
+                                            variant='outlined'
+                                            className={classes.textField}
+                                            multiline
+                                            rows={3}
+                                            InputLabelProps={{shrink: true}}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Divider />
+                                    </Grid>
+                                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                                        <Typography variant='h6'>
+                                            Parameters (optional)
+                                        <ApiHelpDialog />
+                                        </Typography>
+                                    </Grid>
+                                    {params.map((param, index) => (<React.Fragment key={index}>
                                         <Grid item xs={2}>
                                             <FormControl variant='outlined' className={classes.textField} margin='dense'>
-                                                <InputLabel id='demo-simple-select-outlined-label'>Multi-line</InputLabel>
+                                                <InputLabel id={'paramMultiLine' + index + 'Label'}>Multi-line</InputLabel>
                                                 <Select
-                                                    labelId='demo-simple-select-outlined-label'
-                                                    id='demo-simple-select-outlined'
+                                                    labelId={'paramMultiLine' + index + 'Label'}
+                                                    id={'paramMultiLine' + index}
                                                     label='Multi-line'
                                                     value={false}
+                                                    data-index={index}
+                                                    className='paramMultiLine'
                                                 >
                                                     <MenuItem value={true}>Yes</MenuItem>
                                                     <MenuItem value={false}>No</MenuItem>
@@ -231,7 +283,10 @@ function BoardApiSettingsComponent(props) {
                                                 variant='outlined'
                                                 InputLabelProps={{shrink: true}}
                                                 className={classes.textField}
+                                                style={{width: '100%'}}
                                                 margin='dense'
+                                                data-index={index}
+                                                className='paramName'
                                             />
                                         </Grid>
                                         <Grid item xs={6}>
@@ -243,6 +298,8 @@ function BoardApiSettingsComponent(props) {
                                                 className={classes.textField}
                                                 style={{width: '90%'}}
                                                 margin='dense'
+                                                data-index={index}
+                                                className='paramValue'
                                             />
                                             <IconButton onClick={() => handleRemoveRow(index)}>
                                                 <RemoveCircleOutlineIcon />
@@ -251,7 +308,10 @@ function BoardApiSettingsComponent(props) {
                                     </React.Fragment>))}
                                     <Grid item xs={12}>
                                         <Button variant='contained' style={{float: 'left'}} onClick={handleAddRow}>New row</Button>
-                                        <Button variant='contained' color='primary' style={{float: 'right'}}>Create new call</Button>
+                                        <div style={{float: 'right'}}>
+                                            {editMode && <Button variant='contained' style={{marginRight: '10px'}}>Cancel</Button>}
+                                            <Button variant='contained' color='primary'>Create new call</Button>
+                                        </div>
                                     </Grid>
                                 </Grid>
                             </ExpansionPanelDetails>
