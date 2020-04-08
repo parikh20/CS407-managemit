@@ -30,7 +30,7 @@ function ApiHelpDialog(props) {
                         Parameters are included in the body (for POST requests) or as query parameters (for GET requests).
                         <br /><br />
                         There are also special variables that can be included in the parameters. Managemit will automatically replace
-                        these variables with the value when the call is made:
+                        these variables with the value when the call is made: TODO WRITE THIS LATER
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
