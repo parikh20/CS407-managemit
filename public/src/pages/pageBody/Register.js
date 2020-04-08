@@ -72,7 +72,9 @@ function Register(props) {
                     firebase.firestore().collection('users').doc(user.email).set({
                         darkMode: false,
                         emailNotifications: true,
-                        inAppNotifications: true
+                        inAppNotifications: true,
+                        vacationMode: false,
+                        vacationModeEndDate: null
                     }).then(res => {
                         history.push('/login');
                         setSuccessSnackbar(true);

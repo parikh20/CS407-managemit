@@ -303,6 +303,7 @@ function BoardApiSettingsComponent(props) {
         setSavedBody('');
         setSavedName('');
         setSavedBody('');
+        setSavedUrl('');
     }
 
     return (
@@ -503,7 +504,7 @@ function BoardApiSettingsComponent(props) {
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                         {props.apiCallRefs.map(apiCallRef => (
-                            <ExpansionPanel style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}}>
+                            <ExpansionPanel style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}} key={apiCallRef.id}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls='panel1bh-content'

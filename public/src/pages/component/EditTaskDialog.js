@@ -148,7 +148,7 @@ function EditTaskDialog(props) {
         let date = document.getElementById('taskDueDate').valueAsDate;
 
         // date inputs give UTC dates, so we need to convert that to the local timezone
-        if (date != null) {
+        if (date !== null) {
             date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
         }
 
