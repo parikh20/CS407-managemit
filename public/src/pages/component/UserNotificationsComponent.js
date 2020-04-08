@@ -92,7 +92,6 @@ function TaskChip(props) {
 
 function HistoryAction(props) {
     const rowData = props.rowData;
-    const board = props.board;
 
     switch (rowData.action) {
         case 1:
@@ -199,10 +198,11 @@ function HistoryAction(props) {
                     Task <TaskChip label={rowData.taskName} /> edited
                 </span>
             );
+        default:
+            return (
+                <span>HISTORY ENTRY MISSING</span>
+            );  
     }
-    return (
-        <span>HISTORY ENTRY MISSING</span>
-    );
 }
 
 function UserNotificationsComponent(props) {

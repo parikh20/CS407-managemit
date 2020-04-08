@@ -4,8 +4,6 @@ import { createBrowserHistory } from 'history';
 import NavBar from './component/NavBar';
 import UserSettings from './pageBody/UserSettings';
 
-import { db } from '../Firebase';
-
 class UserSettingsPage extends React.Component {
     constructor(props) {
         super(props);

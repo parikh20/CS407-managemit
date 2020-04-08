@@ -148,7 +148,6 @@ class ConnectedTasksDialog extends React.Component {
                                     style: {
                                         'background-color': '#3F51B5',
                                         'height': '5px',
-                                        'height': '5px',
                                         'shape': 'rectangle',
                                         'label': 'data(label)'
                                     }

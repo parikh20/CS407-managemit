@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -17,7 +16,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import firebase from '../../Firebase';
 import { db } from '../../Firebase';
-import { cache } from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -121,7 +119,7 @@ function DeleteAccountDialog(props) {
         cleanState();
 
         if (user.providerData[0].providerId === 'google.com') {
-            if (checkBoards() == true) {
+            if (checkBoards() === true) {
                 firebase.auth().currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider()).then(res => {
                     deleteData();
                     res.user.delete().then(() => {
@@ -134,7 +132,7 @@ function DeleteAccountDialog(props) {
                 });
             }
         } else {
-            if (checkBoards() == true) {
+            if (checkBoards() === true) {
                 firebase.auth().currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(
                     user.email,
                     document.getElementById('password').value

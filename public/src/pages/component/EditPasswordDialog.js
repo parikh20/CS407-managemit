@@ -10,7 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
-import { Typography, Divider, InputLabel } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 import Snackbar from '@material-ui/core/Snackbar'
 import MuiAlert from '@material-ui/lab/Alert';
@@ -36,7 +36,6 @@ function EditPasswordDialog() {
     const history = useHistory();
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const [open, setOpen] = React.useState(false);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordHelperText, setPasswordHelperText] = React.useState('');
@@ -74,7 +73,7 @@ function EditPasswordDialog() {
     const changePassword = (password, newPassword, verifyPassword) => {
         cleanState();
 
-                if (password.length == 0) {
+                if (password.length === 0) {
                     setPasswordError(true);
                     setPasswordHelperText('Password cannot be empty');
                 } else if (password.length < 6) {
@@ -83,10 +82,10 @@ function EditPasswordDialog() {
                 } else if (password.length > 128) {
                     setPasswordError(true);
                     setPasswordHelperText('Password must be less than 128 characters long');
-                } else if (newPassword.length == 0) { 
+                } else if (newPassword.length === 0) { 
                     setNewPasswordError(true);
                     setNewPasswordHelperText('New password cannot be empty');
-                } else if (verifyPassword.length == 0) {
+                } else if (verifyPassword.length === 0) {
                     setVerifyPasswordError(true);
                     setVerifyPasswordHelperText('Verify password cannot be empty');
                 } else if (newPassword !== verifyPassword) {

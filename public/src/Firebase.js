@@ -1,6 +1,5 @@
 import firebase from 'firebase'
-import {ReplaySubject} from 'rxjs';
-import {email} from './Email';
+import { ReplaySubject } from 'rxjs';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCEN33oNb29C4H6rUj9H5do_zimBQS7ycI",

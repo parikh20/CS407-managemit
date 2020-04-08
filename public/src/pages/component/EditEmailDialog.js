@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
-import { Typography, Divider, InputLabel } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 import ArrowIcon from '@material-ui/icons/ArrowForwardIos';
 
 import firebase from '../../Firebase';
@@ -55,7 +55,7 @@ function EditEmailDialog() {
     const changeEmail = (email) => {
         cleanState();
 
-        if (email.length == 0) {
+        if (email.length === 0) {
             setEmailError(true);
             setEmailHelperText('Email cannot be empty');
         } else if (!regexp.test(email)) {
@@ -63,7 +63,7 @@ function EditEmailDialog() {
             setEmailHelperText('Email must be properly formatted')
         } else {
                 const password = document.getElementById('password').value
-                if (password.length == 0) {
+                if (password.length === 0) {
                     setPasswordError(true);
                     setPasswordHelperText('Password cannot be empty');
                 } else if (password.length < 6) {
@@ -83,7 +83,7 @@ function EditEmailDialog() {
                             localStorage.setItem('user', JSON.stringify(user))
                             handleClose();
                         }).catch(err => {
-                            if (err.code == 'auth/email-already-in-use') {
+                            if (err.code === 'auth/email-already-in-use') {
                                 setEmailError(true);
                                 setEmailHelperText('Email already in use')
                             }

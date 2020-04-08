@@ -15,8 +15,6 @@ class Email {
             })
         })
     }
-
-    constructor() {}
 }
 
 export const email = new Email();

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BoardSubpageBreadcrumbs from '../component/BoardSubpageBreadcrumbs';
 import UserSettingsComponent from '../component/UserSettingsComponent';
 
 import { db } from '../../Firebase';

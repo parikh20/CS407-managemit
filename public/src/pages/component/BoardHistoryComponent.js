@@ -193,10 +193,11 @@ function HistoryAction(props) {
                     Task <TaskChip label={rowData.taskName} /> edited
                 </span>
             );
+        default:
+            return (
+                <span>HISTORY ENTRY MISSING</span>
+            );    
     }
-    return (
-        <span>HISTORY ENTRY MISSING</span>
-    );
 }
 
 

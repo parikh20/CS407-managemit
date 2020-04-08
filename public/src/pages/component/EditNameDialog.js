@@ -58,7 +58,7 @@ function EditNameDialog() {
         if (name.length > 50) {
             setNameError(true);
             setNameHelperText('Name cannot be greater than 50 characters long')
-        } else if (name.length == 0) {
+        } else if (name.length === 0) {
             setNameError(true);
             setNameHelperText('Name cannot be empty');
         } else {
@@ -77,7 +77,7 @@ function EditNameDialog() {
                 });
             } else {
                 const password = document.getElementById('password').value
-                if (password.length == 0) {
+                if (password.length === 0) {
                     setPasswordError(true);
                     setPasswordHelperText('Password cannot be empty');
                 } else if (password.length < 6) {
