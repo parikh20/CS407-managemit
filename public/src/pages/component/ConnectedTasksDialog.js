@@ -4,6 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
@@ -16,6 +17,7 @@ class ConnectedTasksDialog extends React.Component {
         super(props);
         this.state = {
             open: false,
+            showAll: true,
             graph: []
         };
 
@@ -34,18 +36,22 @@ class ConnectedTasksDialog extends React.Component {
     }
 
     componentWillMount() {
-        this.buildData(this.props);
+        this.setState({showAll: this.props.showAll}, () => {
+            this.buildData(this.props);
+        });
     }
 
     componentWillReceiveProps(next) {
-        this.buildData(next);
+        this.setState({showAll: next.showAll}, () => {
+            this.buildData(next);
+        });
     }
 
     buildData(props) {
-        this.buildDataRecur(props, [], {}, {});
+        this.buildDataRecur(props, this.state.showAll, [], {}, {});
     }
 
-    buildDataRecur(props, graph, drawnNodes, drawnEdges, startingNode=null) {
+    buildDataRecur(props, recur, graph, drawnNodes, drawnEdges, startingNode=null) {
         let taskData = {};
         let currentId = -1;
 
@@ -90,7 +96,9 @@ class ConnectedTasksDialog extends React.Component {
                 drawnEdges[dependency] = {};
             }
             drawnEdges[dependency][currentId] = true;
-            this.buildDataRecur(props, graph, drawnNodes, drawnEdges, props.allTasksById[dependency]);
+            if (recur) {
+                this.buildDataRecur(props, recur, graph, drawnNodes, drawnEdges, props.allTasksById[dependency]);
+            }
         }
 
         for (const dependent of taskData.dependents) {
@@ -119,7 +127,9 @@ class ConnectedTasksDialog extends React.Component {
                 drawnEdges[currentId] = {};
             }
             drawnEdges[currentId][dependent] = true;
-            this.buildDataRecur(props, graph, drawnNodes, drawnEdges, props.allTasksById[dependent]);
+            if (recur) {
+                this.buildDataRecur(props, recur, graph, drawnNodes, drawnEdges, props.allTasksById[dependent]);
+            }
         }
         this.setState({graph: graph});
     }
@@ -127,9 +137,9 @@ class ConnectedTasksDialog extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <Button onClick={this.handleClickOpen}>View connected tasks</Button>
+                <MenuItem onClick={this.handleClickOpen}>View {this.props.showAll ? 'all' : 'direct'} connections</MenuItem>
                 <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='lg'>
-                    <DialogTitle id='form-dialog-title'>Connected tasks</DialogTitle>
+                    <DialogTitle id='form-dialog-title'>{this.props.showAll ? 'All' : 'Directly'} connected tasks</DialogTitle>
                     <DialogContent>
                         <CytoscapeComponent
                             elements={this.state.graph}

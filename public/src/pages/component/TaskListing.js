@@ -20,6 +20,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import Menu from '@material-ui/core/Menu';
 
 import EditTaskDialog from './EditTaskDialog';
 import ConnectedTasksDialog from './ConnectedTasksDialog';
@@ -32,6 +33,7 @@ import { dispatchUserNotifications } from '../../Notifications';
 
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
+    const [connectionMenuEl, setConnectionMenuEl] = React.useState(null);
     const [commentError, setCommentError] = React.useState(false);
     const [commentHelperText, setCommentHelperText] = React.useState('');
 
@@ -62,6 +64,14 @@ function TaskListing(props) {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleMenuOpen = event => {
+        setConnectionMenuEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setConnectionMenuEl(null);
     };
 
     const handleDelete = () => {
@@ -368,11 +378,30 @@ function TaskListing(props) {
                      </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <ConnectedTasksDialog
-                        boardRef={props.boardRef}
-                        taskRef={props.taskRef}
-                        allTasksById={allTasksById}
-                    />
+                    <Button aria-controls='connections-menu' aria-haspopup='true' onClick={handleMenuOpen}>
+                        View connections
+                    </Button>
+                    <Menu
+                        id='connections-menu'
+                        anchorEl={connectionMenuEl}
+                        keepMounted
+                        open={Boolean(connectionMenuEl)}
+                        onClose={handleMenuClose}
+                    >
+
+                        <ConnectedTasksDialog
+                            boardRef={props.boardRef}
+                            taskRef={props.taskRef}
+                            allTasksById={allTasksById}
+                            showAll={false}
+                        />
+                        <ConnectedTasksDialog
+                            boardRef={props.boardRef}
+                            taskRef={props.taskRef}
+                            allTasksById={allTasksById}
+                            showAll={true}
+                        />
+                    </Menu>
                     <Button onClick={handleDelete} color='secondary'>
                         Delete
                     </Button>
