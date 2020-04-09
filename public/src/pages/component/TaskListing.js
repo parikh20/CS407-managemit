@@ -24,6 +24,7 @@ import Menu from '@material-ui/core/Menu';
 
 import EditTaskDialog from './EditTaskDialog';
 import ConnectedTasksDialog from './ConnectedTasksDialog';
+import DeleteTaskDialog from './DeleteTaskDialog';
 
 import dateFormat from 'dateformat';
 
@@ -72,52 +73,6 @@ function TaskListing(props) {
 
     const handleMenuClose = () => {
         setConnectionMenuEl(null);
-    };
-
-    const handleDelete = () => {
-        db.runTransaction(async (t) => {
-            props.boardRef.ref.collection('tasks').doc(props.taskRef.id).delete();
-
-            props.boardRef.ref.collection('tasks').where('dependents', 'array-contains', props.taskRef.id).get().then(taskRefs => {
-                taskRefs.docs.forEach(taskRef => {
-                    taskRef.ref.update({
-                        dependents: taskRef.data().dependents.filter(item => item !== props.taskRef.id)
-                    });
-                });
-            });
-            props.boardRef.ref.collection('tasks').where('dependencies', 'array-contains', props.taskRef.id).get().then(taskRefs => {
-                taskRefs.docs.forEach(taskRef => {
-                    taskRef.ref.update({
-                        dependencies: taskRef.data().dependencies.filter(item => item !== props.taskRef.id)
-                    });
-                });
-            });
-        }).then(result => {
-            const emailText = 'Task "' + props.task.title + '" deleted';
-            db.collection('boards').doc(props.boardRef.id).collection('history').add(
-                {
-                    user: user.email,
-                    taskName: props.task.title,
-                    action: 8,
-                    timestamp: new Date(),
-                    actionText: emailText
-                }
-            ).catch(err => {
-                console.log("Error logging delete task: " + err);
-            });
-
-            dispatchUserNotifications(props.boardRef.data(), user, emailText, {
-                user: user.email,
-                userIsOwner: props.boardRef.data().owner === user.email,
-                action: 8,
-                timestamp: new Date(),
-                board: props.boardRef.data().label,
-                boardId: props.boardRef.id,
-                taskName: props.task.title,
-                unread: true
-            });
-        });
-        setOpen(false);
     };
 
     const handleChecklistItemStatusChange = (event, index) => {
@@ -402,9 +357,11 @@ function TaskListing(props) {
                             showAll={true}
                         />
                     </Menu>
-                    <Button onClick={handleDelete} color='secondary'>
-                        Delete
-                    </Button>
+                    <DeleteTaskDialog
+                        taskRef={props.taskRef}
+                        boardRef={props.boardRef}
+                        task={props.task}
+                    />
                     <EditTaskDialog
                         buttonSize='medium'
                         buttonVariant='default'
