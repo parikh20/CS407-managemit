@@ -64,6 +64,7 @@ function Alert(props) {
 
 function NewBoardDialog() {
     const [open, setOpen] = React.useState(false);
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
     
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
@@ -96,17 +97,20 @@ function NewBoardDialog() {
             setDescriptionError(true);
             setDescriptionHelperText('Board description must be greater than 150 characters long')
         } else {
+            setButtonDisabled(true);
             try {
                 setShowLoadingAnimation(true);
                 createBoard(name,description).then(() => {
                     setShowLoadingAnimation(false);
                     setOpen(false);
                     setSuccessSnackbar(true);
+                    setButtonDisabled(false);
                 }).catch((err) => {console.error(err)});
             } catch (err) {
                 setOpen(true);
                 setNameError(true);
                 setNameHelperText('Board could not be created!');
+                setButtonDisabled(false);
             }
         }
     };
@@ -168,7 +172,7 @@ function NewBoardDialog() {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmit} color='primary'>
+                    <Button onClick={handleSubmit} color='primary' disabled={buttonDisabled}>
                         Create board
                     </Button>
                 </DialogActions>

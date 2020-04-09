@@ -24,6 +24,8 @@ function Alert(props) {
 
 function NewViewDialog(props) {
     const [open, setOpen] = React.useState(false);
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
+
     const [nameError, setNameError] = React.useState(false);
     const [nameHelperText, setNameHelperText] = React.useState('');
     const [columnError, setColumnError] = React.useState(false);
@@ -62,6 +64,7 @@ function NewViewDialog(props) {
             setNameHelperText('View name is already in use');
         } else {
             setShowLoadingAnimation(true);
+            setButtonDisabled(true);
             db.collection('boards').doc(props.boardRef.id).collection('columnGroups').add({
                 label: groupName
             }).then(async (columnGroupRef) => {
@@ -105,6 +108,7 @@ function NewViewDialog(props) {
                 setShowLoadingAnimation(false);
                 setOpen(false);
                 setSuccessSnackbar(true);
+                setButtonDisabled(false);
             });
         }
     };
@@ -201,7 +205,7 @@ function NewViewDialog(props) {
                             </Button>
                         </Grid>
                     </Grid>
-                    {columnNames.length > 0 && (<>
+                    {columnNames.length > 0 && <React.Fragment>
                         <Divider style={{margin: 10}} />
                         <DialogContentText>
                             Column names
@@ -213,7 +217,7 @@ function NewViewDialog(props) {
                                 ))}
                             </Grid>
                         </Grid>
-                    </>)}
+                    </React.Fragment>}
                     {showLoadingAnimation && (
                         <LoadingAnimation />
                     )}
@@ -222,7 +226,7 @@ function NewViewDialog(props) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmit} color='primary'>
+                    <Button onClick={handleSubmit} color='primary' disabled={buttonDisabled}>
                         Create view
                     </Button>
                 </DialogActions>
