@@ -59,11 +59,12 @@ function EditTaskDialog(props) {
     const [fileAttachments, setFileAttachments] = React.useState({});
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
     const [warningSnackbar, setWarningSnackbar] = React.useState(false);
-    const [selectedUsers, setSelectedUsers] = React.useState([]);
+    let [selectedUsers, setSelectedUsers] = React.useState([]);
     let [selectedDependencies, setSelectedDependencies] = React.useState([]); // using let here is not good practice, but is 'required' - 
     let [selectedDependents, setSelectedDependents] = React.useState([]);     // in other words, I didn't want to rewrite a bunch of stuff
     const [hasModifiedDependencies, setHasModifiedDependencies] = React.useState(false);
     const [hasModifiedDependents, setHasModifiedDependents] = React.useState(false);
+    const [hasModifiedUsers, setHasModifiedUsers] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -118,6 +119,9 @@ function EditTaskDialog(props) {
         setSelectedUsers([]);
         setSelectedDependents([]);
         setSelectedDependencies([]);
+        setHasModifiedDependencies(false);
+        setHasModifiedDependents(false);
+        setHasModifiedUsers(false);
 
         setFileAttachments(defaultFileAttachments);
         setChecklistItems(defaultChecklistItems);
@@ -202,12 +206,6 @@ function EditTaskDialog(props) {
             }
         }
 
-        console.log(hasModifiedDependencies);
-        console.log(selectedDependencies);
-        console.log(hasModifiedDependents);
-        console.log(selectedDependents);
-        console.log('----');
-
         if (!hasError) {
             setOpen(false);
 
@@ -217,6 +215,9 @@ function EditTaskDialog(props) {
                 }
                 if (!hasModifiedDependents) {
                     selectedDependents = props.existingTask.dependents;
+                }
+                if (!hasModifiedUsers) {
+                    selectedUsers = props.existingTask.users;
                 }
 
                 let prevColumnRefs = [...props.existingTask.columnRefs];
@@ -448,6 +449,7 @@ function EditTaskDialog(props) {
 
     const handleUserSelect = event => {
         setSelectedUsers(event.target.value);
+        setHasModifiedUsers(true);
     };
 
     const handleDependenciesSelect = event => {
@@ -469,8 +471,6 @@ function EditTaskDialog(props) {
         setDescHelperText('');
         setDateError(false);
         setDateHelperText('');
-        setHasModifiedDependencies(false);
-        setHasModifiedDependents(false);
     };
 
     const clearChecklistErrors = () => {
@@ -728,7 +728,7 @@ function EditTaskDialog(props) {
                                 </Typography>
                             </Grid>
                         )}
-                        {allTasks && allTasks.length > 0 && (<>
+                        {allTasks && allTasks.length > 0 && <React.Fragment>
                             <Grid item xs={12}>
                                 <FormControl style={{width: '100%'}}>
                                     <InputLabel id='dependencies-input-label'>Dependencies</InputLabel>
@@ -786,7 +786,7 @@ function EditTaskDialog(props) {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                        </>)}
+                        </React.Fragment>}
                      </Grid>
                 </DialogContent>
                 <DialogActions>
