@@ -39,6 +39,7 @@ class NavBar extends React.Component {
         this.showNavigation = !(['/login', '/register'].includes(this.props.location));
         this.showBoardFeatures = this.props.location.startsWith('/board') && this.props.location !== '/boards';
         this.showBoardFeatures = this.showBoardFeatures && boardSubpages.map(subpage => this.props.location.endsWith(subpage)).filter(item => item === true).length === 0;
+        this.showSearch = this.props.location.startsWith('/board') && boardSubpages.map(subpage => this.props.location.endsWith(subpage)).filter(item => item === true).length === 0;
 
         this.state = {
             caseSensitiveChecked: false,
@@ -102,27 +103,33 @@ class NavBar extends React.Component {
             searchInput = searchInput.toLowerCase();
         }
         this.setState({searchInput: searchInput});
-        const taskElements = document.getElementsByClassName('taskListing');
+
+        let elements = [];
+        if (this.showBoardFeatures) {
+            elements = document.getElementsByClassName('taskListing');
+        } else {
+            elements = document.getElementsByClassName('boardCard');
+        }
 
         if (searchInput === '') {
-            for (let i = 0; i < taskElements.length; i++) {
-                taskElements[i].classList.remove('search_matches');
-                taskElements[i].classList.remove('search_no_matches');
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('search_matches');
+                elements[i].classList.remove('search_no_matches');
             }
         } else {
             let matchCount = 0;
-            for (let i = 0; i < taskElements.length; i++) {
-                let content = taskElements[i].innerText;
+            for (let i = 0; i < elements.length; i++) {
+                let content = elements[i].innerText;
                 if (!this.state.caseSensitiveChecked) {
                     content = content.toLowerCase();
                 }
                 if (content.includes(searchInput)) {
-                    taskElements[i].classList.remove('search_no_matches');
-                    taskElements[i].classList.add('search_matches');
+                    elements[i].classList.remove('search_no_matches');
+                    elements[i].classList.add('search_matches');
                     matchCount++;
                 } else {
-                    taskElements[i].classList.remove('search_matches');
-                    taskElements[i].classList.add('search_no_matches');
+                    elements[i].classList.remove('search_matches');
+                    elements[i].classList.add('search_no_matches');
                 }
             }
             this.setState({searchMatches: matchCount});
@@ -160,13 +167,13 @@ class NavBar extends React.Component {
                                 <Button href='/boards' color='inherit' style={{marginLeft: 5}}>Boards</Button>
                             }
                         </Typography>
-                        {this.showBoardFeatures && <>
+                        {this.showSearch && <React.Fragment>
                             {this.state.searchInput !== '' && (
                                 <Typography color='inherit' style={{marginRight: 10 + 'px'}}>
                                     {this.state.searchMatches} match{this.state.searchMatches !== 1 ? 'es': ''}
                                 </Typography>
                             )}
-                            <TextField placeholder='Search for task' onChange={() => this.searchTasks()} id='taskSearchInput' style={{width: '25%', borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
+                            <TextField placeholder={'Search for ' + (this.showBoardFeatures ? 'task' : 'board')} onChange={() => this.searchTasks()} id='taskSearchInput' style={{width: '25%', borderRadius: 5 + 'px', paddingLeft: 5, paddingRight: 5, color: '#FFFFFF', backgroundColor: fade('#FFFFFF', 0.15), '&:hover': {backgroundColor: fade('#FFFFFF', 0.25)}}}/>
                             <Tooltip title='Case sensitivity' arrow>
                                 <ToggleButtonGroup size='small' exclusive value={this.state.caseSensitiveChecked} style={{backgroundColor: 'inherit'}} onChange={this.toggleCaseSensitiveChecked}>
                                     <ToggleButton value={true} style={{border: 0, color: 'white'}}>
@@ -174,44 +181,46 @@ class NavBar extends React.Component {
                                     </ToggleButton>
                                 </ToggleButtonGroup>
                             </Tooltip>
-                            <Tooltip title='Sort tasks' arrow>
-                                <IconButton
-                                    edge='end'
-                                    aria-label='sort'
-                                    color='inherit'
-                                    aria-controls='sort-menu'
-                                    aria-haspopup='true'
-                                    onClick={this.handleMenuOpen}
-                                >
-                                    <SortIcon />
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                id='sort-menu'
-                                anchorEl={this.state.menuAnchorEl}
-                                keepMounted
-                                open={Boolean(this.state.menuAnchorEl)}
-                                onClose={this.handleMenuClose}
-                            >
-                                <MenuItem onClick={() => this.handleMenuClick('titleAsc')}>Sort by title (ascending)</MenuItem>
-                                <MenuItem onClick={() => this.handleMenuClick('titleDesc')}>Sort by title (descending)</MenuItem>
-                                <MenuItem onClick={() => this.handleMenuClick('date')}>Sort by due date</MenuItem>
-                                <MenuItem onClick={() => this.handleMenuClick('users')}>Sort by assigned to me</MenuItem>
-                            </Menu>
-                            {this.props.sortMode !== null && (
-                                <Tooltip title='Return to default task display and unlock functionality' arrow>
+                            {this.showBoardFeatures && <React.Fragment>
+                                <Tooltip title='Sort tasks' arrow>
                                     <IconButton
                                         edge='end'
-                                        aria-label='unlock'
+                                        aria-label='sort'
                                         color='inherit'
-                                        onClick={this.handleUnlock}
+                                        aria-controls='sort-menu'
+                                        aria-haspopup='true'
+                                        onClick={this.handleMenuOpen}
                                     >
-                                        <LockOpenIcon />
+                                        <SortIcon />
                                     </IconButton>
                                 </Tooltip>
-                            )}
-                        </>}
-                        {this.showNavigation && <>
+                                <Menu
+                                    id='sort-menu'
+                                    anchorEl={this.state.menuAnchorEl}
+                                    keepMounted
+                                    open={Boolean(this.state.menuAnchorEl)}
+                                    onClose={this.handleMenuClose}
+                                >
+                                    <MenuItem onClick={() => this.handleMenuClick('titleAsc')}>Sort by title (ascending)</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('titleDesc')}>Sort by title (descending)</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('date')}>Sort by due date</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('users')}>Sort by assigned to me</MenuItem>
+                                </Menu>
+                                {this.props.sortMode !== null && (
+                                    <Tooltip title='Return to default task display and unlock functionality' arrow>
+                                        <IconButton
+                                            edge='end'
+                                            aria-label='unlock'
+                                            color='inherit'
+                                            onClick={this.handleUnlock}
+                                        >
+                                            <LockOpenIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                            </React.Fragment>}
+                        </React.Fragment>}
+                        {this.showNavigation && <React.Fragment>
                             <Tooltip title='Notifications' arrow>
                                 <IconButton
                                     edge='end'
@@ -242,7 +251,7 @@ class NavBar extends React.Component {
                                     <ExitToAppIcon />
                                 </IconButton>
                             </Tooltip>
-                        </>}
+                        </React.Fragment>}
                     </Toolbar>
                 </AppBar>
             </div>
