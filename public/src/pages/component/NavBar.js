@@ -181,44 +181,53 @@ class NavBar extends React.Component {
                                     </ToggleButton>
                                 </ToggleButtonGroup>
                             </Tooltip>
-                            {this.showBoardFeatures && <React.Fragment>
-                                <Tooltip title='Sort tasks' arrow>
-                                    <IconButton
-                                        edge='end'
-                                        aria-label='sort'
-                                        color='inherit'
-                                        aria-controls='sort-menu'
-                                        aria-haspopup='true'
-                                        onClick={this.handleMenuOpen}
-                                    >
-                                        <SortIcon />
-                                    </IconButton>
-                                </Tooltip>
-                                <Menu
-                                    id='sort-menu'
-                                    anchorEl={this.state.menuAnchorEl}
-                                    keepMounted
-                                    open={Boolean(this.state.menuAnchorEl)}
-                                    onClose={this.handleMenuClose}
+                            <Tooltip title='Sort tasks' arrow>
+                                <IconButton
+                                    edge='end'
+                                    aria-label='sort'
+                                    color='inherit'
+                                    aria-controls='sort-menu'
+                                    aria-haspopup='true'
+                                    onClick={this.handleMenuOpen}
                                 >
+                                    <SortIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <Menu
+                                id='sort-menu'
+                                anchorEl={this.state.menuAnchorEl}
+                                keepMounted
+                                open={Boolean(this.state.menuAnchorEl)}
+                                onClose={this.handleMenuClose}
+                            >
+                                {this.showBoardFeatures && <React.Fragment>
                                     <MenuItem onClick={() => this.handleMenuClick('titleAsc')}>Sort by title (ascending)</MenuItem>
                                     <MenuItem onClick={() => this.handleMenuClick('titleDesc')}>Sort by title (descending)</MenuItem>
                                     <MenuItem onClick={() => this.handleMenuClick('date')}>Sort by due date</MenuItem>
                                     <MenuItem onClick={() => this.handleMenuClick('users')}>Sort by assigned to me</MenuItem>
-                                </Menu>
-                                {this.props.sortMode !== null && (
-                                    <Tooltip title='Return to default task display and unlock functionality' arrow>
-                                        <IconButton
-                                            edge='end'
-                                            aria-label='unlock'
-                                            color='inherit'
-                                            onClick={this.handleUnlock}
-                                        >
-                                            <LockOpenIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                )}
-                            </React.Fragment>}
+                                </React.Fragment>}
+                                {!this.showBoardFeatures && <React.Fragment>
+                                    <MenuItem onClick={() => this.handleMenuClick('nameAsc')}>Sort by name (ascending)</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('nameDesc')}>Sort by name (descending)</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('descAsc')}>Sort by description (ascending)</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('descDesc')}>Sort by description (descending)</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('owner')}>Sort by owned by me</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('admin')}>Sort by administered by me</MenuItem>
+                                    <MenuItem onClick={() => this.handleMenuClick('users')}>Sort by number of collaborators</MenuItem>
+                                </React.Fragment>}
+                            </Menu>
+                            {this.props.sortMode !== null && this.showBoardFeatures && (
+                                <Tooltip title='Return to default task display and unlock functionality' arrow>
+                                    <IconButton
+                                        edge='end'
+                                        aria-label='unlock'
+                                        color='inherit'
+                                        onClick={this.handleUnlock}
+                                    >
+                                        <LockOpenIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
                         </React.Fragment>}
                         {this.showNavigation && <React.Fragment>
                             <Tooltip title='Notifications' arrow>
