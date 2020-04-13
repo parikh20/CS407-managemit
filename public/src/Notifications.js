@@ -17,6 +17,16 @@ const dispatchUserNotifications = (boardData, currentUser, emailText, data, extr
             if (userPrefs === undefined) {
                 return;
             }
+            if (userPrefs.vacationMode && userPrefs.vacationModeEndDate !== null) {
+                let today = new Date();
+                if (userPrefs.vacationModeEndDate.toDate() >= today) {
+                    return;
+                }
+                db.collection('users').doc(userEmail).update({
+                    vacationModeEndDate: null,
+                    vacationMode: false
+                });
+            }
             if (userPrefs.inAppNotifications) {
                 db.collection('users').doc(userEmail).collection('notifications').add(data);
             }
