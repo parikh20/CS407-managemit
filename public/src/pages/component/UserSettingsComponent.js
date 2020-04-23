@@ -76,7 +76,7 @@ const useStyles = makeStyles(theme => ({
     },
     darkHeader: {
         color: white,
-        backgroundColor: black
+        backgroundColor: secondaryDark
     },
     whiteHeader: {
         color: black,
