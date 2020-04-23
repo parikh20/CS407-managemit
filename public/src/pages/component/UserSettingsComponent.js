@@ -21,8 +21,10 @@ import DeleteAccountDialog from './DeleteAccountDialog';
 
 import { db } from '../../Firebase';
 
-const primaryDark = "#120136"
-const secondaryDark = "#035AA6"
+// import {primaryDark, secondaryDark, black, white} from '../../styling/getStyles'
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
 const black = "#000"
 const white = "#fff"
 
@@ -47,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     darkpaper: {
         textAlign: 'left',
         marginTop: 20,
-        color: black,
+        color: darkTextColor,
         backgroundColor: secondaryDark
     },
     whitepaper: {
@@ -62,7 +64,7 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: "#D3D3D3",
         },
-        color: white,
+        color: darkTextColor,
         backgroundColor: secondaryDark
     },
     whiteSettingsCard: {
@@ -75,7 +77,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: white
     },
     darkHeader: {
-        color: white,
+        color: darkTextColor,
         backgroundColor: secondaryDark
     },
     whiteHeader: {
