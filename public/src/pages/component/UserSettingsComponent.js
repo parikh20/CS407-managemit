@@ -21,19 +21,40 @@ import DeleteAccountDialog from './DeleteAccountDialog';
 
 import { db } from '../../Firebase';
 
+const primaryDark = "#120136"
+const secondaryDark = "#035AA6"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
     root: {
-        backgroundColor: "#000"
+        backgroundColor: white
     },
-    userSettingsBody: {
+    darkuserSettingsBody: {
         flexGrow: 1,
         padding: 20,
         paddingRight: 200,
-        paddingLeft: 200
+        paddingLeft: 200,
+        backgroundColor: primaryDark
     },
-    paper: {
+    whiteuserSettingsBody: {
+        flexGrow: 1,
+        padding: 20,
+        paddingRight: 200,
+        paddingLeft: 200,
+        backgroundColor: white
+    },
+    darkpaper: {
         textAlign: 'left',
-        marginTop: 20
+        marginTop: 20,
+        color: black,
+        backgroundColor: secondaryDark
+    },
+    whitepaper: {
+        textAlign: 'left',
+        marginTop: 20,
+        color: black,
+        backgroundColor: white
     },
     darkSettingsCard: {
         cursor: 'pointer',
@@ -41,8 +62,8 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: "#D3D3D3",
         },
-        color: "#fff",
-        backgroundColor: "#1F1B24"
+        color: white,
+        backgroundColor: secondaryDark
     },
     whiteSettingsCard: {
         cursor: 'pointer',
@@ -50,16 +71,16 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: "#D3D3D3",
         },
-        color: "#000",
-        backgroundColor: "#fff"
+        color: black,
+        backgroundColor: white
     },
     darkHeader: {
-        color: "#fff",
-        backgroundColor: "#1F1B24"
+        color: white,
+        backgroundColor: black
     },
     whiteHeader: {
-        color: "#000",
-        backgroundColor: "#fff"
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -130,8 +151,8 @@ function UserSettingsComponent(props) {
     }
 
     return (
-        <div className={classes.userSettingsBody}>
-            <Paper className={classes.paper} >
+        <div className={classes[`${darkMode}userSettingsBody`]}>
+            <Paper className={classes[`${darkMode}paper`]} >
                 <Typography variant='h5' className={classes[`${darkMode}Header`]}>Change Your Account Details</Typography>
                 <AddPhotoDialog />
                 <EditNameDialog />
@@ -143,7 +164,7 @@ function UserSettingsComponent(props) {
                     }
             </Paper>
 
-            <Paper className={classes.paper} >
+            <Paper className={classes[`${darkMode}paper`]} >
                 <Typography variant='h5' className={classes[`${darkMode}Header`]}>Display Settings</Typography>
                 <Divider />
                 <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
@@ -162,7 +183,7 @@ function UserSettingsComponent(props) {
                 <Divider />
             </Paper>
 
-            <Paper className={classes.paper} >
+            <Paper className={classes[`${darkMode}paper`]} >
                 <Typography variant='h5' className={classes[`${darkMode}Header`]}>Notification Settings</Typography>
                 <Divider />
                 <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
