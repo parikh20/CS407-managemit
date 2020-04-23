@@ -22,6 +22,9 @@ import DeleteAccountDialog from './DeleteAccountDialog';
 import { db } from '../../Firebase';
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        backgroundColor: "#000"
+    },
     userSettingsBody: {
         flexGrow: 1,
         padding: 20,
@@ -32,15 +35,31 @@ const useStyles = makeStyles(theme => ({
         textAlign: 'left',
         marginTop: 20
     },
-    settingsCard: {
+    darkSettingsCard: {
         cursor: 'pointer',
         padding: theme.spacing(2.5),
         '&:hover': {
             background: "#D3D3D3",
-        }
+        },
+        color: "#fff",
+        backgroundColor: "#1F1B24"
     },
-    header: {
-        padding: theme.spacing(2)
+    whiteSettingsCard: {
+        cursor: 'pointer',
+        padding: theme.spacing(2.5),
+        '&:hover': {
+            background: "#D3D3D3",
+        },
+        color: "#000",
+        backgroundColor: "#fff"
+    },
+    darkHeader: {
+        color: "#fff",
+        backgroundColor: "#1F1B24"
+    },
+    whiteHeader: {
+        color: "#000",
+        backgroundColor: "#fff"
     }
 }));
 
@@ -54,8 +73,10 @@ function UserSettingsComponent(props) {
 
     const [errorText, setErrorText] = React.useState('');
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
+    const darkMode = props.settings.darkMode ? "dark" : "white"
 
     const handleChange = name => event => {
+        console.log(props.settings.darkMode)
         db.collection('users').doc(user.email).set(
             {[name]: event.target.checked},
             {merge: true}
@@ -111,7 +132,7 @@ function UserSettingsComponent(props) {
     return (
         <div className={classes.userSettingsBody}>
             <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Change Your Account Details</Typography>
+                <Typography variant='h5' className={classes[`${darkMode}Header`]}>Change Your Account Details</Typography>
                 <AddPhotoDialog />
                 <EditNameDialog />
                 { user.providerData[0].providerId === 'password' &&
@@ -123,9 +144,9 @@ function UserSettingsComponent(props) {
             </Paper>
 
             <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Display Settings</Typography>
+                <Typography variant='h5' className={classes[`${darkMode}Header`]}>Display Settings</Typography>
                 <Divider />
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -142,9 +163,9 @@ function UserSettingsComponent(props) {
             </Paper>
 
             <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Notification Settings</Typography>
+                <Typography variant='h5' className={classes[`${darkMode}Header`]}>Notification Settings</Typography>
                 <Divider />
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -158,7 +179,7 @@ function UserSettingsComponent(props) {
                     <Switch checked={props.settings.emailNotifications || false} onChange={handleChange('emailNotifications')} color="primary" />   
                 </Grid>
 
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -172,7 +193,7 @@ function UserSettingsComponent(props) {
                     <Switch checked={props.settings.inAppNotifications || false} onChange={handleChange('inAppNotifications')} color="primary" />   
                 </Grid>
 
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -187,7 +208,7 @@ function UserSettingsComponent(props) {
                 </Grid>
 
                 {props.settings.vacationMode && (
-                    <Grid container spacing={0} className={classes.settingsCard} >
+                    <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                         <Grid item xs={12} sm container>
                             <Grid item container direction="column" spacing={2} >
                                 <Typography variant='subtitle1'>
