@@ -21,26 +21,66 @@ import DeleteAccountDialog from './DeleteAccountDialog';
 
 import { db } from '../../Firebase';
 
+const primaryDark = "#120136"
+const secondaryDark = "#035AA6"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
-    userSettingsBody: {
+    root: {
+        backgroundColor: white
+    },
+    darkuserSettingsBody: {
         flexGrow: 1,
         padding: 20,
         paddingRight: 200,
-        paddingLeft: 200
+        paddingLeft: 200,
+        backgroundColor: primaryDark
     },
-    paper: {
+    whiteuserSettingsBody: {
+        flexGrow: 1,
+        padding: 20,
+        paddingRight: 200,
+        paddingLeft: 200,
+        backgroundColor: white
+    },
+    darkpaper: {
         textAlign: 'left',
-        marginTop: 20
+        marginTop: 20,
+        color: black,
+        backgroundColor: secondaryDark
     },
-    settingsCard: {
+    whitepaper: {
+        textAlign: 'left',
+        marginTop: 20,
+        color: black,
+        backgroundColor: white
+    },
+    darkSettingsCard: {
         cursor: 'pointer',
         padding: theme.spacing(2.5),
         '&:hover': {
             background: "#D3D3D3",
-        }
+        },
+        color: white,
+        backgroundColor: secondaryDark
     },
-    header: {
-        padding: theme.spacing(2)
+    whiteSettingsCard: {
+        cursor: 'pointer',
+        padding: theme.spacing(2.5),
+        '&:hover': {
+            background: "#D3D3D3",
+        },
+        color: black,
+        backgroundColor: white
+    },
+    darkHeader: {
+        color: white,
+        backgroundColor: black
+    },
+    whiteHeader: {
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -54,8 +94,10 @@ function UserSettingsComponent(props) {
 
     const [errorText, setErrorText] = React.useState('');
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
+    const darkMode = props.settings.darkMode ? "dark" : "white"
 
     const handleChange = name => event => {
+        console.log(props.settings.darkMode)
         db.collection('users').doc(user.email).set(
             {[name]: event.target.checked},
             {merge: true}
@@ -109,9 +151,9 @@ function UserSettingsComponent(props) {
     }
 
     return (
-        <div className={classes.userSettingsBody}>
-            <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Change Your Account Details</Typography>
+        <div className={classes[`${darkMode}userSettingsBody`]}>
+            <Paper className={classes[`${darkMode}paper`]} >
+                <Typography variant='h5' className={classes[`${darkMode}Header`]}>Change Your Account Details</Typography>
                 <AddPhotoDialog />
                 <EditNameDialog />
                 { user.providerData[0].providerId === 'password' &&
@@ -122,10 +164,10 @@ function UserSettingsComponent(props) {
                     }
             </Paper>
 
-            <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Display Settings</Typography>
+            <Paper className={classes[`${darkMode}paper`]} >
+                <Typography variant='h5' className={classes[`${darkMode}Header`]}>Display Settings</Typography>
                 <Divider />
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -141,10 +183,10 @@ function UserSettingsComponent(props) {
                 <Divider />
             </Paper>
 
-            <Paper className={classes.paper} >
-                <Typography variant='h5' className={classes.header}>Notification Settings</Typography>
+            <Paper className={classes[`${darkMode}paper`]} >
+                <Typography variant='h5' className={classes[`${darkMode}Header`]}>Notification Settings</Typography>
                 <Divider />
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -158,7 +200,7 @@ function UserSettingsComponent(props) {
                     <Switch checked={props.settings.emailNotifications || false} onChange={handleChange('emailNotifications')} color="primary" />   
                 </Grid>
 
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -172,7 +214,7 @@ function UserSettingsComponent(props) {
                     <Switch checked={props.settings.inAppNotifications || false} onChange={handleChange('inAppNotifications')} color="primary" />   
                 </Grid>
 
-                <Grid container spacing={0} className={classes.settingsCard} >
+                <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                     <Grid item xs={12} sm container>
                         <Grid item container direction="column" spacing={2} >
                             <Typography variant='subtitle1'>
@@ -187,7 +229,7 @@ function UserSettingsComponent(props) {
                 </Grid>
 
                 {props.settings.vacationMode && (
-                    <Grid container spacing={0} className={classes.settingsCard} >
+                    <Grid container spacing={0} className={classes[`${darkMode}SettingsCard`]} >
                         <Grid item xs={12} sm container>
                             <Grid item container direction="column" spacing={2} >
                                 <Typography variant='subtitle1'>
