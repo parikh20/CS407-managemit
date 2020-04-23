@@ -186,14 +186,29 @@ function TaskListing(props) {
         setCommentHelperText('');
     };
 
+    let elements = [];
+    elements = document.getElementsByClassName('taskListing');
+    console.log(elements)
+    for (let i = 0; i < elements.length; i++) {
+        let content = elements[i].innerText;
+        if (content.includes("Complete")) {
+            elements[i].classList.add('complete');
+        } else {
+            elements[i].classList.remove('complete');
+        }
+    }
+
     return (
-        <Card variant='outlined' style={{marginBottom: 5}}>
+        <Card variant='outlined' style={{marginBottom: 5}} >
             <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
                 <Typography variant='h6' component='h2'>
                     {props.task.title.length < 30 ? props.task.title : props.task.title.slice(0, 30) + '...'}
                 </Typography>
                 <Typography variant='body2' component='p'>
                     {props.task.desc.length < 300 ? props.task.desc : props.task.desc.slice(0, 300) + '...'}
+                </Typography>
+                <Typography variant='body2' component='p'>
+                    {props.task.completed ? "Complete" : "Incomplete"}
                 </Typography>
             </CardContent>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
@@ -212,7 +227,6 @@ function TaskListing(props) {
                                                 label={"Completed"}
                                             />
                         </Grid>
-                        
                         <Grid item xs={6}>
                             <Grid container spacing={1}>
                                 <Grid item xs={12}>

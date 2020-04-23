@@ -31,6 +31,7 @@ class NavBar extends React.Component {
 
         try {
             this.user = JSON.parse(localStorage.getItem('user'));
+
         } catch (e) {
             // Nothing to do here
         }
@@ -59,7 +60,7 @@ class NavBar extends React.Component {
 
         this.loadNotificationCount();
     }
-
+    
     handleMenuOpen(event) {
         this.setState({menuAnchorEl: event.currentTarget});
     }

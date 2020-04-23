@@ -44,3 +44,7 @@
 .search_no_matches {
     opacity: 0.2;
 }
+
+.complete {
+    background-color: #2bae66ff;
+}
