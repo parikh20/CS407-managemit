@@ -225,6 +225,12 @@ function TaskListing(props) {
                             <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
                                 {props.task.desc !== '' ? props.task.desc : '(No description provided)'}
                             </Typography>
+                            <Typography variant='h6' component='p'>
+                                Points
+                            </Typography>
+                            <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
+                                {props.task.points ? props.task.points + " points" : 0 + " points"}
+                            </Typography>
                             <FormControlLabel
                                                 control={<Checkbox checked={props.task.completed || false} onClick={(event) => handleCompletedChange(event)} />}
                                                 label={"Completed"}

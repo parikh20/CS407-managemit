@@ -150,7 +150,7 @@ function EditTaskDialog(props) {
         let label = document.getElementById('taskTitle').value.trim();
         let desc = document.getElementById('taskDescription').value.trim();
         let date = document.getElementById('taskDueDate').valueAsDate;
-
+        let taskPoints = document.getElementById('points').value;
         // date inputs give UTC dates, so we need to convert that to the local timezone
         if (date !== null) {
             date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
@@ -230,6 +230,7 @@ function EditTaskDialog(props) {
                     desc: desc,
                     date: date,
                     users: selectedUsers,
+                    points: taskPoints,
                     columnRefs: columnIds,
                     checklist: checklistItems,
                     fileRefs: files,
@@ -301,6 +302,7 @@ function EditTaskDialog(props) {
                     desc: desc,
                     date: date,
                     users: selectedUsers,
+                    points: taskPoints,
                     columnRefs: columnIds,
                     checklist: checklistItems,
                     fileRefs: files,
@@ -534,6 +536,17 @@ function EditTaskDialog(props) {
                                 defaultValue={props.existingTask && props.existingTask.date ? dateFormat(props.existingTask.date.toDate(), 'yyyy-mm-dd') : ''}
                                 /* The above defaultValue may or may not actually be the user-displayed selected date - this is OS, browser, and locale-
                                    dependent. Setting it to a standard ISO date seems to work regardless though */
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="points"
+                                label="Points"
+                                type="number"
+                                defaultValue={props.existingTask ? props.existingTask.points : 0}
+                                fullWidth
+                                InputLabelProps={{shrink: true}}
+                                variant="outlined"
                             />
                         </Grid>
                         <Grid item xs={12}>
