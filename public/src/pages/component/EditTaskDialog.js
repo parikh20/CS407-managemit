@@ -506,7 +506,7 @@ function EditTaskDialog(props) {
     return (
         <>
             <ButtonGroup size={props.buttonSize ? props.buttonSize : 'small'}>
-                <Button onClick={handleClickOpen} className={classes[`${mode}Button`]} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
+                <Button disabled={props.buttonDisabled}  className={classes[`${mode}Button`]} onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
                 <DialogContent>
