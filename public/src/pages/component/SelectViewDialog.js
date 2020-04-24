@@ -12,16 +12,36 @@ import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { db } from '../../Firebase';
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
 
 const useStyles = makeStyles(theme => ({
     list: {
         backgroundColor: theme.palette.background.paper
     },
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    }
 }));
 
 function SelectViewDialog(props) {
     const classes = useStyles();
     const history = useHistory();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
 
     const [open, setOpen] = React.useState(false);
 
@@ -60,7 +80,7 @@ function SelectViewDialog(props) {
     return (
         <div>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>Select view</Button>
+                <Button onClick={handleClickOpen} className={classes[`${mode}Button`]}>Select view</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>Select view</DialogTitle>
