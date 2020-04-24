@@ -208,7 +208,10 @@ function TaskListing(props) {
                     {props.task.desc.length < 300 ? props.task.desc : props.task.desc.slice(0, 300) + '...'}
                 </Typography>
                 <Typography variant='body2' component='p'>
-                    {props.task.completed ? "Complete" : "Incomplete"}
+                    {props.task.completed ? "Task Complete" : "Task Incomplete"}
+                </Typography>
+                <Typography variant='body2' component='p'>
+                    {props.task.date != null ? 'Due ' + dateFormat(props.task.date.toDate(), 'mm/dd/yyyy') : ''}
                 </Typography>
             </CardContent>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
