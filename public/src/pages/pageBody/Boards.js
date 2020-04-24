@@ -67,7 +67,7 @@ class Boards extends React.Component {
 
     render() {
         return (
-            <div style={{backgroundColor: primaryDark}}>
+            <div>
                 <BoardsActions />
                 <BoardCardCollection boardRefs={this.state.boardRefs} sortMode={this.props.sortMode} />
             </div>
