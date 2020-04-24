@@ -21,7 +21,6 @@ import DeleteAccountDialog from './DeleteAccountDialog';
 
 import { db } from '../../Firebase';
 
-// import {primaryDark, secondaryDark, black, white} from '../../styling/getStyles'
 const primaryDark = "#222831"
 const secondaryDark = "#30476E"
 const darkTextColor = "#c1a57b"
@@ -89,6 +88,7 @@ const useStyles = makeStyles(theme => ({
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
+
 
 function UserSettingsComponent(props) {
     const classes = useStyles();

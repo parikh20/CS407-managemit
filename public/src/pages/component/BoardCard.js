@@ -1,23 +1,64 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
+import { db } from '../../Firebase';
+
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkGrid: {
+        // width: 80 + '%',
+        // margin: '10px auto 0px auto',
+        backgroundColor: primaryDark
+    },
+    whiteGrid: {
+        // width: 80 + '%',
+        // margin: '10px auto 0px auto',
+        backgroundColor: white
+    },
+    darkPaper: {
+        padding: '12px',
+        cursor: 'pointer',
+        backgroundColor: secondaryDark,
+        color: darkTextColor
+    },
+    whitePaper: {
+        padding: '12px',
+        cursor: 'pointer',
+        backgroundColor: white,
+        color: black
+    }
+}));
+
 
 function BoardCard(props) {
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
+    const classes = useStyles();
 
     const boardPath = '/board/' + props.board.id;
     const goToBoardPage = () => {
         history.push(boardPath);
     }
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
 
     return (
-        <Grid item xs={3}>
-            <Paper onClick={goToBoardPage} style={{padding: '12px', cursor: 'pointer'}} className='boardCard'>
+        <Grid item xs={3} className={classes[`${mode}Grid`]}>
+            <Paper onClick={goToBoardPage} className={classes[`${mode}Paper`]}>
                 <Typography variant='h6' component='h2' style={{textAlign: 'center'}} className='boardCardLabel'>
                     {props.board.label}
                 </Typography>
