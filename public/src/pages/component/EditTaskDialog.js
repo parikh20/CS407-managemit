@@ -67,6 +67,7 @@ function EditTaskDialog(props) {
     const [hasModifiedUsers, setHasModifiedUsers] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
+    
 
     let allTasks = [];
     if (props.taskRefs && Array.isArray(props.taskRefs)) {
@@ -146,7 +147,6 @@ function EditTaskDialog(props) {
 
     const handleSubmit = () => {
         const editMode = props.existingTask ? true : false;
-
         let label = document.getElementById('taskTitle').value.trim();
         let desc = document.getElementById('taskDescription').value.trim();
         let date = document.getElementById('taskDueDate').valueAsDate;
@@ -538,17 +538,20 @@ function EditTaskDialog(props) {
                                    dependent. Setting it to a standard ISO date seems to work regardless though */
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        { (props.board.owner && props.board.permissions) && (props.board.owner === user.email || props.board.permissions[user.email].isAdmin === true) &&
+                        <div>
+                            <Grid item xs={12}>
                             <TextField
                                 id="points"
                                 label="Points"
                                 type="number"
                                 defaultValue={props.existingTask ? props.existingTask.points : 0}
-                                fullWidth
-                                InputLabelProps={{shrink: true}}
+                                fullWidth={true}
                                 variant="outlined"
                             />
                         </Grid>
+                        </div>
+                        } 
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Files
