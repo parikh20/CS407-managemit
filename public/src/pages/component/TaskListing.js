@@ -395,6 +395,7 @@ function TaskListing(props) {
                         buttonSize='medium'
                         buttonVariant='default'
                         buttonText='Edit'
+                        buttonDisabled={props.task.completed ? true : false}
                         buttonConfirmText='Save changes'
                         boardRef={props.boardRef}
                         board={props.board}
