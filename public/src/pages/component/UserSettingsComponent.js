@@ -98,6 +98,8 @@ function UserSettingsComponent(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const darkMode = props.settings.darkMode ? "dark" : "white"
 
+    darkMode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
+
     const handleChange = name => event => {
         console.log(props.settings.darkMode)
         db.collection('users').doc(user.email).set(

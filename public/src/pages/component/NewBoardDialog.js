@@ -11,8 +11,39 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 
 import LoadingAnimation from './LoadingAnimation';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { db } from '../../Firebase';
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        backgroundColor: white
+    },
+    darkBody: {
+        color: darkTextColor,
+        backgroundColor: primaryDark
+    },
+    whiteBody: {
+        color: black,
+        backgroundColor: white
+    },
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    }
+}));
+
+
 
 const defaultColumns = ["Backlog","In Progress","Reviewing","Complete"];
 
@@ -72,6 +103,12 @@ function NewBoardDialog() {
     const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
     const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
+    const user = JSON.parse(localStorage.getItem('user'));
+    const classes = useStyles();
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -135,7 +172,7 @@ function NewBoardDialog() {
     return (
         <div>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>New board</Button>
+                <Button onClick={handleClickOpen} className={classes[`${mode}Button`]}>New board</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>New board</DialogTitle>

@@ -33,6 +33,14 @@ const useStyles = makeStyles(theme => ({
     whiteText: {
         backgroundColor: white,
         color: black
+    },
+    darkDiv: {
+        flexGrow: 1,
+        backgroundColor: primaryDark
+    },
+    whiteDiv: {
+        flexGrow: 1,
+        backgroundColor: white
     }
 }));
 
@@ -46,7 +54,7 @@ function BoardsActions(props) {
     })
     return (
         <Grid container className={classes[`${mode}Grid`]}>
-            <div style={{flexGrow: 1}}>
+            <div className={classes[`${mode}Div`]}>
                 <Breadcrumbs aria-label='breadcrumbs' >
                     <Typography className={classes[`${mode}Text`]}>
                         Boards
