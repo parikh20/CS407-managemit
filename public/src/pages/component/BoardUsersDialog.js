@@ -13,11 +13,36 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Chip from '@material-ui/core/Chip';
+import { db } from '../../Firebase';
+import { makeStyles } from '@material-ui/core/styles';
 
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    }
+}));
 
 function BoardUsersDialog(props) {
     const user = JSON.parse(localStorage.getItem('user'));
     const [open, setOpen] = React.useState(false);
+    const classes = useStyles();
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -30,7 +55,7 @@ function BoardUsersDialog(props) {
     return (
         <div>
             <ButtonGroup size='small'>
-                <Button onClick={handleClickOpen}>Collaborators</Button>
+                <Button onClick={handleClickOpen} className={classes[`${mode}Button`]}>Collaborators</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>Collaborators for {props.board.label}</DialogTitle>
