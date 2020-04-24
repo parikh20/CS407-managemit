@@ -1,11 +1,29 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 
 import BoardsActions from '../component/BoardsActions';
 import BoardCardCollection from '../component/BoardCardCollection';
 
 import { db } from '../../Firebase';
+import color from '@material-ui/core/colors/amber';
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkBody: {
+        backgroundColor: primaryDark
+    },
+    whiteBody: {
+        backgroundColor: white
+    }
+}));
 
 class Boards extends React.Component {
+    // classes = useStyles();
 
     boardsSub;
 
@@ -13,8 +31,16 @@ class Boards extends React.Component {
         super(props);
         this.state = {
             boardRefs: []
+            // mode: 'white'
         };
         this.user = JSON.parse(localStorage.getItem('user'));
+        console.log(props);
+        // db.collection('users').doc(this.user.email).get().then(doc => {
+        //     doc.data().darkMode ? this.setState({
+        //         mode: 'dark'
+        //     }) : '';
+        //     console.log(this.state.mode)
+        // })
         this.loadBoards(this.user);
     }
 

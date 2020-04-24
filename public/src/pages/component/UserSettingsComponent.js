@@ -21,8 +21,9 @@ import DeleteAccountDialog from './DeleteAccountDialog';
 
 import { db } from '../../Firebase';
 
-const primaryDark = "#120136"
-const secondaryDark = "#035AA6"
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
 const black = "#000"
 const white = "#fff"
 
@@ -47,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     darkpaper: {
         textAlign: 'left',
         marginTop: 20,
-        color: black,
+        color: darkTextColor,
         backgroundColor: secondaryDark
     },
     whitepaper: {
@@ -62,7 +63,7 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: "#D3D3D3",
         },
-        color: white,
+        color: darkTextColor,
         backgroundColor: secondaryDark
     },
     whiteSettingsCard: {
@@ -75,8 +76,8 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: white
     },
     darkHeader: {
-        color: white,
-        backgroundColor: black
+        color: darkTextColor,
+        backgroundColor: secondaryDark
     },
     whiteHeader: {
         color: black,
@@ -88,6 +89,7 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
+
 function UserSettingsComponent(props) {
     const classes = useStyles();
     const user = JSON.parse(localStorage.getItem('user'));
@@ -95,6 +97,8 @@ function UserSettingsComponent(props) {
     const [errorText, setErrorText] = React.useState('');
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const darkMode = props.settings.darkMode ? "dark" : "white"
+
+    darkMode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
 
     const handleChange = name => event => {
         console.log(props.settings.darkMode)

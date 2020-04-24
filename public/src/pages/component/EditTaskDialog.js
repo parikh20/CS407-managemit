@@ -38,6 +38,26 @@ import dateFormat from 'dateformat';
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
+import { makeStyles } from '@material-ui/core/styles';
+
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    }
+}));
+
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -67,7 +87,11 @@ function EditTaskDialog(props) {
     const [hasModifiedUsers, setHasModifiedUsers] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
-    
+    const classes = useStyles();
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
 
     let allTasks = [];
     if (props.taskRefs && Array.isArray(props.taskRefs)) {
@@ -483,7 +507,7 @@ function EditTaskDialog(props) {
     return (
         <>
             <ButtonGroup size={props.buttonSize ? props.buttonSize : 'small'}>
-                <Button disabled={props.buttonDisabled}  onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
+                <Button disabled={props.buttonDisabled}  className={classes[`${mode}Button`]} onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
                 <DialogContent>

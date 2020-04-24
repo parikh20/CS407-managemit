@@ -23,6 +23,26 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { db } from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
 
+import { makeStyles } from '@material-ui/core/styles';
+
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    }
+}));
+
 function EditViewDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [errors, setErrors] = React.useState({});
@@ -31,6 +51,11 @@ function EditViewDialog(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const history = useHistory();
+    const classes = useStyles();
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
 
     let colGroups = Array.isArray(props.allColGroups) ? props.allColGroups : [];
     let allCols = props.allCols || {};
@@ -241,7 +266,7 @@ function EditViewDialog(props) {
     return (
         <>
             <ButtonGroup size='small'>
-                <Button {...props} onClick={handleClickOpen}>Edit views</Button>
+                <Button {...props} onClick={handleClickOpen}className={classes[`${mode}Button`]}>Edit views</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
                 <DialogTitle id='form-dialog-title'>Edit views</DialogTitle>

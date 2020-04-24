@@ -1,14 +1,43 @@
 import React from 'react';
 
 import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
 
 import BoardCard from './BoardCard'
+
+import { db } from '../../Firebase';
+
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkGrid: {
+        width: 80 + '%',
+        margin: '10px auto 0px auto',
+        backgroundColor: primaryDark
+    },
+    whiteGrid: {
+        width: 80 + '%',
+        margin: '10px auto 0px auto',
+        backgroundColor: white
+    }
+}));
 
 
 function BoardCardCollection(props) {
     const user = JSON.parse(localStorage.getItem('user'));
+    const classes = useStyles();
 
     const boards = [...props.boardRefs];
+    const [mode, setMode] = React.useState('dark')
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
+
     if (props.sortMode === 'nameAsc' || props.sortMode === null) {
         boards.sort((a, b) => a.label.localeCompare(b.label));
     } else if (props.sortMode === 'nameDesc') {
@@ -56,7 +85,7 @@ function BoardCardCollection(props) {
     }
 
     return (
-        <div style={{width: 80 + '%', margin: '10px auto 0px auto'}}>
+        <div className={classes[`${mode}Grid`]}>
             <Grid container spacing={3}>
                 {boards.map(board => (
                     <BoardCard key={board.id} board={board} />
