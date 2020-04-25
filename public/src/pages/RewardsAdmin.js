@@ -8,11 +8,15 @@ import { cache } from '../Firebase';
 
 class RewardsAdmin extends React.Component {
     
-    mode = 0;
+    activeButtonStyle= {
+        backgroundColor: "lightgrey"
+    }
     
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            setRewardsPanelShown: true
+        }
         this.viewableHistory = createBrowserHistory();
         this.loadBoard();
     }
@@ -21,6 +25,14 @@ class RewardsAdmin extends React.Component {
         cache.loadBoard(this.props.match.params.boardId).subscribe((board) => {
             this.setState({board: board.data()});
         })
+    }
+
+    setRewardsMode() {
+        this.setState({setRewardsPanelShown: true});
+    }
+
+    viewRedeemedMode() {
+        this.setState({setRewardsPanelShown: false});
     }
 
     render() {
@@ -33,8 +45,8 @@ class RewardsAdmin extends React.Component {
                     </Grid>
                     <Grid style={{padding: "10px"}} container justify="center" xs={4}>
                         <ButtonGroup size='medium'>
-                            <Button style={{backgroundColor: this.mode ? "" : "lightgrey"}}>Set Rewards</Button>
-                            <Button style={{backgroundColor: this.mode ? "lightgrey" : ""}}>Redeemed Rewards</Button>
+                            <Button onClick={this.setRewardsMode.bind(this)} style={this.state.setRewardsPanelShown ? this.activeButtonStyle : {}}>Set Rewards</Button>
+                            <Button onClick={this.viewRedeemedMode.bind(this)} style={!this.state.setRewardsPanelShown ? this.activeButtonStyle : {}}>Redeemed Rewards</Button>
                         </ButtonGroup>
                     </Grid>
                 </Grid>
