@@ -80,6 +80,11 @@ class FirebaseCache {
     }
   }
 
+  addPointsToUser(email, points) {
+    db.collection("users").doc(email).get().then((userRef) => {
+      userRef.ref.update({points: Number.parseInt(userRef.data().points || 0) + (points)});
+    });
+  }
 }
 
 
