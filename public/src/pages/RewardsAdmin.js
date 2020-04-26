@@ -27,7 +27,9 @@ class RewardsAdmin extends React.Component {
 
     loadBoard() {
         cache.loadBoard(this.props.match.params.boardId).subscribe((board) => {
-            this.setState({boardRef: board});
+            let b = board.data();
+            b.id = board.id;
+            this.setState({boardRef: board, board: b});
         })
     }
 
@@ -52,7 +54,7 @@ class RewardsAdmin extends React.Component {
                 <NavBar location={this.viewableHistory.location.pathname}  />
                 <Grid justify="space-between" container>
                     <Grid item xs={8}>
-                        <BoardSubpageBreadcrumbs currentPageName='Rewards Admin' board={this.state.boardRef ? this.state.boardRef.data() : {}} />
+                        <BoardSubpageBreadcrumbs currentPageName='Rewards Admin' board={this.state.boardRef ? this.state.board : {}} />
                     </Grid>
                     <Grid item xs={4}>
                         <Grid container justify="flex-end">
