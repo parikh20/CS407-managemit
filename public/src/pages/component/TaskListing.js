@@ -88,6 +88,15 @@ function TaskListing(props) {
 
     const handleCompletedChange = (event) => {
         props.task.completed = event.target.checked;
+        if(props.task.completed) {
+            const associatedUsers = new Set(props.task.users);
+            associatedUsers.add(user.email)
+            associatedUsers.forEach((user) => {
+                db.collection("users").doc(user).get().then((userRef) => {
+                    userRef.ref.update({points: Number.parseInt(userRef.data().points || 0) + Number.parseInt(props.task.points)});
+                });
+            });
+        }
         props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
             completed: event.target.checked
         });
@@ -188,7 +197,6 @@ function TaskListing(props) {
 
     let elements = [];
     elements = document.getElementsByClassName('taskListing');
-    console.log(elements)
     for (let i = 0; i < elements.length; i++) {
         let content = elements[i].innerText;
         if (content.includes("Complete")) {
