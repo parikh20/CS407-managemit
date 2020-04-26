@@ -47,11 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 function BoardsActions(props) {
     const classes = useStyles()
-    const user = JSON.parse(localStorage.getItem('user'));
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
     return (
         <Grid container className={classes[`${mode}Grid`]}>
             <div className={classes[`${mode}Div`]}>
@@ -61,7 +57,7 @@ function BoardsActions(props) {
                     </Typography>
                 </Breadcrumbs>
             </div>
-            <NewBoardDialog />
+            <NewBoardDialog darkMode={mode}/>
         </Grid>
     );
 }

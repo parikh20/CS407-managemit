@@ -38,10 +38,8 @@ function SelectViewDialog(props) {
     const classes = useStyles();
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
+
 
     const [open, setOpen] = React.useState(false);
 

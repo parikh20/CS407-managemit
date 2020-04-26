@@ -75,7 +75,7 @@ export default (props) => {
     return (
         <div className={classes[`${mode}Body`]}>
             <NavBar location={viewableHistory.location.pathname} sortMode={sortMode} />
-            <Board history={history} boardId={props.match.params.boardId} sortMode={sortMode} lockFunctionality={sortMode !== null} params={props.match.params} />
+            <Board history={history} boardId={props.match.params.boardId} mode={mode} sortMode={sortMode} lockFunctionality={sortMode !== null} params={props.match.params} />
         </div>
     );
 };

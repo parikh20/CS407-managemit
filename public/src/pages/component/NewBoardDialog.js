@@ -93,7 +93,7 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
-function NewBoardDialog() {
+function NewBoardDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [buttonDisabled, setButtonDisabled] = React.useState(false);
     
@@ -103,12 +103,8 @@ function NewBoardDialog() {
     const [descriptionHelperText, setDescriptionHelperText] = React.useState('');
     const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
     const [successSnackbar, setSuccessSnackbar] = React.useState(false);
-    const user = JSON.parse(localStorage.getItem('user'));
     const classes = useStyles();
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
 
     const handleClickOpen = () => {
         setOpen(true);

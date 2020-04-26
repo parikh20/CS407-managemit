@@ -56,10 +56,8 @@ function NewViewDialog(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const classes = useStyles();
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
+
     let allColGroups = Array.isArray(props.allColGroups) ? props.allColGroups : [];
     let groupNames = allColGroups.map(colGroup => colGroup.data().label);
 
