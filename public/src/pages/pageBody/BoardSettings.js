@@ -8,11 +8,13 @@ import { db } from '../../Firebase';
 class BoardSettings extends React.Component {
 
     boardSub;
+    pointsSub;
 
     constructor(props) {
         super(props);
         this.state = {};
         this.loadBoard();
+        this.loadPoints();
     }
 
     loadBoard() {
@@ -33,6 +35,23 @@ class BoardSettings extends React.Component {
         });
     }
 
+    loadPoints() {
+        if (this.pointsSub) {
+            this.pointsSub()
+        }
+
+        this.pointsSub = db.collection('boards').doc(this.props.boardId).collection('points').onSnapshot(pointsRef => {
+            let data = {}
+            let user;
+
+            for (user in pointsRef.docs) {
+                data[pointsRef.docs[user].id] = pointsRef.docs[user].data().points
+            }
+
+            this.setState({points: data});
+        });
+    }
+
     componentWillUnmount() {
         this.boardSub && this.boardSub();
     }
@@ -41,7 +60,7 @@ class BoardSettings extends React.Component {
         return (
             <div>
                 <BoardSubpageBreadcrumbs currentPageName='Settings' board={this.state.board ? this.state.board : {}} />
-                <BoardSettingsComponent board={this.state.board ? this.state.board : {}} />
+                <BoardSettingsComponent board={this.state.board ? this.state.board : {}} points={this.state.points ? this.state.points : {}} />
             </div>
         );
     }

@@ -568,6 +568,7 @@ function EditTaskDialog(props) {
                                 type="number"
                                 defaultValue={props.existingTask ? props.existingTask.points : 0}
                                 fullWidth={true}
+                                InputLabelProps={{shrink: true}}
                                 variant="outlined"
                             />
                         </Grid>

@@ -92,7 +92,7 @@ function TaskListing(props) {
             const associatedUsers = new Set(props.task.users);
             associatedUsers.add(user.email)
             associatedUsers.forEach((user) => {
-                addPointsToUser(props.boardRef.ref.id, user, Number.parseInt(props.task.points))
+                addPointsToUser(props.boardRef.ref.id, user, Number.parseInt(props.task.points), false)
             });
         }
         props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({

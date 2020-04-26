@@ -26,7 +26,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DeleteBoardDialog from './DeleteBoardDialog';
 import TransferBoardDialog from './TransferBoardDialog';
 
-import { db, auth } from '../../Firebase';
+import { db, auth, addPointsToUser } from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
 
 function Alert(props) {
@@ -88,6 +88,7 @@ function BoardSettings(props) {
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleSettingsSubmit = () => {
+        console.log(props.points[user.email])
         clearState();
         if (!props.board) {
             return; // sanity check
@@ -291,6 +292,10 @@ function BoardSettings(props) {
         setSuccessSnackbar(false);
     };
 
+    const handlePoints = (event, email) => {
+        addPointsToUser(props.board.id, email, parseInt(event.target.value), true)
+    }
+
     return (
         <div className={classes.settingsBody}>
             <Paper className={classes.paper}>
@@ -325,6 +330,7 @@ function BoardSettings(props) {
                                     <TableRow>
                                         <TableCell>Email</TableCell>
                                         <TableCell align='right'>Role</TableCell>
+                                        <TableCell align='right'>Points</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -343,6 +349,9 @@ function BoardSettings(props) {
                                                 </Select>
                                             </FormControl>
                                         </TableCell>
+                                        <TableCell align='right'>
+                                            <TextField type="number" defaultValue={props.points ? props.points[props.board.owner] : 0} onChange={(e) => handlePoints(e, props.board.owner)} />
+                                        </TableCell>
                                     </TableRow>
                                     {props.board && props.board.userRefs && <React.Fragment>
                                         {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
@@ -357,6 +366,9 @@ function BoardSettings(props) {
                                                             <MenuItem value='administrator'>Administrator</MenuItem>
                                                         </Select>
                                                     </FormControl>
+                                                </TableCell>
+                                                <TableCell align='right'>
+                                                    <TextField type="number" defaultValue={props.points ? props.points[userEmail] : 0} onChange={(e) => handlePoints(e, userEmail)} />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
