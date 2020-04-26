@@ -28,7 +28,7 @@ import DeleteTaskDialog from './DeleteTaskDialog';
 
 import dateFormat from 'dateformat';
 
-import { db } from '../../Firebase';
+import { db, cache, addPointsToUser } from '../../Firebase';
 import firebase from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
 
@@ -92,9 +92,7 @@ function TaskListing(props) {
             const associatedUsers = new Set(props.task.users);
             associatedUsers.add(user.email)
             associatedUsers.forEach((user) => {
-                db.collection("users").doc(user).get().then((userRef) => {
-                    userRef.ref.update({points: Number.parseInt(userRef.data().points || 0) + Number.parseInt(props.task.points)});
-                });
+                addPointsToUser(props.boardRef.ref.id, user, Number.parseInt(props.task.points))
             });
         }
         props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
