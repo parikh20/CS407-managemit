@@ -82,6 +82,7 @@ function BoardSettings(props) {
     const [inviteEmailError, setInviteEmailError] = React.useState(false);
     const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
     const [successMessage, setSuccessMessage] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState('');
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -138,6 +139,7 @@ function BoardSettings(props) {
                 });
             }).catch(err => {
                 setErrorSnackbar(true);
+                setErrorMessage('There was an error saving board details!')
                 console.log(err);
                 return;
             });
@@ -279,6 +281,7 @@ function BoardSettings(props) {
         setDescriptionHelperText('');
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
+        setErrorMessage('');
         setInviteEmailError(false);
         setInviteEmailHelperText('');
     }
@@ -293,7 +296,13 @@ function BoardSettings(props) {
     };
 
     const handlePoints = (event, email) => {
-        addPointsToUser(props.board.id, email, parseInt(event.target.value), true)
+        clearState();
+        if (event.target.value < 0) {
+            setErrorSnackbar(true);
+            setErrorMessage('A users points cannot be negative!')
+        } else {
+            addPointsToUser(props.board.id, email, parseInt(event.target.value), true)
+        }
     }
 
     return (
@@ -472,7 +481,7 @@ function BoardSettings(props) {
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
-                    There was an error saving board details!
+                    {errorMessage}
                 </Alert>
             </Snackbar>
         </div>
