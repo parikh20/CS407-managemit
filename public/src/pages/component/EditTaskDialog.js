@@ -168,11 +168,10 @@ function EditTaskDialog(props) {
 
     const handleSubmit = () => {
         const editMode = props.existingTask ? true : false;
-
         let label = document.getElementById('taskTitle').value.trim();
         let desc = document.getElementById('taskDescription').value.trim();
         let date = document.getElementById('taskDueDate').valueAsDate;
-
+        let taskPoints = document.getElementById('points').value;
         // date inputs give UTC dates, so we need to convert that to the local timezone
         if (date !== null) {
             date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
@@ -252,6 +251,7 @@ function EditTaskDialog(props) {
                     desc: desc,
                     date: date,
                     users: selectedUsers,
+                    points: taskPoints,
                     columnRefs: columnIds,
                     checklist: checklistItems,
                     fileRefs: files,
@@ -323,6 +323,7 @@ function EditTaskDialog(props) {
                     desc: desc,
                     date: date,
                     users: selectedUsers,
+                    points: taskPoints,
                     columnRefs: columnIds,
                     checklist: checklistItems,
                     fileRefs: files,
@@ -503,7 +504,7 @@ function EditTaskDialog(props) {
     return (
         <>
             <ButtonGroup size={props.buttonSize ? props.buttonSize : 'small'}>
-                <Button onClick={handleClickOpen} className={classes[`${mode}Button`]} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
+                <Button disabled={props.buttonDisabled}  className={classes[`${mode}Button`]} onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
                 <DialogContent>
@@ -558,6 +559,20 @@ function EditTaskDialog(props) {
                                    dependent. Setting it to a standard ISO date seems to work regardless though */
                             />
                         </Grid>
+                        { (props.board.owner && props.board.permissions) && (props.board.owner === user.email || props.board.permissions[user.email].isAdmin === true) &&
+                        <div>
+                            <Grid item xs={12}>
+                            <TextField
+                                id="points"
+                                label="Points"
+                                type="number"
+                                defaultValue={props.existingTask ? props.existingTask.points : 0}
+                                fullWidth={true}
+                                variant="outlined"
+                            />
+                        </Grid>
+                        </div>
+                        } 
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Files

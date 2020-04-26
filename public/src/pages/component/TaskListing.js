@@ -37,7 +37,6 @@ function TaskListing(props) {
     const [connectionMenuEl, setConnectionMenuEl] = React.useState(null);
     const [commentError, setCommentError] = React.useState(false);
     const [commentHelperText, setCommentHelperText] = React.useState('');
-
     const user = JSON.parse(localStorage.getItem('user'));
 
     let fileListings = {};
@@ -58,6 +57,10 @@ function TaskListing(props) {
         }
     }
     
+    if (props.taskCompleted === null) {
+
+    }
+
     const handleClickOpen = () => {
         clearState();
         setOpen(true);
@@ -80,6 +83,13 @@ function TaskListing(props) {
         checklistCopy[index].completed = event.target.checked;
         props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
             checklist: checklistCopy
+        });
+    };
+
+    const handleCompletedChange = (event) => {
+        props.task.completed = event.target.checked;
+        props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
+            completed: event.target.checked
         });
     };
 
@@ -176,14 +186,32 @@ function TaskListing(props) {
         setCommentHelperText('');
     };
 
+    let elements = [];
+    elements = document.getElementsByClassName('taskListing');
+    console.log(elements)
+    for (let i = 0; i < elements.length; i++) {
+        let content = elements[i].innerText;
+        if (content.includes("Complete")) {
+            elements[i].classList.add('complete');
+        } else {
+            elements[i].classList.remove('complete');
+        }
+    }
+
     return (
-        <Card variant='outlined' style={{marginBottom: 5}}>
+        <Card variant='outlined' style={{marginBottom: 5}} >
             <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
                 <Typography variant='h6' component='h2'>
                     {props.task.title.length < 30 ? props.task.title : props.task.title.slice(0, 30) + '...'}
                 </Typography>
                 <Typography variant='body2' component='p'>
                     {props.task.desc.length < 300 ? props.task.desc : props.task.desc.slice(0, 300) + '...'}
+                </Typography>
+                <Typography variant='body2' component='p'>
+                    {props.task.completed ? "Task Complete" : "Task Incomplete"}
+                </Typography>
+                <Typography variant='body2' component='p'>
+                    {props.task.date != null ? 'Due ' + dateFormat(props.task.date.toDate(), 'mm/dd/yyyy') : ''}
                 </Typography>
             </CardContent>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
@@ -197,6 +225,16 @@ function TaskListing(props) {
                             <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
                                 {props.task.desc !== '' ? props.task.desc : '(No description provided)'}
                             </Typography>
+                            <Typography variant='h6' component='p'>
+                                Points
+                            </Typography>
+                            <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
+                                {props.task.points ? props.task.points + " points" : 0 + " points"}
+                            </Typography>
+                            <FormControlLabel
+                                                control={<Checkbox checked={props.task.completed || false} onClick={(event) => handleCompletedChange(event)} />}
+                                                label={"Completed"}
+                                            />
                         </Grid>
                         <Grid item xs={6}>
                             <Grid container spacing={1}>
@@ -366,6 +404,7 @@ function TaskListing(props) {
                         buttonSize='medium'
                         buttonVariant='default'
                         buttonText='Edit'
+                        buttonDisabled={props.task.completed ? true : false}
                         buttonConfirmText='Save changes'
                         boardRef={props.boardRef}
                         board={props.board}
