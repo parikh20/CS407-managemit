@@ -350,7 +350,7 @@ function BoardSettings(props) {
                                             </FormControl>
                                         </TableCell>
                                         <TableCell align='right'>
-                                            <TextField type="number" defaultValue={props.points ? props.points[props.board.owner] : 0} onChange={(e) => handlePoints(e, props.board.owner)} />
+                                            <TextField type="number" value={props.points ? props.points[props.board.owner]: 0} onChange={(e) => handlePoints(e, props.board.owner)} />
                                         </TableCell>
                                     </TableRow>
                                     {props.board && props.board.userRefs && <React.Fragment>
@@ -368,7 +368,7 @@ function BoardSettings(props) {
                                                     </FormControl>
                                                 </TableCell>
                                                 <TableCell align='right'>
-                                                    <TextField type="number" defaultValue={props.points ? props.points[userEmail] : 0} onChange={(e) => handlePoints(e, userEmail)} />
+                                                    <TextField type="number" value={props.points ? props.points[userEmail] : 0} onChange={(e) => handlePoints(e, userEmail)} />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
