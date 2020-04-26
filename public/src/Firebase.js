@@ -79,14 +79,17 @@ class FirebaseCache {
       return sub;
     }
   }
-
-  addPointsToUser(email, points) {
-    db.collection("users").doc(email).get().then((userRef) => {
-      userRef.ref.update({points: Number.parseInt(userRef.data().points || 0) + (points)});
-    });
-  }
 }
 
+export const addPointsToUser = (boardId, email, points) => {
+  db.collection("boards").doc(boardId).collection("points").doc(email).get().then((userRef) => {
+    if(userRef.exists) {
+      userRef.ref.update({points: Number.parseInt(userRef.data().points || 0) + (points)});
+    } else {
+      db.collection("boards").doc(boardId).collection("points").doc(email).set({points: points});
+    }
+  });
+}
 
 firebase.initializeApp(firebaseConfig);
 export const provider = new firebase.auth.GoogleAuthProvider();
