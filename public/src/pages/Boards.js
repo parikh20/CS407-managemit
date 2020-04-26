@@ -58,7 +58,7 @@ export default (props) => {
     return (
         <div className={classes[`${mode}Body`]}>
             <NavBar location={history.location.pathname} sortMode={sortMode} />
-            <Boards sortMode={sortMode} params={props.match.params} />
+            <Boards sortMode={sortMode} params={props.match.params} mode={mode}/>
         </div>
     );
 };

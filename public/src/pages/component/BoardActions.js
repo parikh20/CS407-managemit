@@ -57,22 +57,20 @@ const useStyles = makeStyles(theme => ({
 function BoardActions(props) {
     const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
     const classes = useStyles();
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
+
     return (
         <Grid container className={classes[`${mode}Grid`]}>
             <div style={{flexGrow: 1}}>
-                <BoardBreadcrumbs board={props.board} columnGroupRef={props.columnGroupRef} />
+                <BoardBreadcrumbs board={props.board} columnGroupRef={props.columnGroupRef} darkMode={mode}/>
             </div>
             {props.board && (
                 <ButtonGroup size='small' className={classes[`${mode}Button`]}>
-                    <EditTaskDialog boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} fileRefs={props.fileRefs} />
-                    <NewColumnDialog boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
-                    <SelectViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
-                    <NewViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
-                    <EditViewDialog boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} currentGroupId={props.currentGroupId} />
+                    <EditTaskDialog darkMode={mode} boardRef={props.boardRef} board={props.board} columns={props.columns} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} fileRefs={props.fileRefs} />
+                    <NewColumnDialog darkMode={mode} boardRef={props.boardRef} columnGroupRef={props.columnGroupRef} columns={props.columns}/>
+                    <SelectViewDialog darkMode={mode} boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} />
+                    <NewViewDialog darkMode={mode} boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} />
+                    <EditViewDialog darkMode={mode} boardRef={props.boardRef} board={props.board} allColGroups={props.allColGroups} allCols={props.allCols} taskRefs={props.taskRefs} currentGroupId={props.currentGroupId} />
                     <ButtonGroup size='small'>
                         <Button href={'/board/' + props.boardRef.id + '/calendar' } className={classes[`${mode}Button`]}>Calendar</Button>
                     </ButtonGroup>

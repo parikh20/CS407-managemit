@@ -19,11 +19,13 @@ class Board extends React.Component {
 
     constructor(props) {
         super(props);
+        // console.log(props)
         this.state = {
             taskRefs: {},
             taskCommentRefs: {},
             allColumns: {},
-            columnGroupId: null
+            columnGroupId: null,
+            darkMode: props.mode
         };
     }
 
@@ -175,6 +177,7 @@ class Board extends React.Component {
                     taskRefs={this.state.taskRefs}
                     currentGroupId={this.state.columnGroupId}
                     fileRefs={this.state.fileRefs ? this.state.fileRefs : []}
+                    darkMode={this.state.darkMode}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}

@@ -51,10 +51,7 @@ function BoardCard(props) {
     const goToBoardPage = () => {
         history.push(boardPath);
     }
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
 
     return (
         <Grid item xs={3} className={classes[`${mode}Grid`]}>

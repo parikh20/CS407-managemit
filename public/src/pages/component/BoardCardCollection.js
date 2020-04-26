@@ -33,10 +33,7 @@ function BoardCardCollection(props) {
     const classes = useStyles();
 
     const boards = [...props.boardRefs];
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = props.darkMode
 
     if (props.sortMode === 'nameAsc' || props.sortMode === null) {
         boards.sort((a, b) => a.label.localeCompare(b.label));
@@ -88,7 +85,7 @@ function BoardCardCollection(props) {
         <div className={classes[`${mode}Grid`]}>
             <Grid container spacing={3}>
                 {boards.map(board => (
-                    <BoardCard key={board.id} board={board} />
+                    <BoardCard key={board.id} board={board} darkMode={mode}/>
                 ))}
             </Grid>
         </div>
