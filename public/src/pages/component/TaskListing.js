@@ -31,6 +31,37 @@ import dateFormat from 'dateformat';
 import { db } from '../../Firebase';
 import firebase from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
+import { makeStyles } from '@material-ui/core/styles';
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        backgroundColor: white
+    },
+    darkCard: {
+        marginBottom: 5,
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteCard: {
+        marginBottom: 5,
+        color: black,
+        backgroundColor: white
+    },
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    }
+}));
 
 function TaskListing(props) {
     const [open, setOpen] = React.useState(false);
@@ -38,6 +69,8 @@ function TaskListing(props) {
     const [commentError, setCommentError] = React.useState(false);
     const [commentHelperText, setCommentHelperText] = React.useState('');
     const user = JSON.parse(localStorage.getItem('user'));
+    const classes = useStyles();
+    const mode = props.darkMode
 
     let fileListings = {};
     if (props.fileRefs) {
@@ -199,7 +232,7 @@ function TaskListing(props) {
     }
 
     return (
-        <Card variant='outlined' style={{marginBottom: 5}} >
+        <Card variant='outlined' className={classes[`${mode}Card`]}>
             <CardContent onClick={handleClickOpen} style={{cursor: 'pointer'}} className='taskListing'>
                 <Typography variant='h6' component='h2'>
                     {props.task.title.length < 30 ? props.task.title : props.task.title.slice(0, 30) + '...'}

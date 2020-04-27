@@ -113,6 +113,7 @@ function Column(props) {
                                                 allCols={props.allCols}
                                                 allColGroups={props.allColGroups}
                                                 taskRefs={props.allTaskRefs}
+                                                darkMode={props.darkMode}
                                             />
                                         </div>
                                     )}
