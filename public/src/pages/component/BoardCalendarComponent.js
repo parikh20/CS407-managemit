@@ -9,29 +9,86 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
-    settingsBody: {
+    darkSettingsBody: {
         flexGrow: 1,
         padding: 20,
         paddingRight: 200,
-        paddingLeft: 200
+        paddingLeft: 200,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
     },
-    paper: {
+    whiteSettingsBody: {
+        flexGrow: 1,
+        padding: 20,
+        paddingRight: 200,
+        paddingLeft: 200,
+        color: black,
+        backgroundColor: white,
+    },
+    darkPaper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
         marginBottom: 20
     },
-    button: {
-        marginRight: 5,
-        marginLeft: 5
+    whitePaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: black,
+        backgroundColor: white,
+        marginBottom: 20
     },
-    textField: {
-        width: 80 + '%'
-    },
-    chip: {
+    darkButton: {
         marginRight: 5,
-        marginLeft: 5
+        marginLeft: 5,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteButton: {
+        marginRight: 5,
+        marginLeft: 5,
+        color: black,
+        backgroundColor: white,
+    },
+    darkTextField: {
+        width: 80 + '%',
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteTextField: {
+        width: 80 + '%',
+        color: black,
+        backgroundColor: white,
+    },
+    darkChip: {
+        marginRight: 5,
+        marginLeft: 5,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteChip: {
+        marginRight: 5,
+        marginLeft: 5,
+        color: black,
+        backgroundColor: white,
+    },
+    darkCalendar: {
+        height: 700,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteCalendar: {
+        height: 700,
+        color: black,
+        backgroundColor: white,
     }
 }));
 
@@ -50,6 +107,7 @@ const buildEvents = taskRefs => {
 
 function BoardCalendarComponent(props) {
     const classes = useStyles();
+    const mode = props.darkMode
 
     let defaultDate = new Date();
     if (typeof props.month === 'string' && typeof props.day === 'string' &&  typeof props.year === 'string') {
@@ -57,8 +115,8 @@ function BoardCalendarComponent(props) {
     }
 
     return (
-        <div className={classes.settingsBody}>
-            <Paper className={classes.paper}>
+        <div className={classes[`${mode}SettingsBody`]}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Calendar</h2>
@@ -68,7 +126,7 @@ function BoardCalendarComponent(props) {
                             events={props.taskRefs ? buildEvents(props.taskRefs) : []}
                             endAccessor='end'
                             defaultDate={defaultDate}
-                            style={{ height: 700 }}
+                            className={classes[`${mode}Calendar`]}
                         />
                     </Grid>
                 </Grid>

@@ -12,6 +12,7 @@ class BoardCalendar extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log(props)
         this.state = {
             taskRefs: []
         };
@@ -52,13 +53,14 @@ class BoardCalendar extends React.Component {
     render() {
         return (
             <div>
-                <BoardSubpageBreadcrumbs currentPageName='Calendar' board={this.state.board ? this.state.board : {}} />
+                <BoardSubpageBreadcrumbs currentPageName='Calendar' board={this.state.board ? this.state.board : {}} darkMode={this.props.darkMode}/>
                 <BoardCalendarComponent
                     board={this.state.board}
                     taskRefs={this.state.taskRefs}
                     month={this.props.month}
                     day={this.props.day}
                     year={this.props.year}
+                    darkMode={this.props.darkMode}
                 />
             </div>
         );

@@ -196,7 +196,7 @@ class Board extends React.Component {
                     lockFunctionality={this.props.lockFunctionality}
                     sortMode={this.props.sortMode}
                     fileRefs={this.state.fileRefs ? this.state.fileRefs : []}
-
+                    darkMode={this.state.darkMode}
                 />
             </div>
         ); 

@@ -47,7 +47,6 @@ const useStyles = makeStyles(theme => ({
 
 
 function BoardBreadcrumbs(props) {
-    const user = JSON.parse(localStorage.getItem('user'));
     const classes = useStyles();
     const mode = props.darkMode
     return (

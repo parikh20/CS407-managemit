@@ -11,8 +11,20 @@ export default (props) => {
     const viewableHistory = createBrowserHistory();
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
-
+    const [mode, setMode] = React.useState('dark')
     const db = firebase.firestore();
+    const primaryDark = "#222831"
+    const secondaryDark = "#30476E"
+    const darkTextColor = "#c1a57b"
+    const black = "#000"
+    const white = "#fff"
+
+    db.collection('users').doc(user.email).get().then(doc => {
+        doc.data().darkMode ? setMode("dark") : setMode("white");
+    })
+
+    mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
+
     db.collection('boards').where('userRefs', 'array-contains', user.email).get().then(snapshot => {
         for (const doc of snapshot.docs) {
             if (doc.id === props.match.params.boardId) {
@@ -34,6 +46,7 @@ export default (props) => {
                 month={props.match.params.month || today.getMonth()}
                 day={props.match.params.day || today.getDate()}
                 year={props.match.params.year || today.getFullYear()}
+                darkMode={mode}
             />
         </div>
     );
