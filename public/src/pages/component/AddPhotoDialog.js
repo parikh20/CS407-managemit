@@ -71,8 +71,7 @@ function AddPhotoDialog() {
         const file = document.getElementById('file').files[0]
         const filePath = user.uid + '/profilePicture/' + file.name
         const storageRef = firebase.storage().ref(filePath);
-        
-        if (user.providerData[0].providerId !== 'google.com') {
+        if (user.providerData[0].providerId !== 'google.com' && user.photoURL !== null) {
             const oldStorageRef = firebase.storage().refFromURL(user.photoURL).then(res => {
                 oldStorageRef.delete().then(res => {
                     console.log(res);
