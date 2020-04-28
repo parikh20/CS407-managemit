@@ -326,6 +326,22 @@ function BoardSettings(props) {
         }
     }
 
+    const testGetTasks = () => {
+        const key = document.getElementById('tasksAPI').value;
+        const deleteAPI = firebase.functions().httpsCallable('getBoardTasks');
+        deleteAPI({boardId: props.board.id, apiKey: key}).then(result => {
+            console.log(result.data)
+        });
+    }
+
+    const testGetHistory = () => {
+        const key = document.getElementById('historyAPI').value;
+        const deleteAPI = firebase.functions().httpsCallable('getBoardHistory');
+        deleteAPI({boardId: props.board.id, apiKey: key}).then(result => {
+            console.log(result.data)
+        });
+    }
+
     return (
         <div className={classes.settingsBody}>
             <Paper className={classes.paper}>
@@ -510,6 +526,39 @@ function BoardSettings(props) {
                     </Grid>
                 </Paper>
             )}
+            <Paper className={classes.paper}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>Test Public Facing API (FOR DEMO ONLY)</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Get board tasks
+                                    </Typography>
+                                    <TextField id="tasksAPI" size='small' defaultValue="" ></TextField>
+                                </Grid>
+                            </Grid>
+                            <Button variant='contained' color='primary' onClick={testGetTasks}>Test</Button>
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Get board history
+                                    </Typography>
+                                    <TextField id="historyAPI" size='small' ></TextField>
+                                </Grid>
+                            </Grid>
+                            <Button variant='contained' color='primary' onClick={testGetHistory}>Test</Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Paper>
             <Snackbar open={successSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
                     {successMessage}
