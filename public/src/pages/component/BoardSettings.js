@@ -28,6 +28,7 @@ import TransferBoardDialog from './TransferBoardDialog';
 
 import { db, auth, addPointsToUser } from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
+import firebase from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -63,6 +64,9 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: "#D3D3D3",
         }
+    },
+    apiCard: {
+        padding: theme.spacing(2.5),
     },
     typography: {
         color: 'black'
@@ -305,6 +309,21 @@ function BoardSettings(props) {
         }
     }
 
+    const generateAPI = () => {
+        var key = "";
+  
+        var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+        
+        for (var i = 0; i < 40; i++)
+          key += charset.charAt(Math.floor(Math.random() * charset.length));
+    
+        const generateAPI = firebase.functions().httpsCallable('generateAPI');
+
+        generateAPI({boardId: props.board.id}).then(result => {
+            props.board.apiKey = result.data
+        });
+    }   
+
     return (
         <div className={classes.settingsBody}>
             <Paper className={classes.paper}>
@@ -399,9 +418,23 @@ function BoardSettings(props) {
             <Paper className={classes.paper}>
                 <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Grid item xs={12}>
-                        <h2>API calls</h2>
+                        <h2>APIs</h2>
                     </Grid>
                     <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        This boards API key
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        {props.board.apiKey ? props.board.apiKey : "No API key"}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Button variant='contained' color='primary' onClick={generateAPI}>Generate</Button>
+                        </Grid>
                         <Divider />
                         <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/settings')}>
                             <Grid item xs={12} sm container>
