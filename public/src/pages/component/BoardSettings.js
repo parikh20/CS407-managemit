@@ -93,7 +93,6 @@ function BoardSettings(props) {
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleSettingsSubmit = () => {
-        console.log(props.points[user.email])
         clearState();
         if (!props.board) {
             return; // sanity check
@@ -310,19 +309,22 @@ function BoardSettings(props) {
     }
 
     const generateAPI = () => {
-        var key = "";
-  
-        var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
-        
-        for (var i = 0; i < 40; i++)
-          key += charset.charAt(Math.floor(Math.random() * charset.length));
-    
         const generateAPI = firebase.functions().httpsCallable('generateAPI');
 
         generateAPI({boardId: props.board.id}).then(result => {
-            props.board.apiKey = result.data
+           console.log(result)
+           props.board.apiKey = result.data
         });
     }   
+
+    const deleteAPI = () => {
+        if (props.board.apiKey != null) {
+            const deleteAPI = firebase.functions().httpsCallable('deleteAPI');
+            deleteAPI({boardId: props.board.id}).then(result => {
+                console.log(result)
+             });
+        }
+    }
 
     return (
         <div className={classes.settingsBody}>
@@ -433,7 +435,8 @@ function BoardSettings(props) {
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <Button variant='contained' color='primary' onClick={generateAPI}>Generate</Button>
+                            <Button variant='contained' color='primary' style={{marginRight: 5}} onClick={generateAPI}>Generate</Button>
+                            <Button variant='contained' color='primary' onClick={deleteAPI}>Delete</Button>
                         </Grid>
                         <Divider />
                         <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/settings')}>
