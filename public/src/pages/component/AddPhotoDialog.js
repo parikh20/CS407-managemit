@@ -71,9 +71,18 @@ function AddPhotoDialog() {
         const file = document.getElementById('file').files[0]
         const filePath = user.uid + '/profilePicture/' + file.name
         const storageRef = firebase.storage().ref(filePath);
-
-        const oldStorageRef = firebase.storage().refFromURL(URL)
-        oldStorageRef.delete()
+        
+        if (user.providerData[0].providerId !== 'google.com') {
+            const oldStorageRef = firebase.storage().refFromURL(user.photoURL).then(res => {
+                oldStorageRef.delete().then(res => {
+                    console.log(res);
+                }).catch(err => {
+                    console.log(err);
+                });
+            }).catch(err => {
+                console.log(err);
+            });
+    }   
 
         storageRef.put(file).then(() => {
             storageRef.getDownloadURL().then(url => {
@@ -89,6 +98,8 @@ function AddPhotoDialog() {
                         }).catch(error => {
                             console.log(error);
                         });
+                    }).catch(err => {
+                        console.log(err);
                     });
                 } else {
                     firebase.auth().currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(
