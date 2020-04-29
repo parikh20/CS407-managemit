@@ -230,7 +230,7 @@ function BoardHistoryComponent(props) {
             <Paper className={classes.paper}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <h2>Board History</h2>
+                        <h2>Board history</h2>
                         <MaterialTable
                             icons={tableIcons}
                             columns={columns}

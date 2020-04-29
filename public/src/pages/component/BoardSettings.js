@@ -436,7 +436,7 @@ function BoardSettings(props) {
             <Paper className={classes.paper}>
                 <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Grid item xs={12}>
-                        <h2>APIs</h2>
+                        <h2>Board API</h2>
                     </Grid>
                     <Grid item xs={12} style={{textAlign: 'left'}}>
                     <Divider />
@@ -455,6 +455,16 @@ function BoardSettings(props) {
                             <Button variant='contained' color='primary' onClick={deleteAPI}>Delete</Button>
                         </Grid>
                         <Divider />
+                    </Grid>
+                </Grid>
+            </Paper>
+            <Paper className={classes.paper}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>External API hooks</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
                         <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/settings')}>
                             <Grid item xs={12} sm container>
                                 <Grid item container direction="column" spacing={2}>
@@ -469,11 +479,11 @@ function BoardSettings(props) {
                             <ChevronRightIcon />
                         </Grid>
                         <Divider />
-                        <Grid container spacing={0} className={classes.settingsCard}>
+                        <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/history')}>
                             <Grid item xs={12} sm container>
                                 <Grid item container direction="column" spacing={2}>
                                     <Typography variant='subtitle1' className={classes.typography}>
-                                        View API call log
+                                        View API call history
                                     </Typography>
                                     <Typography variant="body2">
                                         View the results of previous API calls

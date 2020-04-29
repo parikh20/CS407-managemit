@@ -51,7 +51,9 @@ const useStyles = makeStyles(theme => ({
 
 function BoardSubpageBreadcrumbs(props) {
     const classes = useStyles();
-    const mode = props.darkMode
+    const mode = props.darkMode;
+    console.log(mode);
+    console.log(classes[`${mode}Grid`]);
     return (
         <Grid container className={classes[`${mode}Grid`]}>
             <Breadcrumbs aria-label='breadcrumbs' className={classes[`${mode}Breadcrumbs`]}>
