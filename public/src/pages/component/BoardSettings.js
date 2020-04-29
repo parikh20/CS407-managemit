@@ -33,6 +33,12 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
     settingsBody: {
         flexGrow: 1,
@@ -40,11 +46,19 @@ const useStyles = makeStyles(theme => ({
         paddingRight: 200,
         paddingLeft: 200
     },
-    paper: {
+    darkPaper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
-        marginBottom: 20
+        marginBottom: 20,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whitePaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        marginBottom: 20,
+        color: black,
+        backgroundColor: white,
     },
     button: {
         marginRight: 5,
@@ -84,7 +98,7 @@ function BoardSettings(props) {
     const [successMessage, setSuccessMessage] = React.useState('');
 
     const user = JSON.parse(localStorage.getItem('user'));
-
+    const mode = localStorage.darkMode
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleSettingsSubmit = () => {
@@ -293,7 +307,7 @@ function BoardSettings(props) {
 
     return (
         <div className={classes.settingsBody}>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Board details</h2>
@@ -309,7 +323,7 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Collaborators</h2>
@@ -375,7 +389,7 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Grid item xs={12}>
                         <h2>API calls</h2>
@@ -414,7 +428,7 @@ function BoardSettings(props) {
                 </Grid>
             </Paper>
             {props.board && props.board.owner === user.email && (
-                <Paper className={classes.paper}>
+                <Paper className={classes[`${mode}Paper`]}>
                     <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                         <Grid item xs={12}>
                             <h2>Here be dragons</h2>
