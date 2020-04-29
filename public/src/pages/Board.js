@@ -36,9 +36,7 @@ export default (props) => {
     const db = firebase.firestore();
     const classes = useStyles();
     const mode = localStorage.darkMode
-
     mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
-    console.log(mode)
     
     db.collection('boards').where('userRefs', 'array-contains', user.email).get().then(async (snapshot) => {
         for (const doc of snapshot.docs) {
