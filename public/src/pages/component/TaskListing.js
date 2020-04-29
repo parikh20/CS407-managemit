@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     },
     darkButton: {
         color: darkTextColor,
-        backgroundColor: secondaryDark
+        backgroundColor: '#DEE1DD'
     },
     whiteButton: {
         color: black,
@@ -254,8 +254,8 @@ function TaskListing(props) {
                 </Typography>
             </CardContent>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>{props.task.title}</DialogTitle>
-                <DialogContent>
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Button`]}>{props.task.title}</DialogTitle>
+                <DialogContent className={classes[`${mode}Button`]}>
                     <Grid container spacing={1}>
                         <Grid item xs={6}>
                             <Typography variant='h6' component='h2'>
@@ -408,7 +408,7 @@ function TaskListing(props) {
                         ))}
                      </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Button`]}>
                     <Button aria-controls='connections-menu' aria-haspopup='true' onClick={handleMenuOpen}>
                         View connections
                     </Button>

@@ -96,7 +96,7 @@ function EditTaskDialog(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const classes = useStyles();
-    const mode = props.darkMode
+    const mode = localStorage.darkMode
 
     let allTasks = [];
     if (props.taskRefs && Array.isArray(props.taskRefs)) {
