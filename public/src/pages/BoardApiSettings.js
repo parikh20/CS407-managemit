@@ -12,6 +12,11 @@ class BoardApiSettingsPage extends React.Component {
 
         this.viewableHistory = createBrowserHistory();
         const user = JSON.parse(localStorage.getItem('user'));
+        const primaryDark = "#222831"
+        const white = "#fff"
+        const mode = localStorage.darkMode
+        mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
+    
 
         db.collection('boards').doc(props.match.params.boardId).get().then(boardRef => {
             const data = boardRef.data();
