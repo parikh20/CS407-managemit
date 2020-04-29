@@ -74,7 +74,8 @@ function Register(props) {
                         emailNotifications: true,
                         inAppNotifications: true,
                         vacationMode: false,
-                        vacationModeEndDate: null
+                        vacationModeEndDate: null,
+                        points: 0
                     }).then(res => {
                         history.push('/login');
                         setSuccessSnackbar(true);

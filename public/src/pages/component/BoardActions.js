@@ -81,8 +81,12 @@ function BoardActions(props) {
                     <ButtonGroup size='small'>
                         <Button href={'/board/' + props.boardRef.id + '/history'} className={classes[`${mode}Button`]}>History</Button>
                     </ButtonGroup>
+                    <ButtonGroup size='small'>
+                        <Button href={'/board/' + props.boardRef.id + '/rewards'} className={classes[`${mode}Button`]}>Redeem Rewards</Button>
+                    </ButtonGroup>
                     {user && props.board.permissions && (props.board.owner === user.email || props.board.permissions[user.email].isAdmin === true) && (
                         <ButtonGroup size='small'>
+                            <Button href={'/board/' + props.boardRef.id + '/rewardsadmin'} className={classes[`${mode}Button`]}>Reward Settings</Button>
                             <Button href={'/board/' + props.boardRef.id + '/settings'} className={classes[`${mode}Button`]}>Settings</Button>
                         </ButtonGroup>
                     )}
