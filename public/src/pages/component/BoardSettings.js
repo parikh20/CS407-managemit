@@ -414,7 +414,7 @@ function BoardSettings(props) {
                                                     </FormControl>
                                                 </TableCell>
                                                 <TableCell align='right'>
-                                                    <TextField type="number" value={props.points ? props.points[userEmail] : 0} onChange={(e) => handlePoints(e, userEmail)} />
+                                                    <TextField type="number" value={props.points && props.points[userEmail] ? props.points[userEmail] : 0} onChange={(e) => handlePoints(e, userEmail)} />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
