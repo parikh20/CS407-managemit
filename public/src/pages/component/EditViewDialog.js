@@ -40,6 +40,14 @@ const useStyles = makeStyles(theme => ({
     whiteButton: {
         color: black,
         backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -266,10 +274,10 @@ function EditViewDialog(props) {
                 <Button {...props} onClick={handleClickOpen}className={classes[`${mode}Button`]}>Edit views</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Edit views</DialogTitle>
-                <DialogContent>
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Dialog`]}>Edit views</DialogTitle>
+                <DialogContent className={classes[`${mode}Dialog`]}>
                     {colGroupDisplay && colGroupDisplay.map((colGroup, index) => (
-                        <ExpansionPanel key={colGroup.id}>
+                        <ExpansionPanel key={colGroup.id} className={classes[`${mode}Dialog`]}>
                             <ExpansionPanelSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls={'panel' + index + 'content'}
@@ -348,7 +356,7 @@ function EditViewDialog(props) {
                         </ExpansionPanel>
                     ))}
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Close
                     </Button>

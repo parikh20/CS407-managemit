@@ -11,6 +11,32 @@ import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
 
 import { db } from '../../Firebase';
+import { makeStyles } from '@material-ui/core/styles';
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
+const useStyles = makeStyles(theme => ({
+    darkButton: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whiteButton: {
+        color: black,
+        backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
+        color: black,
+        backgroundColor: white
+    }
+}));
 
 function EditColumnDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -19,6 +45,8 @@ function EditColumnDialog(props) {
     const [deleteDisable, setDeleteDisable] = React.useState(true);
     
     const user = JSON.parse(localStorage.getItem('user'));
+    const classes = useStyles();
+    const mode = localStorage.darkMode
 
     const columnNames = [];
     for (let column of props.columns) {
@@ -134,8 +162,8 @@ function EditColumnDialog(props) {
                 <EditIcon />
             </IconButton>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Edit column</DialogTitle>
-                <DialogContent>
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Dialog`]}>Edit column</DialogTitle>
+                <DialogContent className={classes[`${mode}Dialog`]}>
                     <TextField
                         autoFocus
                         margin='dense'
@@ -163,7 +191,7 @@ function EditColumnDialog(props) {
                         InputLabelProps={{shrink: true}}
                     />
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>

@@ -55,6 +55,14 @@ const useStyles = makeStyles(theme => ({
     whiteButton: {
         color: black,
         backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -88,7 +96,7 @@ function EditTaskDialog(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const classes = useStyles();
-    const mode = props.darkMode
+    const mode = localStorage.darkMode
 
     let allTasks = [];
     if (props.taskRefs && Array.isArray(props.taskRefs)) {
@@ -507,8 +515,8 @@ function EditTaskDialog(props) {
                 <Button disabled={props.buttonDisabled}  className={classes[`${mode}Button`]} onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
-                <DialogContent>
-                    <Grid container spacing={1}>
+                <DialogContent className={classes[`${mode}Dialog`]}>
+                    <Grid container spacing={1} >
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Basic details
@@ -827,7 +835,7 @@ function EditTaskDialog(props) {
                         </React.Fragment>}
                      </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>

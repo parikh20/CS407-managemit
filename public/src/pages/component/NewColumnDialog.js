@@ -33,6 +33,14 @@ const useStyles = makeStyles(theme => ({
     whiteButton: {
         color: black,
         backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -150,8 +158,8 @@ function NewColumnDialog(props) {
                 <Button {...props} onClick={handleClickOpen} className={classes[`${mode}Button`]} >New column</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>New column</DialogTitle>
-                <DialogContent>
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Dialog`]}>New column</DialogTitle>
+                <DialogContent className={classes[`${mode}Dialog`]}>
                     <DialogContentText>
                         Enter a name for the new column.
                     </DialogContentText>
@@ -174,7 +182,7 @@ function NewColumnDialog(props) {
                         <LoadingAnimation />
                     )}
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
