@@ -560,18 +560,19 @@ function EditTaskDialog(props) {
                             />
                         </Grid>
                         { (props.board.owner && props.board.permissions) && (props.board.owner === user.email || props.board.permissions[user.email].isAdmin === true) &&
-                        <div>
                             <Grid item xs={12}>
-                            <TextField
-                                id="points"
-                                label="Points"
-                                type="number"
-                                defaultValue={props.existingTask ? props.existingTask.points : 0}
-                                fullWidth={true}
-                                variant="outlined"
-                            />
-                        </Grid>
-                        </div>
+                                <TextField
+                                    margin='dense'
+                                    id="points"
+                                    label="Points"
+                                    type="number"
+                                    defaultValue={props.existingTask ? props.existingTask.points : 0}
+                                    fullWidth
+                                    InputLabelProps={{shrink: true}}
+                                    variant="outlined"
+                                    inputProps={{min: '0'}}
+                                />
+                            </Grid>
                         } 
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>

@@ -28,7 +28,7 @@ import DeleteTaskDialog from './DeleteTaskDialog';
 
 import dateFormat from 'dateformat';
 
-import { db } from '../../Firebase';
+import { db, cache, addPointsToUser } from '../../Firebase';
 import firebase from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
 import { makeStyles } from '@material-ui/core/styles';
@@ -121,6 +121,13 @@ function TaskListing(props) {
 
     const handleCompletedChange = (event) => {
         props.task.completed = event.target.checked;
+        if(props.task.completed) {
+            const associatedUsers = new Set(props.task.users);
+            associatedUsers.add(user.email)
+            associatedUsers.forEach((user) => {
+                addPointsToUser(props.boardRef.ref.id, user, Number.parseInt(props.task.points), false)
+            });
+        }
         props.boardRef.ref.collection('tasks').doc(props.taskRef.id).update({
             completed: event.target.checked
         });
@@ -257,67 +264,66 @@ function TaskListing(props) {
                             <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
                                 {props.task.desc !== '' ? props.task.desc : '(No description provided)'}
                             </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant='h6' component='h2'>
+                                Columns
+                            </Typography>
+                            {props.task.columnRefs.map(columnId => 
+                                <Chip key={columnId} label={props.allColumnNames[columnId]} size='small' style={{margin: 3 + 'px'}} />
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
                             <Typography variant='h6' component='p'>
                                 Points
                             </Typography>
                             <Typography variant='body2' component='p' style={{whiteSpace: 'pre-line'}}>
                                 {props.task.points ? props.task.points + " points" : 0 + " points"}
                             </Typography>
-                            <FormControlLabel
-                                                control={<Checkbox checked={props.task.completed || false} onClick={(event) => handleCompletedChange(event)} />}
-                                                label={"Completed"}
-                                            />
                         </Grid>
                         <Grid item xs={6}>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <Typography variant='h6' component='h2'>
-                                        Columns
-                                    </Typography>
-                                    {props.task.columnRefs.map(columnId => 
-                                        <Chip key={columnId} label={props.allColumnNames[columnId]} size='small' style={{margin: 3 + 'px'}} />
-                                    )}
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <Typography variant='h6' component='h2'>
-                                        Due Date
-                                    </Typography>
-                                    <Typography variant='body2' component='p'>
-                                        {props.task.date === null && (
-                                            '(No due date)'
-                                        )}
-                                        {props.task.date !== null && <React.Fragment>
-                                            {dateFormat(props.task.date.toDate(), 'mm/dd/yyyy')}
-                                            <Button
-                                                variant='outlined'
-                                                size='small'
-                                                color='primary'
-                                                style={{float: 'right'}}
-                                                href={'/board/' + props.boardRef.id + '/calendar/' + props.task.date.toDate().getMonth() + '/' + props.task.date.toDate().getDate() + '/' + props.task.date.toDate().getFullYear()}
-                                            >
-                                                View on calendar
-                                            </Button>
-                                        </React.Fragment>}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <Typography variant='h6' component='h2'>
-                                        Users
-                                    </Typography>
-                                    {props.task.users.length === 0 && (
-                                        <Typography variant='body2' component='p'>
-                                            (No users assigned to task)
-                                        </Typography>
-                                    )}
-                                    {props.task.users.length > 0 && props.task.users.map(user =>
-                                        <Chip key={user} label={user} color='primary' size='small' style={{margin: 3 + 'px'}} variant={user !== props.boardRef.data().owner ? 'outlined' : 'default'} />
-                                    )}
-                                </Grid>
-                            </Grid>
+                            <Typography variant='h6' component='h2'>
+                                Due Date
+                            </Typography>
+                            <Typography variant='body2' component='p'>
+                                {props.task.date === null && (
+                                    '(No due date)'
+                                )}
+                                {props.task.date !== null && <React.Fragment>
+                                    {dateFormat(props.task.date.toDate(), 'mm/dd/yyyy')}
+                                    <Button
+                                        variant='outlined'
+                                        size='small'
+                                        color='primary'
+                                        style={{float: 'right'}}
+                                        href={'/board/' + props.boardRef.id + '/calendar/' + props.task.date.toDate().getMonth() + '/' + props.task.date.toDate().getDate() + '/' + props.task.date.toDate().getFullYear()}
+                                    >
+                                        View on calendar
+                                    </Button>
+                                </React.Fragment>}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant='h6' component='h2'>
+                                Status
+                            </Typography>
+                            <FormControlLabel
+                                control={<Checkbox checked={props.task.completed || false} onClick={(event) => handleCompletedChange(event)} />}
+                                label={"Completed"}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant='h6' component='h2'>
+                                Users
+                            </Typography>
+                            {props.task.users.length === 0 && (
+                                <Typography variant='body2' component='p'>
+                                    (No users assigned to task)
+                                </Typography>
+                            )}
+                            {props.task.users.length > 0 && props.task.users.map(user =>
+                                <Chip key={user} label={user} color='primary' size='small' style={{margin: 3 + 'px'}} variant={user !== props.boardRef.data().owner ? 'outlined' : 'default'} />
+                            )}
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>

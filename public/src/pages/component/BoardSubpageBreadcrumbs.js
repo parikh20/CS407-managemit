@@ -14,12 +14,10 @@ const white = "#fff"
 
 const useStyles = makeStyles(theme => ({
     darkGrid: {
-        padding: '10px 10px 0px 10px',
         color: darkTextColor,
         backgroundColor: primaryDark
     },
     whiteGrid: {
-        padding: '10px 10px 0px 10px',
         color: black,
         backgroundColor: white
     },
@@ -54,7 +52,7 @@ function BoardSubpageBreadcrumbs(props) {
     const mode = localStorage.darkMode
     return (
         <Grid container className={classes[`${mode}Grid`]}>
-            <Breadcrumbs aria-label='breadcrumbs' className={classes[`${mode}Breadcrumbs`]}>
+            <Breadcrumbs aria-label='breadcrumbs' className={classes[`${mode}Breadcrumbs`]} style={{padding: '10px 10px 0px 10px'}}>
                 <Link className={classes[`${mode}Link`]} href='/boards'>
                     Boards
                 </Link>

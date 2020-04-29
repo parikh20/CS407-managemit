@@ -252,7 +252,7 @@ function BoardHistoryComponent(props) {
             <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3} className={classes[`${mode}Table`]}>
                     <Grid item xs={12}>
-                        <h2>Board History</h2>
+                        <h2>Board history</h2>
                         <MaterialTable
                             icons={tableIcons}
                             columns={columns}

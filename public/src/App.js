@@ -20,6 +20,9 @@ import UserSettings from './pages/UserSettings';
 import BoardDocuments from './pages/BoardDocuments';
 import UserNotifications from './pages/UserNotifications';
 import BoardApiSettings from './pages/BoardApiSettings';
+import BoardApiHistory from './pages/BoardApiHistory';
+import RewardsAdmin from './pages/RewardsAdmin';
+import RedeemRewards from './pages/RedeemRewards';
 
 // Used to ensure users must log in
 class ProtectedRoute extends React.Component {
@@ -65,8 +68,11 @@ function App() {
                 <ProtectedRoute path='/boards' component={Boards} />
                 <ProtectedRoute path='/board/:boardId/calendar/:month/:day/:year' component={BoardCalendar} />
                 <ProtectedRoute path='/board/:boardId/calendar' component={BoardCalendar} />
+                <ProtectedRoute path='/board/:boardId/rewards' component={RedeemRewards} />
+                <ProtectedRoute path='/board/:boardId/rewardsadmin' component={RewardsAdmin} />
                 <ProtectedRoute path='/board/:boardId/settings' component={BoardSettings} />
                 <ProtectedRoute path='/board/:boardId/api/settings' component={BoardApiSettings} />
+                <ProtectedRoute path='/board/:boardId/api/history' component={BoardApiHistory} />
                 <ProtectedRoute path='/board/:boardId/history' component={BoardHistory} />
                 <ProtectedRoute path='/board/:boardId/documents' component={BoardDocuments} />
                 <ProtectedRoute path='/board/:boardId/:groupId' component={Board} />
