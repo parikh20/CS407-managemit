@@ -99,6 +99,7 @@ function UserSettingsComponent(props) {
     const darkMode = props.settings.darkMode ? "dark" : "white"
 
     darkMode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
+    localStorage.setItem('darkMode', darkMode)
 
     const handleChange = name => event => {
         console.log(props.settings.darkMode)

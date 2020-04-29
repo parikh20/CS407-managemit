@@ -38,11 +38,7 @@ function BoardUsersDialog(props) {
     const user = JSON.parse(localStorage.getItem('user'));
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
-
+    const mode = localStorage.darkMode
 
     const handleClickOpen = () => {
         setOpen(true);

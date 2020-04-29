@@ -11,7 +11,11 @@ export default (props) => {
     const viewableHistory = createBrowserHistory();
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
-
+    const mode = localStorage.darkMode
+    const primaryDark = "#222831"
+    const white = "#fff"
+    mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
+    
     const db = firebase.firestore();
     db.collection('boards').where('userRefs', 'array-contains', user.email).get().then(snapshot => {
         for (const doc of snapshot.docs) {
