@@ -26,18 +26,14 @@ class Boards extends React.Component {
     // classes = useStyles();
 
     boardsSub;
-    mode
 
     constructor(props) {
         super(props);
         this.state = {
             boardRefs: [],
+            mode: this.props.mode
         };
         this.user = JSON.parse(localStorage.getItem('user'));
-        db.collection('users').doc(this.user.email).get().then(doc => {
-            doc.data().darkMode ? this.mode = 'dark' : this.mode = 'white'
-            console.log(this.mode)
-        })
         this.loadBoards(this.user);
     }
 
@@ -65,8 +61,8 @@ class Boards extends React.Component {
     render() {
         return (
             <div>
-                <BoardsActions darkMode={this.mode}/>
-                <BoardCardCollection darkMode={this.mode} boardRefs={this.state.boardRefs} sortMode={this.props.sortMode} />
+                <BoardsActions darkMode={this.props.mode}/>
+                <BoardCardCollection darkMode={this.props.mode} boardRefs={this.state.boardRefs} sortMode={this.props.sortMode} />
             </div>
         );
     }
