@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
 function BoardActions(props) {
     const user = JSON.parse(localStorage.getItem('user')); // temp fix. auth.currentUser doesn't work if we navigate to this page directly, or refresh
     const classes = useStyles();
+    console.log(props.darkMode)
     const mode = props.darkMode
 
     return (

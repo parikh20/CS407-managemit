@@ -221,7 +221,6 @@ function TaskListing(props) {
 
     let elements = [];
     elements = document.getElementsByClassName('taskListing');
-    console.log(elements)
     for (let i = 0; i < elements.length; i++) {
         let content = elements[i].innerText;
         if (content.includes("Complete")) {
