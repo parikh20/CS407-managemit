@@ -35,6 +35,14 @@ const useStyles = makeStyles(theme => ({
     whiteButton: {
         color: black,
         backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -185,8 +193,8 @@ function NewViewDialog(props) {
                 <Button onClick={handleClickOpen} className={classes[`${mode}Button`]}>New view</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>New view</DialogTitle>
-                <DialogContent>
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Dialog`]}>New view</DialogTitle>
+                <DialogContent className={classes[`${mode}Dialog`]}>
                     <DialogContentText>
                         Enter a name for your new view.
                     </DialogContentText>
@@ -244,7 +252,7 @@ function NewViewDialog(props) {
                         <LoadingAnimation />
                     )}
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
