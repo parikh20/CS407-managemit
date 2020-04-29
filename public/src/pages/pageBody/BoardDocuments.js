@@ -60,8 +60,8 @@ class BoardDocuments extends React.Component {
     render() {
         return (
             <div>
-                <BoardSubpageBreadcrumbs currentPageName='Documents' board={this.state.board ? this.state.board : {}} />
-                <BoardDocumentsComponent board={this.state.board} files={this.state.files} />
+                <BoardSubpageBreadcrumbs currentPageName='Documents' board={this.state.board ? this.state.board : {}} darkMode={this.props.darkMode}/>
+                <BoardDocumentsComponent board={this.state.board} files={this.state.files} darkMode={this.props.darkMode}/>
             </div>
         );
     }
