@@ -11,7 +11,6 @@ export default (props) => {
     const viewableHistory = createBrowserHistory();
     const history = useHistory();
     const user = JSON.parse(localStorage.getItem('user'));
-    const [mode, setMode] = React.useState('dark')
     const db = firebase.firestore();
     const primaryDark = "#222831"
     const secondaryDark = "#30476E"
@@ -19,9 +18,8 @@ export default (props) => {
     const black = "#000"
     const white = "#fff"
 
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
+    const mode = localStorage.darkMode
+
 
     mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
 
