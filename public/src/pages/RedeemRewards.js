@@ -38,7 +38,7 @@ class RedeemRewards extends React.Component {
 
     loadUserPoints(boardRef) {
         this.pointSub = boardRef.ref.collection("points").doc(this.state.userEmail).onSnapshot((pointsRef) => {
-            this.setState({userPoints: pointsRef.data().points});
+            this.setState({userPoints: pointsRef.data() ? pointsRef.data().points : 0});
         });
     }
 

@@ -41,6 +41,11 @@ class ViewRedeemedRewards extends React.Component {
         return d.toDateString();
     }
 
+    componentWillUnmount() {
+        this.redeemedRewardsSub && this.redeemedRewardsSub()
+        this.rewardsSub && this.rewardsSub()
+    }
+
     render() {
         return (
             <React.Fragment>
