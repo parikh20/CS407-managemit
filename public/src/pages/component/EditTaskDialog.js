@@ -35,7 +35,7 @@ import Link from '@material-ui/core/Link';
 
 import dateFormat from 'dateformat';
 
-import { db } from '../../Firebase';
+import { db, addPointsToUser } from '../../Firebase';
 import firebase from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
 import { makeStyles } from '@material-ui/core/styles';
@@ -254,6 +254,12 @@ function EditTaskDialog(props) {
                 let removedDependents = props.existingTask.dependents.filter(item => !selectedDependents.includes(item) && item.trim() !== '');
                 let newColumnRefs = columnIds.filter(item => !prevColumnRefs.includes(item));
 
+                if (props.buttonConfirmText !== undefined) {
+                    if (props.board.pointsSettings['editTask']) {
+                        addPointsToUser(props.boardRef.id, user.email, parseInt(props.board.pointsSettings['editTask']))
+                    }
+                }
+
                 props.boardRef.ref.collection('tasks').doc(props.existingTaskRef.id).update({
                     title: label,
                     desc: desc,
@@ -373,6 +379,11 @@ function EditTaskDialog(props) {
                         taskName: label,
                         unread: true
                     });
+                    if (props.buttonConfirmText === undefined) {
+                        if (props.board.pointsSettings['createTask']) {
+                            addPointsToUser(props.boardRef.id, user.email, parseInt(props.board.pointsSettings['createTask']))
+                        }
+                    }
                     return db.collection('boards').doc(props.boardRef.id).collection('history').add({
                             user: user.email,
                             taskName: label,
