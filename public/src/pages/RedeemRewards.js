@@ -8,6 +8,12 @@ import { cache, db, currentUser } from '../Firebase';
 import RedeemNewRewards from './pageBody/RedeemNewRewards';
 import ViewRedeemedRewards from './pageBody/ViewRedeemedRewards';
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 class RedeemRewards extends React.Component {
     
     boardSub;
@@ -57,7 +63,10 @@ class RedeemRewards extends React.Component {
     render() {
 
         let shownComponent = this.state.setRewardsPanelShown ? <RedeemNewRewards userPoints={this.state.userPoints} userEmail={this.state.userEmail} boardRef={this.state.boardRef}></RedeemNewRewards> : (this.state.boardRef && <ViewRedeemedRewards boardRef={this.state.boardRef} email={this.state.userEmail}></ViewRedeemedRewards>);
-
+        const primaryDark = "#222831"
+        const white = "#fff"
+        const mode = localStorage.darkMode
+        mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
         return (
             <div>
                 <NavBar location={this.viewableHistory.location.pathname}  />
@@ -76,7 +85,7 @@ class RedeemRewards extends React.Component {
                 </Grid>
                 <Grid container justify="center">
                     <Grid item xs={10}>
-                        <Paper elevation={3} style={{"min-height": "80vh"}}>
+                        <Paper elevation={3} style={{"min-height": "80vh", backgroundColor:localStorage.darkMode==='dark'?secondaryDark:white, color: localStorage.darkMode==='dark'?darkTextColor:black}}>
                             {this.state.boardRef && shownComponent}
                         </Paper>
                     </Grid>
