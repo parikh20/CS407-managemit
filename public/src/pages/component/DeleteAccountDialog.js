@@ -21,6 +21,12 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
     userSettingsBody: {
         flexGrow: 1,
@@ -28,9 +34,17 @@ const useStyles = makeStyles(theme => ({
         paddingRight: 200,
         paddingLeft: 200
     },
-    paper: {
+    darkpaper: {
         textAlign: 'left',
-        marginTop: 20
+        marginTop: 20,
+        color: darkTextColor,
+        backgroundColor: secondaryDark
+    },
+    whitepaper: {
+        textAlign: 'left',
+        marginTop: 20,
+        color: black,
+        backgroundColor: white
     },
     settingsCard: {
         cursor: 'pointer',
@@ -41,6 +55,14 @@ const useStyles = makeStyles(theme => ({
     },
     header: {
         padding: theme.spacing(2)
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
+        color: black,
+        backgroundColor: white
     }
 }));
 
@@ -55,6 +77,7 @@ function DeleteAccountDialog(props) {
     const [errorSnackbar, setErrorSnackbar] = React.useState(false);
     const [successMessage, setSuccessMessage] = React.useState('');
     const [errorMessage, setErrorMessage] = React.useState('');
+    const mode = localStorage.darkMode
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -155,7 +178,7 @@ function DeleteAccountDialog(props) {
 
     return (
         <>
-            <Paper className={classes.paper} >
+            <Paper className={classes[`${mode}paper`]} >
                 <Typography variant='h5' className={classes.header}>Delete Account</Typography>
                 <Divider />
                 <Grid container spacing={0} className={classes.settingsCard} >
@@ -175,8 +198,8 @@ function DeleteAccountDialog(props) {
             </Paper>
 
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Delete Account</DialogTitle>
-                <DialogContent >
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Dialog`]}>Delete Account</DialogTitle>
+                <DialogContent className={classes[`${mode}Dialog`]}>
                     < Typography variant='subtitle1'>
                         Reauthenticate to delete your account
                     </Typography>
@@ -190,7 +213,7 @@ function DeleteAccountDialog(props) {
                     }
                     <Divider style={{marginTop: 5}} />
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
