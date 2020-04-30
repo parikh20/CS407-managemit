@@ -255,7 +255,7 @@ function EditTaskDialog(props) {
                 let newColumnRefs = columnIds.filter(item => !prevColumnRefs.includes(item));
 
                 if (props.buttonConfirmText !== undefined) {
-                    if (props.board.pointsSettings['editTask']) {
+                    if (props.board.pointsSettings && props.board.pointsSettings['editTask']) {
                         addPointsToUser(props.boardRef.id, user.email, parseInt(props.board.pointsSettings['editTask']))
                     }
                 }
@@ -380,7 +380,7 @@ function EditTaskDialog(props) {
                         unread: true
                     });
                     if (props.buttonConfirmText === undefined) {
-                        if (props.board.pointsSettings['createTask']) {
+                        if (props.board.pointsSettings && props.board.pointsSettings['createTask']) {
                             addPointsToUser(props.boardRef.id, user.email, parseInt(props.board.pointsSettings['createTask']))
                         }
                     }
