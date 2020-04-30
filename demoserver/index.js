@@ -18,7 +18,7 @@ var server = http.createServer(function (req, res) {   //create web server
         res.writeHead(200); 
         
         // set response content    
-        res.write('got boardId: ' + queryObject.hello);
+        res.write('received boardId: ' + queryObject.newBoardId + ' from user ' + queryObject.user);
         res.end();
     
     } else {
