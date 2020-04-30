@@ -44,6 +44,12 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
     settingsBody: {
         flexGrow: 1,
@@ -51,10 +57,18 @@ const useStyles = makeStyles(theme => ({
         paddingRight: 200,
         paddingLeft: 200
     },
-    paper: {
+    darkPaper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+        marginBottom: 20
+    },
+    whitePaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: black,
+        backgroundColor: white,
         marginBottom: 20
     },
     button: {
@@ -67,7 +81,15 @@ const useStyles = makeStyles(theme => ({
     chip: {
         marginRight: 5,
         marginLeft: 5
-    }
+    },
+    darkTable: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteTable: {
+        color: black,
+        backgroundColor: white,
+    },
 }));
 
 
@@ -203,7 +225,7 @@ function HistoryAction(props) {
 
 function BoardHistoryComponent(props) {
     const classes = useStyles();
-
+    const mode = localStorage.darkMode
     let columns = [];
     if (props.board) {
         columns = [
@@ -227,10 +249,10 @@ function BoardHistoryComponent(props) {
 
     return (
         <div className={classes.settingsBody}>
-            <Paper className={classes.paper}>
-                <Grid container spacing={3}>
+            <Paper className={classes[`${mode}Paper`]}>
+                <Grid container spacing={3} className={classes[`${mode}Table`]}>
                     <Grid item xs={12}>
-                        <h2>Board History</h2>
+                        <h2>Board history</h2>
                         <MaterialTable
                             icons={tableIcons}
                             columns={columns}
@@ -239,6 +261,7 @@ function BoardHistoryComponent(props) {
                             options={{
                                 search: true
                             }}
+                            style={{backgroundColor:(mode==='dark' ? secondaryDark : white),color:(mode==='dark'?darkTextColor:black)}}
                         />
                     </Grid>
                 </Grid>

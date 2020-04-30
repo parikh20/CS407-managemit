@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 function EditEmailDialog() {
     const classes = useStyles();
+    const history = useHistory();
 
     const user = JSON.parse(localStorage.getItem('user'));
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -54,7 +56,7 @@ function EditEmailDialog() {
 
     const changeEmail = (email) => {
         cleanState();
-
+        const oldEmail = user.email;
         if (email.length === 0) {
             setEmailError(true);
             setEmailHelperText('Email cannot be empty');
@@ -77,16 +79,12 @@ function EditEmailDialog() {
                         user.email,
                         password
                     )).then(res => {
-                        res.user.updateEmail(email).then(result => {
-                            setEmail(email);
-                            user.email = email;
-                            localStorage.setItem('user', JSON.stringify(user))
+                        const changeEmailFunction = firebase.functions().httpsCallable('changeEmail');
+                        changeEmailFunction({oldEmail: oldEmail, newEmail: email, uid: user.uid}).then(result => {
+                            console.log(result.data)
+                            localStorage.removeItem('user');
+                            history.push('/login');
                             handleClose();
-                        }).catch(err => {
-                            if (err.code === 'auth/email-already-in-use') {
-                                setEmailError(true);
-                                setEmailHelperText('Email already in use')
-                            }
                         });
                     }).catch(error => {
                         setPasswordError(true);

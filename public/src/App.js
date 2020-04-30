@@ -20,6 +20,7 @@ import UserSettings from './pages/UserSettings';
 import BoardDocuments from './pages/BoardDocuments';
 import UserNotifications from './pages/UserNotifications';
 import BoardApiSettings from './pages/BoardApiSettings';
+import BoardApiHistory from './pages/BoardApiHistory';
 import RewardsAdmin from './pages/RewardsAdmin';
 import RedeemRewards from './pages/RedeemRewards';
 
@@ -71,6 +72,7 @@ function App() {
                 <ProtectedRoute path='/board/:boardId/rewardsadmin' component={RewardsAdmin} />
                 <ProtectedRoute path='/board/:boardId/settings' component={BoardSettings} />
                 <ProtectedRoute path='/board/:boardId/api/settings' component={BoardApiSettings} />
+                <ProtectedRoute path='/board/:boardId/api/history' component={BoardApiHistory} />
                 <ProtectedRoute path='/board/:boardId/history' component={BoardHistory} />
                 <ProtectedRoute path='/board/:boardId/documents' component={BoardDocuments} />
                 <ProtectedRoute path='/board/:boardId/:groupId' component={Board} />

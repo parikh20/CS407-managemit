@@ -39,11 +39,7 @@ export default (props) => {
     const user = JSON.parse(localStorage.getItem('user'));
     const db = firebase.firestore();
     const classes = useStyles();
-    const [mode, setMode] = React.useState('dark')
-    db.collection('users').doc(user.email).get().then(doc => {
-        doc.data().darkMode ? setMode("dark") : setMode("white");
-    })
-
+    const mode = localStorage.darkMode
     mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
 
     // Check if we have the query param for sorting

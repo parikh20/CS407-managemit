@@ -32,6 +32,12 @@ import ApiHelpDialog from './ApiHelpDialog';
 
 import { db } from '../../Firebase';
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
     settingsBody: {
         flexGrow: 1,
@@ -39,10 +45,18 @@ const useStyles = makeStyles(theme => ({
         paddingRight: 200,
         paddingLeft: 200
     },
-    paper: {
+    darkPaper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+        marginBottom: 20
+    },
+    whitePaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: black,
+        backgroundColor: white,
         marginBottom: 20
     },
     button: {
@@ -76,6 +90,16 @@ const useStyles = makeStyles(theme => ({
         fontSize: theme.typography.pxToRem(15),
         color: theme.palette.text.secondary,
     },
+    darkPanel: {
+        width: '80%', marginRight: 'auto', marginLeft: 'auto',
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whitePanel: {
+        width: '80%', marginRight: 'auto', marginLeft: 'auto',
+        color: black,
+        backgroundColor: white,
+    }
 }));
 
 function Alert(props) {
@@ -103,6 +127,7 @@ function BoardApiSettingsComponent(props) {
     const [savedName, setSavedName] = React.useState('');
     const [savedUrl, setSavedUrl] = React.useState('');
     const [savedBody, setSavedBody] = React.useState('');
+    const mode = localStorage.darkMode
 
     const actionIdToName = {
         '7': 'Task created',
@@ -308,7 +333,7 @@ function BoardApiSettingsComponent(props) {
 
     return (
         <div className={classes.settingsBody}>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>API calls</h2>
@@ -320,7 +345,7 @@ function BoardApiSettingsComponent(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <ExpansionPanel style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}} expanded={true}>
+                        <ExpansionPanel className={classes[`${mode}Panel`]} expanded={true}>
                             <ExpansionPanelSummary
                                 aria-controls='panel1bh-content'
                                 id='panel1bh-header'

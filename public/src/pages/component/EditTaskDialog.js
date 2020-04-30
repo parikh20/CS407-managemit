@@ -35,7 +35,7 @@ import Link from '@material-ui/core/Link';
 
 import dateFormat from 'dateformat';
 
-import { db } from '../../Firebase';
+import { db, addPointsToUser } from '../../Firebase';
 import firebase from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
 import { makeStyles } from '@material-ui/core/styles';
@@ -53,6 +53,14 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: secondaryDark
     },
     whiteButton: {
+        color: black,
+        backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
         color: black,
         backgroundColor: white
     }
@@ -88,7 +96,7 @@ function EditTaskDialog(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const classes = useStyles();
-    const mode = props.darkMode
+    const mode = localStorage.darkMode
 
     let allTasks = [];
     if (props.taskRefs && Array.isArray(props.taskRefs)) {
@@ -246,6 +254,12 @@ function EditTaskDialog(props) {
                 let removedDependents = props.existingTask.dependents.filter(item => !selectedDependents.includes(item) && item.trim() !== '');
                 let newColumnRefs = columnIds.filter(item => !prevColumnRefs.includes(item));
 
+                if (props.buttonConfirmText !== undefined) {
+                    if (props.board.pointsSettings['editTask']) {
+                        addPointsToUser(props.boardRef.id, user.email, parseInt(props.board.pointsSettings['editTask']))
+                    }
+                }
+
                 props.boardRef.ref.collection('tasks').doc(props.existingTaskRef.id).update({
                     title: label,
                     desc: desc,
@@ -365,6 +379,11 @@ function EditTaskDialog(props) {
                         taskName: label,
                         unread: true
                     });
+                    if (props.buttonConfirmText === undefined) {
+                        if (props.board.pointsSettings['createTask']) {
+                            addPointsToUser(props.boardRef.id, user.email, parseInt(props.board.pointsSettings['createTask']))
+                        }
+                    }
                     return db.collection('boards').doc(props.boardRef.id).collection('history').add({
                             user: user.email,
                             taskName: label,
@@ -507,8 +526,8 @@ function EditTaskDialog(props) {
                 <Button disabled={props.buttonDisabled}  className={classes[`${mode}Button`]} onClick={handleClickOpen} variant={props.buttonVariant ? props.buttonVariant : 'outlined'}>{props.buttonText ? props.buttonText : 'New task'}</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth={true} maxWidth='md'>
-                <DialogContent>
-                    <Grid container spacing={1}>
+                <DialogContent className={classes[`${mode}Dialog`]}>
+                    <Grid container spacing={1} >
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
                                 Basic details
@@ -560,18 +579,19 @@ function EditTaskDialog(props) {
                             />
                         </Grid>
                         { (props.board.owner && props.board.permissions) && (props.board.owner === user.email || props.board.permissions[user.email].isAdmin === true) &&
-                        <div>
                             <Grid item xs={12}>
-                            <TextField
-                                id="points"
-                                label="Points"
-                                type="number"
-                                defaultValue={props.existingTask ? props.existingTask.points : 0}
-                                fullWidth={true}
-                                variant="outlined"
-                            />
-                        </Grid>
-                        </div>
+                                <TextField
+                                    margin='dense'
+                                    id="points"
+                                    label="Points"
+                                    type="number"
+                                    defaultValue={props.existingTask ? props.existingTask.points : 0}
+                                    fullWidth
+                                    InputLabelProps={{shrink: true}}
+                                    variant="outlined"
+                                    inputProps={{min: '0'}}
+                                />
+                            </Grid>
                         } 
                         <Grid item xs={12}>
                             <Typography variant='h6' component='h2'>
@@ -826,7 +846,7 @@ function EditTaskDialog(props) {
                         </React.Fragment>}
                      </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>

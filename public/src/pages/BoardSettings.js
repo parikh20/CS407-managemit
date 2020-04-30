@@ -12,7 +12,11 @@ class BoardSettingsPage extends React.Component {
 
         this.viewableHistory = createBrowserHistory();
         const user = JSON.parse(localStorage.getItem('user'));
-
+        const mode = localStorage.darkMode
+        const primaryDark = "#222831"
+        const white = "#fff"
+        mode === 'dark' ? document.body.style.backgroundColor = primaryDark : document.body.style.backgroundColor = white;
+        
         db.collection('boards').doc(props.match.params.boardId).get().then(boardRef => {
             const data = boardRef.data();
             if (!boardRef.exists || !data.permissions.hasOwnProperty(user.email) || data.permissions[user.email].isAdmin === false) {

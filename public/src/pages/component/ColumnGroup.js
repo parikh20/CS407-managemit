@@ -15,7 +15,6 @@ function Alert(props) {
 class ColumnGroup extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             warningSnackbar: false,
             columns: [],
@@ -157,6 +156,7 @@ class ColumnGroup extends React.Component {
                                 allCols={this.props.allCols}
                                 allColGroups={this.props.allColGroups}
                                 allTaskRefs={this.props.taskRefs}
+                                darkMode={this.props.darkMode}
                             />
                         ))}
                     </GridList>

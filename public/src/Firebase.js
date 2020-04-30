@@ -81,9 +81,9 @@ class FirebaseCache {
   }
 }
 
-export const addPointsToUser = (boardId, email, points) => {
+export const addPointsToUser = (boardId, email, points, set) => {
   db.collection("boards").doc(boardId).collection("points").doc(email).get().then((userRef) => {
-    if(userRef.exists) {
+    if(userRef.exists && !set) {
       userRef.ref.update({points: Number.parseInt(userRef.data().points || 0) + (points)});
     } else {
       db.collection("boards").doc(boardId).collection("points").doc(email).set({points: points});

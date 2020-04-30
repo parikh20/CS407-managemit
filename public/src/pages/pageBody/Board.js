@@ -19,7 +19,6 @@ class Board extends React.Component {
 
     constructor(props) {
         super(props);
-        // console.log(props)
         this.state = {
             taskRefs: {},
             taskCommentRefs: {},
@@ -160,6 +159,7 @@ class Board extends React.Component {
     }
 
     render() {
+        // console.log(this.props)
         return (
             <div>
                 <BoardActions
@@ -177,7 +177,7 @@ class Board extends React.Component {
                     taskRefs={this.state.taskRefs}
                     currentGroupId={this.state.columnGroupId}
                     fileRefs={this.state.fileRefs ? this.state.fileRefs : []}
-                    darkMode={this.state.darkMode}
+                    darkMode={this.props.mode}
                 />
                 <ColumnGroup
                     boardRef={this.state.boardRef ? this.state.boardRef : {}}
@@ -196,7 +196,7 @@ class Board extends React.Component {
                     lockFunctionality={this.props.lockFunctionality}
                     sortMode={this.props.sortMode}
                     fileRefs={this.state.fileRefs ? this.state.fileRefs : []}
-
+                    darkMode={this.props.mode}
                 />
             </div>
         ); 

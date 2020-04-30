@@ -21,14 +21,27 @@ const black = "#000"
 const white = "#fff"
 
 const useStyles = makeStyles(theme => ({
-    list: {
-        backgroundColor: theme.palette.background.paper
+    darkList: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'    
+    },
+    whiteList: {
+        color: black,
+        backgroundColor: white    
     },
     darkButton: {
         color: darkTextColor,
         backgroundColor: secondaryDark
     },
     whiteButton: {
+        color: black,
+        backgroundColor: white
+    },
+    darkDialog: {
+        color: darkTextColor,
+        backgroundColor: '#DEE1DD'
+    },
+    whiteDialog: {
         color: black,
         backgroundColor: white
     }
@@ -81,11 +94,11 @@ function SelectViewDialog(props) {
                 <Button onClick={handleClickOpen} className={classes[`${mode}Button`]}>Select view</Button>
             </ButtonGroup>
             <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-                <DialogTitle id='form-dialog-title'>Select view</DialogTitle>
-                <DialogContent>
+                <DialogTitle id='form-dialog-title' className={classes[`${mode}Dialog`]}>Select view</DialogTitle>
+                <DialogContent className={classes[`${mode}Dialog`]}>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
-                            <List className={classes.list}>
+                            <List className={classes[`${mode}List`]}>
                                 {colGroupDisplay.map((colGroup, index) => (
                                     <ListItem key={colGroup.id} button onClick={() => handleViewSelect(colGroup)}>
                                         <ListItemText primary={colGroup.label} secondary={colGroup.columnNames.join(', ')} />
@@ -95,7 +108,7 @@ function SelectViewDialog(props) {
                         </Grid>
                      </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes[`${mode}Dialog`]}>
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>

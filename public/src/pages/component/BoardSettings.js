@@ -26,12 +26,19 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DeleteBoardDialog from './DeleteBoardDialog';
 import TransferBoardDialog from './TransferBoardDialog';
 
-import { db, auth } from '../../Firebase';
+import { db, auth, addPointsToUser } from '../../Firebase';
 import { dispatchUserNotifications } from '../../Notifications';
+import firebase from '../../Firebase';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
+
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
 
 const useStyles = makeStyles(theme => ({
     settingsBody: {
@@ -40,11 +47,19 @@ const useStyles = makeStyles(theme => ({
         paddingRight: 200,
         paddingLeft: 200
     },
-    paper: {
+    darkPaper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
-        marginBottom: 20
+        marginBottom: 20,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whitePaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        marginBottom: 20,
+        color: black,
+        backgroundColor: white,
     },
     button: {
         marginRight: 5,
@@ -64,6 +79,9 @@ const useStyles = makeStyles(theme => ({
             background: "#D3D3D3",
         }
     },
+    apiCard: {
+        padding: theme.spacing(2.5),
+    },
     typography: {
         color: 'black'
     }
@@ -82,9 +100,10 @@ function BoardSettings(props) {
     const [inviteEmailError, setInviteEmailError] = React.useState(false);
     const [inviteEmailHelperText, setInviteEmailHelperText] = React.useState('');
     const [successMessage, setSuccessMessage] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState('');
 
     const user = JSON.parse(localStorage.getItem('user'));
-
+    const mode = localStorage.darkMode
     const regexp = /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     const handleSettingsSubmit = () => {
@@ -137,6 +156,7 @@ function BoardSettings(props) {
                 });
             }).catch(err => {
                 setErrorSnackbar(true);
+                setErrorMessage('There was an error saving board details!')
                 console.log(err);
                 return;
             });
@@ -278,6 +298,7 @@ function BoardSettings(props) {
         setDescriptionHelperText('');
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
+        setErrorMessage('');
         setInviteEmailError(false);
         setInviteEmailHelperText('');
     }
@@ -291,9 +312,73 @@ function BoardSettings(props) {
         setSuccessSnackbar(false);
     };
 
+    const handlePoints = (event, email) => {
+        clearState();
+        if (event.target.value < 0) {
+            setErrorSnackbar(true);
+            setErrorMessage('A users points cannot be negative!')
+        } else {
+            addPointsToUser(props.board.id, email, parseInt(event.target.value), true)
+        }
+    }
+
+    const generateAPI = () => {
+        const generateAPI = firebase.functions().httpsCallable('generateAPI');
+
+        generateAPI({boardId: props.board.id}).then(result => {
+           console.log(result)
+           props.board.apiKey = result.data
+        });
+    }   
+
+    const deleteAPI = () => {
+        if (props.board.apiKey != null) {
+            const deleteAPI = firebase.functions().httpsCallable('deleteAPI');
+            deleteAPI({boardId: props.board.id}).then(result => {
+                console.log(result)
+             });
+        }
+    }
+
+    const testGetTasks = () => {
+        const key = document.getElementById('tasksAPI').value;
+        const deleteAPI = firebase.functions().httpsCallable('getBoardTasks');
+        deleteAPI({boardId: props.board.id, apiKey: key}).then(result => {
+            console.log(result.data)
+        });
+    }
+
+    const testGetHistory = () => {
+        const key = document.getElementById('historyAPI').value;
+        const deleteAPI = firebase.functions().httpsCallable('getBoardHistory');
+        deleteAPI({boardId: props.board.id, apiKey: key}).then(result => {
+            console.log(result.data)
+        });
+    }
+
+    const handlePointsSettings = (event, key) => {
+        clearState()
+        if (event.target.value < 0) {
+            setErrorSnackbar(true);
+            setErrorMessage('A points setting cannot be negative!')
+            return
+        }
+        var newPointsSettings = {}
+        if (props.board.pointsSettings === undefined) {
+            newPointsSettings[key] = event.target.value;
+        } else {
+            newPointsSettings = props.board.pointsSettings;
+            newPointsSettings[key] = event.target.value;
+        }
+
+        db.collection('boards').doc(props.board.id).update({
+            pointsSettings: newPointsSettings
+        })
+    }
+
     return (
         <div className={classes.settingsBody}>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Board details</h2>
@@ -309,7 +394,7 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Collaborators</h2>
@@ -325,6 +410,7 @@ function BoardSettings(props) {
                                     <TableRow>
                                         <TableCell>Email</TableCell>
                                         <TableCell align='right'>Role</TableCell>
+                                        <TableCell align='right'>Points</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -343,6 +429,9 @@ function BoardSettings(props) {
                                                 </Select>
                                             </FormControl>
                                         </TableCell>
+                                        <TableCell align='right'>
+                                            <TextField type="number" value={props.points ? props.points[props.board.owner]: 0} onChange={(e) => handlePoints(e, props.board.owner)} />
+                                        </TableCell>
                                     </TableRow>
                                     {props.board && props.board.userRefs && <React.Fragment>
                                         {props.board.userRefs.filter(userEmail => userEmail !== props.board.owner).map(userEmail => (
@@ -357,6 +446,9 @@ function BoardSettings(props) {
                                                             <MenuItem value='administrator'>Administrator</MenuItem>
                                                         </Select>
                                                     </FormControl>
+                                                </TableCell>
+                                                <TableCell align='right'>
+                                                    <TextField type="number" value={props.points && props.points[userEmail] ? props.points[userEmail] : 0} onChange={(e) => handlePoints(e, userEmail)} />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -375,13 +467,38 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Grid item xs={12}>
-                        <h2>API calls</h2>
+                        <h2>Board API</h2>
                     </Grid>
                     <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        This boards API key
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        {props.board.apiKey ? props.board.apiKey : "No API key"}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Button variant='contained' color='primary' style={{marginRight: 5}} onClick={generateAPI}>Generate</Button>
+                            <Button variant='contained' color='primary' onClick={deleteAPI}>Delete</Button>
+                        </Grid>
                         <Divider />
+                    </Grid>
+                </Grid>
+            </Paper>
+            <Paper className={classes[`${mode}Paper`]}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>External API hooks</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
                         <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/settings')}>
                             <Grid item xs={12} sm container>
                                 <Grid item container direction="column" spacing={2}>
@@ -396,11 +513,11 @@ function BoardSettings(props) {
                             <ChevronRightIcon />
                         </Grid>
                         <Divider />
-                        <Grid container spacing={0} className={classes.settingsCard}>
+                        <Grid container spacing={0} className={classes.settingsCard} onClick={() => history.push('/board/' + props.board.id + '/api/history')}>
                             <Grid item xs={12} sm container>
                                 <Grid item container direction="column" spacing={2}>
                                     <Typography variant='subtitle1' className={classes.typography}>
-                                        View API call log
+                                        View API call history
                                     </Typography>
                                     <Typography variant="body2">
                                         View the results of previous API calls
@@ -413,8 +530,60 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
+            <Paper className={classes[`${mode}Paper`]}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>Points Settings</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Creating a task
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        How many points a user receives for creating a task
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <TextField type="number" value={props.board.pointsSettings ? props.board.pointsSettings['createTask'] : 0} onChange={(e) => handlePointsSettings(e, 'createTask')} />
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Editing a task
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        How many points a user receives for editing a task
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <TextField type="number" value={props.board.pointsSettings ? props.board.pointsSettings['editTask'] : 0} onChange={(e) => handlePointsSettings(e, 'editTask')} />
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Moving a task
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        How many points a user receives for moving a task to another column
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <TextField type="number" value={props.board.pointsSettings ? props.board.pointsSettings['moveTask'] : 0} onChange={(e) => handlePointsSettings(e, 'moveTask')} />
+                        </Grid>
+                        <Divider />
+                    </Grid>
+                </Grid>
+            </Paper>
             {props.board && props.board.owner === user.email && (
-                <Paper className={classes.paper}>
+                <Paper className={classes[`${mode}Paper`]}>
                     <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                         <Grid item xs={12}>
                             <h2>Here be dragons</h2>
@@ -453,6 +622,39 @@ function BoardSettings(props) {
                     </Grid>
                 </Paper>
             )}
+            <Paper className={classes.paper}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>Test Public Facing API (FOR DEMO ONLY)</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Get board tasks
+                                    </Typography>
+                                    <TextField id="tasksAPI" size='small' defaultValue="" ></TextField>
+                                </Grid>
+                            </Grid>
+                            <Button variant='contained' color='primary' onClick={testGetTasks}>Test</Button>
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Get board history
+                                    </Typography>
+                                    <TextField id="historyAPI" size='small' ></TextField>
+                                </Grid>
+                            </Grid>
+                            <Button variant='contained' color='primary' onClick={testGetHistory}>Test</Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Paper>
             <Snackbar open={successSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
                     {successMessage}
@@ -460,7 +662,7 @@ function BoardSettings(props) {
             </Snackbar>
             <Snackbar open={errorSnackbar} onClose={handleClose}>
                 <Alert onClose={handleClose} autoHideDuration={6000} severity='success'>
-                    There was an error saving board details!
+                    {errorMessage}
                 </Alert>
             </Snackbar>
         </div>

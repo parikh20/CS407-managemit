@@ -60,6 +60,12 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+const primaryDark = "#222831"
+const secondaryDark = "#30476E"
+const darkTextColor = "#c1a57b"
+const black = "#000"
+const white = "#fff"
+
 const useStyles = makeStyles(theme => ({
     settingsBody: {
         flexGrow: 1,
@@ -67,15 +73,31 @@ const useStyles = makeStyles(theme => ({
         paddingRight: 200,
         paddingLeft: 200
     },
-    paper: {
+    darkPaper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
         marginBottom: 20
     },
-    button: {
+    whitePaper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: black,
+        backgroundColor: white,
+        marginBottom: 20
+    },
+    darkButton: {
         marginRight: 5,
-        marginLeft: 5
+        marginLeft: 5,
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteButton: {
+        marginRight: 5,
+        marginLeft: 5,
+        color: black,
+        backgroundColor: white,
     },
     textField: {
         width: 80 + '%'
@@ -83,7 +105,15 @@ const useStyles = makeStyles(theme => ({
     chip: {
         marginRight: 5,
         marginLeft: 5
-    }
+    },
+    darkTable: {
+        color: darkTextColor,
+        backgroundColor: secondaryDark,
+    },
+    whiteTable: {
+        color: black,
+        backgroundColor: white,
+    },
 }));
 
 
@@ -104,6 +134,7 @@ function BoardDocumentsComponent(props) {
     const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
 
     const user = JSON.parse(localStorage.getItem('user'));
+    const mode = props.darkMode
 
     let columns = [];
     if (props.board) {
@@ -238,7 +269,7 @@ function BoardDocumentsComponent(props) {
 
     return (
         <div className={classes.settingsBody}>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <h2>Board Documents</h2>
@@ -258,7 +289,7 @@ function BoardDocumentsComponent(props) {
                             InputLabelProps={{shrink: true}}
                             style={{width: 90 + '%'}}
                         />
-                        <IconButton aria-label='upload files' onClick={() => handleUpload()}>
+                        <IconButton aria-label='upload files' onClick={() => handleUpload()} className={classes[`${mode}Button`]}>
                             <CloudUploadIcon />
                         </IconButton>
                     </Grid>
@@ -268,7 +299,7 @@ function BoardDocumentsComponent(props) {
                         )}
                         <Divider />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes[`${mode}Table`]}>
                         <MaterialTable
                             icons={tableIcons}
                             columns={columns}
@@ -280,6 +311,7 @@ function BoardDocumentsComponent(props) {
                             }]}
                             options={{actionsColumnIndex: -1}}
                             data={props.files || []}
+                            style={{backgroundColor:(mode==='dark' ? secondaryDark : white),color:(mode==='dark'?darkTextColor:black)}}
                         />
                     </Grid>
                 </Grid>
