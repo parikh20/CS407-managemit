@@ -56,7 +56,7 @@ class RedeemRewards extends React.Component {
 
     render() {
 
-        let shownComponent = this.state.setRewardsPanelShown ? <RedeemNewRewards userPoints={this.state.userPoints} userEmail={this.state.userEmail} boardRef={this.state.boardRef}></RedeemNewRewards> : <ViewRedeemedRewards></ViewRedeemedRewards>;
+        let shownComponent = this.state.setRewardsPanelShown ? <RedeemNewRewards userPoints={this.state.userPoints} userEmail={this.state.userEmail} boardRef={this.state.boardRef}></RedeemNewRewards> : (this.state.boardRef && <ViewRedeemedRewards boardRef={this.state.boardRef} email={this.state.userEmail}></ViewRedeemedRewards>);
 
         return (
             <div>

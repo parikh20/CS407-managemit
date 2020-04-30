@@ -47,7 +47,7 @@ class RewardsAdmin extends React.Component {
 
     render() {
 
-        let shownComponent = this.state.setRewardsPanelShown ? <SetRewards boardRef={this.state.boardRef}></SetRewards> : <ViewRedeemedRewards></ViewRedeemedRewards>;
+        let shownComponent = this.state.setRewardsPanelShown ? <SetRewards boardRef={this.state.boardRef}></SetRewards> : (this.state.boardRef && <ViewRedeemedRewards boardRef={this.state.boardRef}></ViewRedeemedRewards>);
 
         return (
             <div>
