@@ -21,6 +21,7 @@ class RedeemNewRewards extends React.Component {
     }
 
     handleBuy(rewardRef) {
+        this.props.boardRef.ref.collection("redeemedrewards").add({user: this.props.userEmail, reward: rewardRef.ref.id, date: new Date()});
         addPointsToUser(this.props.boardRef.ref.id, this.props.userEmail, -1*(rewardRef.data().pointCost), false)
     }
 

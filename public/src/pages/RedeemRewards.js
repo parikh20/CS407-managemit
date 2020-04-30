@@ -44,7 +44,7 @@ class RedeemRewards extends React.Component {
 
     loadUserPoints(boardRef) {
         this.pointSub = boardRef.ref.collection("points").doc(this.state.userEmail).onSnapshot((pointsRef) => {
-            this.setState({userPoints: pointsRef.data().points});
+            this.setState({userPoints: pointsRef.data() ? pointsRef.data().points : 0});
         });
     }
 
@@ -62,7 +62,7 @@ class RedeemRewards extends React.Component {
 
     render() {
 
-        let shownComponent = this.state.setRewardsPanelShown ? <RedeemNewRewards userPoints={this.state.userPoints} userEmail={this.state.userEmail} boardRef={this.state.boardRef}></RedeemNewRewards> : <ViewRedeemedRewards></ViewRedeemedRewards>;
+        let shownComponent = this.state.setRewardsPanelShown ? <RedeemNewRewards userPoints={this.state.userPoints} userEmail={this.state.userEmail} boardRef={this.state.boardRef}></RedeemNewRewards> : (this.state.boardRef && <ViewRedeemedRewards boardRef={this.state.boardRef} email={this.state.userEmail}></ViewRedeemedRewards>);
         const primaryDark = "#222831"
         const white = "#fff"
         const mode = localStorage.darkMode

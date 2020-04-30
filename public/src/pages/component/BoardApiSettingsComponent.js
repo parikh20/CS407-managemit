@@ -345,7 +345,7 @@ function BoardApiSettingsComponent(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <ExpansionPanel className={classes[`${mode}Panel`]} expanded={true}>
+                        <ExpansionPanel className={classes[`${mode}Panel`]} expanded={true} style={{width: '80%', marginRight: 'auto', marginLeft: 'auto'}}>
                             <ExpansionPanelSummary
                                 aria-controls='panel1bh-content'
                                 id='panel1bh-header'

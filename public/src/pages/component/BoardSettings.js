@@ -356,6 +356,26 @@ function BoardSettings(props) {
         });
     }
 
+    const handlePointsSettings = (event, key) => {
+        clearState()
+        if (event.target.value < 0) {
+            setErrorSnackbar(true);
+            setErrorMessage('A points setting cannot be negative!')
+            return
+        }
+        var newPointsSettings = {}
+        if (props.board.pointsSettings === undefined) {
+            newPointsSettings[key] = event.target.value;
+        } else {
+            newPointsSettings = props.board.pointsSettings;
+            newPointsSettings[key] = event.target.value;
+        }
+
+        db.collection('boards').doc(props.board.id).update({
+            pointsSettings: newPointsSettings
+        })
+    }
+
     return (
         <div className={classes.settingsBody}>
             <Paper className={classes[`${mode}Paper`]}>
@@ -472,7 +492,7 @@ function BoardSettings(props) {
                     </Grid>
                 </Grid>
             </Paper>
-            <Paper className={classes.paper}>
+            <Paper className={classes[`${mode}Paper`]}>
                 <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Grid item xs={12}>
                         <h2>External API hooks</h2>
@@ -505,6 +525,58 @@ function BoardSettings(props) {
                                 </Grid>
                             </Grid>
                             <ChevronRightIcon />
+                        </Grid>
+                        <Divider />
+                    </Grid>
+                </Grid>
+            </Paper>
+            <Paper className={classes[`${mode}Paper`]}>
+                <Grid container spacing={3} style={{width: '80%', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Grid item xs={12}>
+                        <h2>Points Settings</h2>
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: 'left'}}>
+                    <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Creating a task
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        How many points a user receives for creating a task
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <TextField type="number" value={props.board.pointsSettings ? props.board.pointsSettings['createTask'] : 0} onChange={(e) => handlePointsSettings(e, 'createTask')} />
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Editing a task
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        How many points a user receives for editing a task
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <TextField type="number" value={props.board.pointsSettings ? props.board.pointsSettings['editTask'] : 0} onChange={(e) => handlePointsSettings(e, 'editTask')} />
+                        </Grid>
+                        <Divider />
+                        <Grid container spacing={0} className={classes.apiCard} >
+                            <Grid item xs={12} sm container>
+                                <Grid item container direction="column" spacing={2}>
+                                    <Typography variant='subtitle1' className={classes.typography}>
+                                        Moving a task
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        How many points a user receives for moving a task to another column
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <TextField type="number" value={props.board.pointsSettings ? props.board.pointsSettings['moveTask'] : 0} onChange={(e) => handlePointsSettings(e, 'moveTask')} />
                         </Grid>
                         <Divider />
                     </Grid>

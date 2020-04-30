@@ -54,7 +54,7 @@ class RewardsAdmin extends React.Component {
 
     render() {
 
-        let shownComponent = this.state.setRewardsPanelShown ? <SetRewards boardRef={this.state.boardRef}></SetRewards> : <ViewRedeemedRewards></ViewRedeemedRewards>;
+        let shownComponent = this.state.setRewardsPanelShown ? <SetRewards boardRef={this.state.boardRef}></SetRewards> : (this.state.boardRef && <ViewRedeemedRewards boardRef={this.state.boardRef}></ViewRedeemedRewards>);
         const primaryDark = "#222831"
         const white = "#fff"
         const mode = localStorage.darkMode
