@@ -7,6 +7,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import Column from './Column.js';
+import { addPointsToUser } from '../../Firebase.js';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -20,7 +21,8 @@ class ColumnGroup extends React.Component {
             columns: [],
             allColumnNames: {},
             columnsById: {},
-            columnIdToIndex: {}
+            columnIdToIndex: {},
+            user: JSON.parse(localStorage.getItem('user'))
         };
 
         this.handleDragStart = this.handleDragStart.bind(this);
@@ -108,6 +110,8 @@ class ColumnGroup extends React.Component {
             await this.props.boardRef.ref.collection('tasks').doc(result.draggableId).update({
                 columnRefs: [...data.columnRefs.filter(item => item !== source.droppableId), destination.droppableId]
             });
+
+            addPointsToUser(this.props.boardRef.ref.id, this.state.user.email, Number.parseInt(this.props.boardRef.data().pointsSettings.moveTask))
 
             // then we can update the column docs as well
             let sourceColRef = await this.props.columnGroupRef.ref.collection('columns').doc(source.droppableId).get();
